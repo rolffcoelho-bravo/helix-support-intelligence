@@ -67,9 +67,7 @@ def _build_items(
     items: list[tuple[float, float, float, str, str]] = []
     validation_weight = (1.0 - oos_prevalence) / len(validation_rows)
     id_confidence = (
-        f"{model_id}_raw_confidence"
-        if variant == "raw"
-        else f"{model_id}_temperature_confidence"
+        f"{model_id}_raw_confidence" if variant == "raw" else f"{model_id}_temperature_confidence"
     )
     for row in validation_rows:
         event = row[f"{model_id}_event"]
@@ -98,11 +96,7 @@ def _build_items(
     elif variant == "temperature":
         total_validation = len(validation_rows)
         for fold, heldout_rows in FOLD_COUNTS.items():
-            oos_weight = (
-                oos_prevalence
-                * (heldout_rows / total_validation)
-                / len(oos_rows)
-            )
+            oos_weight = oos_prevalence * (heldout_rows / total_validation) / len(oos_rows)
             confidence_key = f"{model_id}_temperature_fold_{fold}_confidence"
             for row in oos_rows:
                 items.append(
@@ -132,14 +126,9 @@ def _snapshot(
 ) -> dict[str, Any]:
     total_id = len(validation_rows)
     oos_automatic_rate = (
-        0.0
-        if oos_prevalence == 0.0
-        else oos_mixture_weight_automatic / oos_prevalence
+        0.0 if oos_prevalence == 0.0 else oos_mixture_weight_automatic / oos_prevalence
     )
-    id_mean_cost = (
-        sum(id_event_counts[event] * costs[event] for event in EVENTS)
-        / total_id
-    )
+    id_mean_cost = sum(id_event_counts[event] * costs[event] for event in EVENTS) / total_id
     oos_mean_cost = (
         oos_automatic_rate * costs["wrong_queue"]
         + (1.0 - oos_automatic_rate) * costs["human_escalation"]
@@ -151,20 +140,14 @@ def _snapshot(
         "mean_oos_cost": oos_mean_cost,
         "id_automation_coverage": id_automatic / total_id,
         "id_selective_risk": (
-            None
-            if id_automatic == 0
-            else 1.0 - id_correct_automatic / id_automatic
+            None if id_automatic == 0 else 1.0 - id_correct_automatic / id_automatic
         ),
         "oos_escalation_recall": 1.0 - oos_automatic_rate,
         "unsafe_high_risk_rate": (
-            (1.0 - oos_prevalence)
-            * id_event_counts["unsafe_high_risk_auto_route"]
-            / total_id
+            (1.0 - oos_prevalence) * id_event_counts["unsafe_high_risk_auto_route"] / total_id
         ),
         "wrong_queue_rate": (
-            (1.0 - oos_prevalence)
-            * id_event_counts["wrong_queue"]
-            / total_id
+            (1.0 - oos_prevalence) * id_event_counts["wrong_queue"] / total_id
             + oos_mixture_weight_automatic
         ),
         "id_event_counts": dict(id_event_counts),
@@ -202,9 +185,7 @@ def _optimize(
     )
     human_cost = float(costs["human_escalation"])
     expected_cost = human_cost
-    id_event_counts: Counter[str] = Counter(
-        {"human_escalation": len(validation_rows)}
-    )
+    id_event_counts: Counter[str] = Counter({"human_escalation": len(validation_rows)})
     id_automatic = 0
     id_correct_automatic = 0
     oos_mixture_weight_automatic = 0.0
@@ -278,9 +259,7 @@ def _evaluate_threshold(
     id_automatic = 0
     id_correct = 0
     id_confidence = (
-        f"{model_id}_raw_confidence"
-        if variant == "raw"
-        else f"{model_id}_temperature_confidence"
+        f"{model_id}_raw_confidence" if variant == "raw" else f"{model_id}_temperature_confidence"
     )
     for row in validation_rows:
         if float(row[id_confidence]) >= threshold:
@@ -294,41 +273,34 @@ def _evaluate_threshold(
 
     if variant == "raw":
         oos_automatic_rate = sum(
-            float(row[f"{model_id}_raw_confidence"]) >= threshold
-            for row in oos_rows
+            float(row[f"{model_id}_raw_confidence"]) >= threshold for row in oos_rows
         ) / len(oos_rows)
     else:
         oos_automatic_rate = sum(
             (FOLD_COUNTS[fold] / len(validation_rows))
             * sum(
-                float(row[f"{model_id}_temperature_fold_{fold}_confidence"])
-                >= threshold
+                float(row[f"{model_id}_temperature_fold_{fold}_confidence"]) >= threshold
                 for row in oos_rows
             )
             / len(oos_rows)
             for fold in range(5)
         )
 
-    id_mean_cost = sum(
-        id_event_counts[event] * costs[event] for event in EVENTS
-    ) / len(validation_rows)
+    id_mean_cost = sum(id_event_counts[event] * costs[event] for event in EVENTS) / len(
+        validation_rows
+    )
     oos_mean_cost = (
         oos_automatic_rate * costs["wrong_queue"]
         + (1.0 - oos_automatic_rate) * costs["human_escalation"]
     )
-    expected_cost = (
-        (1.0 - oos_prevalence) * id_mean_cost
-        + oos_prevalence * oos_mean_cost
-    )
+    expected_cost = (1.0 - oos_prevalence) * id_mean_cost + oos_prevalence * oos_mean_cost
     return {
         "threshold": threshold,
         "expected_cost": expected_cost,
         "mean_id_cost": id_mean_cost,
         "mean_oos_cost": oos_mean_cost,
         "id_automation_coverage": id_automatic / len(validation_rows),
-        "id_selective_risk": (
-            None if id_automatic == 0 else 1.0 - id_correct / id_automatic
-        ),
+        "id_selective_risk": (None if id_automatic == 0 else 1.0 - id_correct / id_automatic),
         "oos_escalation_recall": 1.0 - oos_automatic_rate,
         "unsafe_high_risk_rate": (
             (1.0 - oos_prevalence)
@@ -336,9 +308,7 @@ def _evaluate_threshold(
             / len(validation_rows)
         ),
         "wrong_queue_rate": (
-            (1.0 - oos_prevalence)
-            * id_event_counts["wrong_queue"]
-            / len(validation_rows)
+            (1.0 - oos_prevalence) * id_event_counts["wrong_queue"] / len(validation_rows)
             + oos_prevalence * oos_automatic_rate
         ),
         "id_event_counts": dict(id_event_counts),
@@ -358,9 +328,7 @@ def _selective_risk_at_coverage(
     )
     accepted = max(1, min(len(ordered), round(coverage * len(ordered))))
     selected = ordered[:accepted]
-    correct = sum(
-        row[f"{model_id}_event"] == "correct_route" for row in selected
-    )
+    correct = sum(row[f"{model_id}_event"] == "correct_route" for row in selected)
     return {
         "coverage": coverage,
         "accepted": accepted,
@@ -370,9 +338,7 @@ def _selective_risk_at_coverage(
 
 
 def _matrix_map(cost_config: dict[str, Any]) -> dict[str, dict[str, float]]:
-    output = {
-        cost_config["primary_matrix"]["id"]: cost_config["primary_matrix"]["costs"]
-    }
+    output = {cost_config["primary_matrix"]["id"]: cost_config["primary_matrix"]["costs"]}
     for matrix in cost_config["sensitivity_matrices"]:
         output[matrix["id"]] = matrix["costs"]
     return output
@@ -405,13 +371,8 @@ def _decision_hashes(
     oos_hashes: dict[str, str] = {}
     for fold in range(5):
         column = f"{model_id}_temperature_fold_{fold}_confidence"
-        lines = [
-            f"{row['oos_id']}\t{int(float(row[column]) >= threshold)}"
-            for row in oos_rows
-        ]
-        oos_hashes[str(fold)] = hashlib.sha256(
-            ("\n".join(lines) + "\n").encode()
-        ).hexdigest()
+        lines = [f"{row['oos_id']}\t{int(float(row[column]) >= threshold)}" for row in oos_rows]
+        oos_hashes[str(fold)] = hashlib.sha256(("\n".join(lines) + "\n").encode()).hexdigest()
     return {
         "validation_auto_route_sha256": id_hash,
         "oos_auto_route_sha256_by_fold": oos_hashes,
@@ -427,12 +388,22 @@ def _markdown_report(result: dict[str, Any]) -> str:
         [
             "# Phase 2 Routing Cost and Operating-Point Benchmark",
             "",
-            "> Development evidence using synthetic scenario costs. The weights are not real-bank economics, and the confirmatory BANKING77 test split remains unopened.",
+            (
+                "> Development evidence using synthetic scenario costs. The weights are not "
+                "real-bank economics, and the confirmatory BANKING77 test split remains "
+                "unopened."
+            ),
             "",
-            "| Candidate | Threshold | Expected cost | ID coverage | ID selective risk | OOS escalation |",
+            (
+                "| Candidate | Threshold | Expected cost | ID coverage | "
+                "ID selective risk | OOS escalation |"
+            ),
             "|---|---:|---:|---:|---:|---:|",
             *[
-                "| {candidate} | {threshold:.6f} | {cost:.4f} | {coverage:.2%} | {risk:.2%} | {oos:.2%} |".format(
+                (
+                    "| {candidate} | {threshold:.6f} | {cost:.4f} | {coverage:.2%} | "
+                    "{risk:.2%} | {oos:.2%} |"
+                ).format(
                     candidate=candidate,
                     threshold=float(primary[candidate]["threshold"]),
                     cost=float(primary[candidate]["expected_cost"]),
@@ -456,7 +427,9 @@ def _markdown_report(result: dict[str, Any]) -> str:
             ),
             (
                 "H4 development status: **supported**; the cost-selected policy reduces "
-                f"expected cost versus full automation by {float(h4['expected_cost_reduction_vs_full_automation']):.4f}."
+                "expected cost versus full automation by {:.4f}.".format(
+                    float(h4["expected_cost_reduction_vs_full_automation"])
+                )
             ),
             "",
         ]
@@ -478,16 +451,12 @@ def run(
 
     matrices = _matrix_map(cost_config)
     primary_matrix_id = cost_config["primary_matrix"]["id"]
-    primary_prevalence = float(
-        cost_config["population_mixture"]["primary_oos_prevalence"]
-    )
+    primary_prevalence = float(cost_config["population_mixture"]["primary_oos_prevalence"])
     prevalences = {
         primary_prevalence,
         *(
             float(value)
-            for value in cost_config["population_mixture"][
-                "sensitivity_oos_prevalence"
-            ]
+            for value in cost_config["population_mixture"]["sensitivity_oos_prevalence"]
         ),
     }
 
@@ -543,9 +512,7 @@ def run(
         h3[model_id] = {
             "raw_min_expected_cost": raw["expected_cost"],
             "temperature_min_expected_cost": calibrated["expected_cost"],
-            "temperature_minus_raw": (
-                calibrated["expected_cost"] - raw["expected_cost"]
-            ),
+            "temperature_minus_raw": (calibrated["expected_cost"] - raw["expected_cost"]),
             "supported_on_development_primary_cost": (
                 calibrated["expected_cost"] < raw["expected_cost"]
             ),
@@ -560,8 +527,7 @@ def run(
             full_automation["expected_cost"] - final_result["expected_cost"]
         ),
         "selective_risk_reduction_vs_full_automation": (
-            float(full_automation["id_selective_risk"])
-            - float(final_result["id_selective_risk"])
+            float(full_automation["id_selective_risk"]) - float(final_result["id_selective_risk"])
         ),
         "fixed_coverage": [
             _selective_risk_at_coverage(validation_rows, final_model, coverage)
