@@ -1,7 +1,7 @@
 # Phase 2 Exit Report
 
 - Phase: Routing baseline and selective decision policy
-- Status: Active — model ladder, calibration, OOS, cost policy, and development configuration complete; implementation contracts next
+- Status: Active — development selection and implementation contracts complete; final pre-confirmatory audit next
 - Date opened: 2026-08-18
 - Public version: 0.1.0
 
@@ -26,8 +26,8 @@
 - [x] Frozen out-of-scope benchmark and evaluation.
 - [x] Declared routing cost matrix.
 - [x] Final development risk-coverage report and operating-point selection.
-- [ ] Router model card.
-- [ ] `/v1/tickets/route` contract tests.
+- [x] Router model card.
+- [x] `/v1/tickets/route` contract tests.
 - [x] One frozen development routing configuration and operating threshold.
 - [ ] Registered confirmatory result for H3 and H4.
 
@@ -140,9 +140,33 @@ Full-refit transfer result:
 
 Permanent evidence: `benchmarks/routing/results/cost_policy_validation_v1.{json,md}` and `configs/models/routing_selected_v1.json`.
 
+## Router model card and route contract checkpoint
+
+The selected router now has a public model card and a framework-neutral implementation contract for `POST /v1/tickets/route`.
+
+The implementation deliberately keeps the ML scorer behind an injected `IntentScorer` boundary. The domain router therefore does not import FastAPI, scikit-learn, sentence-transformers, or another framework/provider SDK. It applies the already-frozen temperature and threshold, maps accepted intents to frozen operational queues, and fails closed on malformed scorer output.
+
+Contract semantics:
+
+- confidence `>= 0.892704` -> `AUTO_ROUTE`;
+- confidence below threshold -> `ESCALATE_LOW_CONFIDENCE` with `intent=null` and `queue=null`;
+- scorer exception or invalid runtime output -> `ESCALATE_SYSTEM_FAILURE`;
+- request schema -> `data/contracts/phase2/routing_request.schema.json`;
+- response schema -> existing Phase 1 `data/contracts/routing.schema.json`.
+
+The Phase 2 request schema is intentionally namespaced below `data/contracts/phase2/`. A hostile audit caught an initial placement in the root Phase 1 contract suite; that was corrected by restoring the closed Phase 1 suite rather than weakening its completeness test.
+
+The same audit corrected temperature validation semantics, hardened direct configuration and runtime scorer boundaries, and added an exact inclusive-threshold regression test.
+
+Latest release-blocking quality gate: Ruff passed, strict mypy passed, **70 tests passed**, Phase 1 offline data contracts passed, and publication audit passed. No Phase 2 scientific metric or selected policy changed.
+
+Permanent evidence: `docs/routing-model-card.md`, `benchmarks/routing/results/route_contract_v1.{json,md}`, `src/helix_support_intelligence/domain/routing.py`, and `tests/test_phase2_route_contract.py`.
+
 ## Post-execution audit rule
 
 Every Phase 2 checkpoint closes only after a hostile audit covering code correctness, metric interpretation, split integrity, reproducibility, dependency/hardware consistency, CI behavior, and public wording. Material findings are corrected before the checkpoint is accepted; negative scientific results are preserved rather than tuned away.
+
+Every execution close must also provide a results table, interpretation, limitations, methodological/value assessment, improvement recommendations, the next locked blueprint action, and a final double-check for code or result errors and misleading claims. Recommendations do not authorize blueprint drift.
 
 ## Test-set status
 
@@ -152,8 +176,8 @@ The confirmatory test is not permitted to change `routing-selected-v1`; it can o
 
 ## Current decision
 
-The model ladder, calibration choice, OOS benchmark, public cost matrix, selective operating point, and one development routing configuration are now frozen. **A2 + temperature scaling remains the selected calibrated development router. H3 is unsupported on development cost evidence; H4 is supported on development selective-routing evidence. Neither is yet a confirmatory verdict.**
+The model ladder, calibration choice, OOS benchmark, public cost matrix, selective operating point, frozen development router, model card, and route implementation contract are complete. **A2 + temperature scaling remains the selected calibrated development router. H3 is unsupported on development cost evidence; H4 is supported on development selective-routing evidence. Neither is yet a confirmatory verdict.**
 
-Phase 2 remains open because the implementation-facing contracts are incomplete.
+Phase 2 remains open for exactly two gates: the final pre-confirmatory hostile audit and the one registered confirmatory evaluation.
 
-**Next locked action:** create the router model card and implement `/v1/tickets/route` contract tests against `routing-selected-v1`. Do not open the confirmatory BANKING77 test until those contracts pass and the final pre-confirmatory audit is complete.
+**Next locked action:** run the final pre-confirmatory Phase 2 hostile audit across all frozen data, model, calibration, OOS, cost, threshold, contract, workflow, evidence, and public-claim surfaces. Do not open the BANKING77 confirmatory test until that audit passes. Phase 3 retrieval remains forbidden.
