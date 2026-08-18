@@ -1,0 +1,79 @@
+{
+  "version": "routing-ladder-v1",
+  "phase": 2,
+  "dataset_contract": "banking77-helix-v1",
+  "selection_partition": "validation",
+  "confirmatory_partition": "test",
+  "models": [
+    {
+      "id": "A0",
+      "family": "rules",
+      "name": "majority_and_stratified",
+      "required": true,
+      "purpose": "Lower-bound reference for routing performance and expected cost."
+    },
+    {
+      "id": "A1",
+      "family": "linear_text",
+      "name": "tfidf_logistic_regression",
+      "required": true,
+      "purpose": "Strong interpretable classical baseline."
+    },
+    {
+      "id": "A2",
+      "family": "sentence_embedding",
+      "name": "sentence_embeddings_linear_classifier",
+      "required": true,
+      "purpose": "Test whether fixed semantic representations add value over sparse lexical features."
+    },
+    {
+      "id": "A3",
+      "family": "compact_transformer",
+      "name": "compact_transformer_classifier",
+      "required": true,
+      "purpose": "Bounded end-to-end transformer candidate."
+    },
+    {
+      "id": "A4",
+      "family": "peft",
+      "name": "single_peft_configuration",
+      "required": false,
+      "enabled": false,
+      "purpose": "Optional bounded remediation only; not part of the default Phase 2 ladder."
+    }
+  ],
+  "calibration_candidates": [
+    "temperature_scaling",
+    "isotonic_regression",
+    "platt_scaling"
+  ],
+  "required_metrics": [
+    "macro_f1",
+    "balanced_accuracy",
+    "top3_recall",
+    "expected_calibration_error",
+    "brier_score",
+    "oos_auroc",
+    "oos_fpr_at_declared_recall",
+    "expected_routing_cost",
+    "risk_coverage"
+  ],
+  "decision_policy": {
+    "automatic_decision": "AUTO_ROUTE",
+    "abstention_decision": "ESCALATE_LOW_CONFIDENCE",
+    "threshold_source": "validation_only",
+    "test_set_may_select_threshold": false
+  },
+  "cost_events": [
+    "correct_route",
+    "wrong_intent_same_queue",
+    "wrong_queue",
+    "unsafe_high_risk_auto_route",
+    "human_escalation"
+  ],
+  "publication_boundary": {
+    "numeric_cost_weights": "withheld_until_registered_publication",
+    "operating_threshold": "withheld_until_phase_exit",
+    "unpublished_remediation_logic": "private"
+  }
+}
