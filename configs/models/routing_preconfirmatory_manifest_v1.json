@@ -23,6 +23,7 @@
     "benchmarks/routing/evaluate_calibration.py": "0b88f65ae41af62b19b4f494ffbdce1c6cf2d679",
     "benchmarks/routing/evaluate_calibration.py.lock": "113a8b8a693d3b8014d1c93f7fef96b76b96ccc4",
     "benchmarks/routing/evaluate_confirmatory.py": "7667e0d977fdcadf6ccd4331f5ecffb11174526b",
+    "benchmarks/routing/verify_preconfirmatory_freeze.py": "6da20c18386396c1f550701bb28a5e7181769e8f",
     "benchmarks/routing/results/a0_a1_validation_v1.json": "002fa49496ba8fcf69d85cf0bd12d9f75c5730b0",
     "benchmarks/routing/results/a2_validation_v2.json": "4fdccdadcfa27062560bb31cc2b05e24727607b8",
     "benchmarks/routing/results/a3_validation_v1.json": "5242d2b5be520c2722be63fb8ee243dbb0db0c65",
@@ -38,7 +39,7 @@
     "docs/routing-model-card.md": "a003c92b62375da76383275ea9c09718b8c21f10",
     "docs/phase2-confirmatory-protocol.md": "048498be41c78ea38af8e16d88536f0d53b6d092",
     ".github/workflows/ci.yml": "3247e53c92605767919c65293f63b5fa0b3ab02d",
-    ".github/workflows/phase2-routing-confirmatory.yml": "255861987921f61546be773f3778547da5b1c097",
+    ".github/workflows/phase2-routing-confirmatory.yml": "e31e6b807d88b3e3f7838060e8dd1d8e6293d2e2",
     "tests/test_phase2_confirmatory_protocol.py": "bc96f6fa775857257b0f2e03262f1756cb7460a5"
   },
   "governance": {
