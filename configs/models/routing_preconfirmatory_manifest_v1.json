@@ -2,7 +2,7 @@
   "version": "routing-preconfirmatory-freeze-v1",
   "phase": 2,
   "status": "frozen_before_confirmatory_test_open",
-  "frozen_parent_commit_sha": "477535c9b60844f1ad0a4e30f973e61ce9bf8695",
+  "frozen_parent_commit_sha": "0f5c92147783b55c099e74cbdad0ff21a5700452",
   "test_set_opened": false,
   "hash_semantics": "Git blob SHA-1: sha1(b'blob ' + decimal_byte_length + b'\\0' + file_bytes)",
   "purpose": "Machine-checkable freeze of the selection-critical Phase 2 scientific and execution surface before the one registered BANKING77 confirmatory evaluation.",
@@ -17,12 +17,12 @@
     "configs/models/routing_operations.json": "0462584f010a296dd3d7f9b097410efe02b85fd3",
     "configs/models/routing_cost_matrix.json": "7d0ec154fb091d4727d4a0c702e5c8f01d07c246",
     "configs/models/routing_selected_v1.json": "0b1ebe4be964afe35ebbf5604c24e090776e42c9",
-    "configs/models/routing_confirmatory_v1.json": "7bd13b18327d603dd7ff9bbda9a6c24202f0742a",
+    "configs/models/routing_confirmatory_v1.json": "23561dcf55a20d5b2600a767d72647722fd8f5ec",
     "data/oos/routing_oos_v1.json": "816e89d1cff8e3d54757b43a84b3689a90671250",
     "benchmarks/routing/evaluate_a2.py.lock": "113a8b8a693d3b8014d1c93f7fef96b76b96ccc4",
     "benchmarks/routing/evaluate_calibration.py": "0b88f65ae41af62b19b4f494ffbdce1c6cf2d679",
     "benchmarks/routing/evaluate_calibration.py.lock": "113a8b8a693d3b8014d1c93f7fef96b76b96ccc4",
-    "benchmarks/routing/evaluate_confirmatory.py": "7667e0d977fdcadf6ccd4331f5ecffb11174526b",
+    "benchmarks/routing/evaluate_confirmatory.py": "c048f5dba091a7274a921aaf03ee376a5a29351d",
     "benchmarks/routing/verify_preconfirmatory_freeze.py": "6da20c18386396c1f550701bb28a5e7181769e8f",
     "benchmarks/routing/results/a0_a1_validation_v1.json": "002fa49496ba8fcf69d85cf0bd12d9f75c5730b0",
     "benchmarks/routing/results/a2_validation_v2.json": "4fdccdadcfa27062560bb31cc2b05e24727607b8",
@@ -37,16 +37,18 @@
     "src/helix_support_intelligence/domain/routing.py": "5bcd9b7f6e88fef4fe6fb9a19a321c8e1f482561",
     "docs/routing-evaluation-protocol.md": "efa4937f8fc4b6dd91c5471a0706f24b8c007a44",
     "docs/routing-model-card.md": "a003c92b62375da76383275ea9c09718b8c21f10",
-    "docs/phase2-confirmatory-protocol.md": "048498be41c78ea38af8e16d88536f0d53b6d092",
+    "docs/phase2-confirmatory-protocol.md": "a6ad7d83485967d82a114fe8affed79ab57232dc",
     ".github/workflows/ci.yml": "3247e53c92605767919c65293f63b5fa0b3ab02d",
     ".github/workflows/phase2-routing-confirmatory.yml": "e31e6b807d88b3e3f7838060e8dd1d8e6293d2e2",
-    "tests/test_phase2_confirmatory_protocol.py": "bc96f6fa775857257b0f2e03262f1756cb7460a5"
+    ".github/workflows/phase2-routing-confirmatory-preflight.yml": "3d8e0fd68c92a54b0c4e54689104e108e62155ee",
+    "tests/test_phase2_confirmatory_protocol.py": "b6136f2270f2429b8f69fee1368ca1da1b3c2728"
   },
   "governance": {
     "manifest_may_be_changed_after_confirmatory_result": false,
     "artifact_hash_mismatch_blocks_test_open": true,
     "confirmatory_test_may_change_frozen_artifacts": false,
     "phase3_may_start_before_phase2_close": false,
-    "oos_benchmark_is_independent_confirmatory_evidence": false
+    "oos_benchmark_is_independent_confirmatory_evidence": false,
+    "H3_full_mixed_endpoint_has_independent_confirmatory_sample": false
   }
 }
