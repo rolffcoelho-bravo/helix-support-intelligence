@@ -1,7 +1,7 @@
 # Phase 2 Exit Report
 
 - Phase: Routing baseline and selective decision policy
-- Status: Active — A0/A1 checkpoint passed; A2 next
+- Status: Active — A0/A1/A2 checkpoints passed; A3 next
 - Date opened: 2026-08-18
 - Public version: 0.1.0
 
@@ -20,7 +20,7 @@
 - [x] Routing evaluation protocol.
 - [ ] Reproducible A0-A3 implementations and evaluation artifacts.
   - [x] A0/A1 development benchmark and evidence checkpoint.
-  - [ ] A2 sentence-embedding + linear classifier.
+  - [x] A2 sentence-embedding + linear-classifier benchmark and evidence checkpoint.
   - [ ] A3 compact transformer classifier.
 - [ ] Calibration comparison.
 - [ ] Frozen out-of-scope benchmark and evaluation.
@@ -48,12 +48,34 @@ Permanent development evidence is recorded in:
 - `benchmarks/routing/results/a0_a1_validation_v1.json`
 - `benchmarks/routing/results/a0_a1_validation_v1.md`
 
+## A2 checkpoint
+
+A2 was frozen before evaluation as `sentence-transformers/all-MiniLM-L6-v2` at revision `c315f904dfc467d8b9c40ab4ed50b3a8d0866c15`, used only as a 384-dimensional normalized sentence-embedding feature extractor. The linear classifier retained the fixed A1 logistic-regression specification. No alternate encoder or hyperparameter search was allowed.
+
+Two independent GitHub Actions executions produced byte-identical deterministic result JSON, report, and all 1,976 validation predictions. The complete A2 script dependency graph is now committed in `benchmarks/routing/evaluate_a2.py.lock`.
+
+| Model | Macro-F1 | Balanced accuracy | Top-3 recall | ECE | Brier |
+|---|---:|---:|---:|---:|---:|
+| A1 | 0.8422 | 0.8407 | 0.9534 | 0.4895 | 0.4951 |
+| **A2 frozen embeddings + logistic regression** | **0.8986** | **0.8963** | **0.9732** | **0.2910** | **0.2501** |
+| **A2 − A1** | **+0.0564** | **+0.0556** | **+0.0197** | **−0.1986** | **−0.2450** |
+
+A2 also improves selective risk at every registered coverage point. At 50% coverage, risk falls from approximately 2.53% for A1 to 0.40% for A2; at 70%, from approximately 6.07% to 1.59%. These are development observations only and do not select an operating threshold.
+
+A2 adds a neural embedding stage. On two GitHub-hosted CPU runs, validation embedding required approximately 5.57–5.71 ms per example, but a standardized A1 end-to-end latency comparator has not yet been run. Final complexity and cost selection therefore remains open.
+
+Permanent A2 evidence is recorded in:
+
+- `benchmarks/routing/results/a2_validation_v1.json`
+- `benchmarks/routing/results/a2_validation_v1.md`
+- `benchmarks/routing/evaluate_a2.py.lock`
+
 ## Test-set status
 
-The official BANKING77 test split remains confirmatory and has not been downloaded or opened by the Phase 2 routing benchmark. It remains unauthorized for model selection, calibration selection, feature selection, or operating-threshold selection.
+The official BANKING77 test split remains confirmatory and has not been downloaded or opened by the Phase 2 routing benchmarks. It remains unauthorized for model selection, calibration selection, feature selection, error-driven tuning, or operating-threshold selection.
 
 ## Current decision
 
-**A1 survives as the classical routing baseline.** Its classification performance is strong enough that A2 and A3 must justify their additional complexity through measurable improvements in routing quality, calibration, selective risk, OOS behavior, or later cost-aware evaluation.
+**A2 survives and is the leading Phase 2 development candidate.** A1 remains the required simpler classical reference. A2's gain is large enough that A3 must now justify its additional training and inference complexity against A2 rather than merely outperforming A1.
 
-Phase 2 remains open. The next locked implementation action is **A2 — frozen sentence embeddings plus a linear classifier** using exactly the same train/validation contract. Preserve A1 outputs for the later calibration comparison. Do not open the confirmatory test and do not introduce a classifier family outside the frozen ladder.
+Phase 2 remains open. The next locked implementation action is **A3 — one frozen compact transformer classifier** under the identical train/validation contract. Its base checkpoint, tokenizer, training budget, seed, optimization specification, and early-stopping rule must be frozen before the first A3 result. Do not open the confirmatory test and do not introduce a classifier family outside the frozen ladder.
