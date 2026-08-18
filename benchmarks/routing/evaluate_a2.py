@@ -41,9 +41,7 @@ RUN_ID = "phase2-development-a2-v1"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_CONFIG_PATH = REPO_ROOT / "configs" / "data" / "banking77.json"
 A2_CONFIG_PATH = REPO_ROOT / "configs" / "models" / "routing_a2.json"
-A1_CHECKPOINT_PATH = (
-    REPO_ROOT / "benchmarks" / "routing" / "results" / "a0_a1_validation_v1.json"
-)
+A1_CHECKPOINT_PATH = REPO_ROOT / "benchmarks" / "routing" / "results" / "a0_a1_validation_v1.json"
 
 
 def _data_module() -> Any:
@@ -273,10 +271,7 @@ def _markdown_report(result: dict[str, object]) -> str:
             "",
             "| Model | Macro-F1 | Balanced accuracy | Top-3 recall | ECE | Brier |",
             "|---|---:|---:|---:|---:|---:|",
-            (
-                "| A2 | {f1:.4f} | {bal:.4f} | {top3:.4f} | {ece:.4f} | "
-                "{brier:.4f} |"
-            ).format(
+            ("| A2 | {f1:.4f} | {bal:.4f} | {top3:.4f} | {ece:.4f} | {brier:.4f} |").format(
                 f1=float(metrics["macro_f1"]),
                 bal=float(metrics["balanced_accuracy"]),
                 top3=float(metrics["top3_recall"]),
@@ -411,8 +406,7 @@ def run(output_dir: Path) -> dict[str, object]:
             - float(a1_metrics["expected_calibration_error_15bin"])
         ),
         "brier_delta": (
-            float(metrics["multiclass_brier_score"])
-            - float(a1_metrics["multiclass_brier_score"])
+            float(metrics["multiclass_brier_score"]) - float(a1_metrics["multiclass_brier_score"])
         ),
         "risk_coverage_delta": _risk_coverage_delta(a1_metrics, metrics),
         "top_confusion_pair_change": _confusion_change(a1_metrics, metrics),
