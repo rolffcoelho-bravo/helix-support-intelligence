@@ -46,10 +46,51 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply mechanical Ruff fixes
+      - name: Apply mechanical source fixes
         id: source
         run: |
-          uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_cost_policy.py
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("benchmarks/routing/evaluate_cost_policy.py")
+          text = path.read_text(encoding="utf-8")
+          replacements = {
+              '            "> Development evidence using synthetic scenario costs. The weights are not real-bank economics, and the confirmatory BANKING77 test split remains unopened.",': (
+                  '            (\n'
+                  '                "> Development evidence using synthetic scenario costs. The weights are not "\n'
+                  '                "real-bank economics, and the confirmatory BANKING77 test split remains "\n'
+                  '                "unopened."\n'
+                  '            ),'
+              ),
+              '            "| Candidate | Threshold | Expected cost | ID coverage | ID selective risk | OOS escalation |",': (
+                  '            (\n'
+                  '                "| Candidate | Threshold | Expected cost | ID coverage | "\n'
+                  '                "ID selective risk | OOS escalation |"\n'
+                  '            ),'
+              ),
+              '                "| {candidate} | {threshold:.6f} | {cost:.4f} | {coverage:.2%} | {risk:.2%} | {oos:.2%} |".format(': (
+                  '                (\n'
+                  '                    "| {candidate} | {threshold:.6f} | {cost:.4f} | {coverage:.2%} | "\n'
+                  '                    "{risk:.2%} | {oos:.2%} |"\n'
+                  '                ).format('
+              ),
+              '            (\n                "H4 development status: **supported**; the cost-selected policy reduces "\n                f"expected cost versus full automation by {float(h4[\'expected_cost_reduction_vs_full_automation\']):.4f}."\n            ),': (
+                  '            (\n'
+                  '                "H4 development status: **supported**; the cost-selected policy reduces "\n'
+                  '                "expected cost versus full automation by {:.4f}.".format(\n'
+                  '                    float(h4["expected_cost_reduction_vs_full_automation"])\n'
+                  '                )\n'
+                  '            ),'
+              ),
+          }
+          changed = False
+          for old, new in replacements.items():
+              if old in text:
+                  text = text.replace(old, new, 1)
+                  changed = True
+          if changed:
+              path.write_text(text, encoding="utf-8")
+          PY
           uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_cost_policy.py
           uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_cost_policy.py
           if git diff --quiet -- benchmarks/routing/evaluate_cost_policy.py; then
