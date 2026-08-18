@@ -45,11 +45,27 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply mechanical Ruff fixes
+      - name: Apply mechanical source fixes
         id: ruff
         run: |
-          uvx --from ruff==0.16.3 ruff check --fix benchmarks/routing/evaluate_calibration.py
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("benchmarks/routing/evaluate_calibration.py")
+          text = path.read_text(encoding="utf-8")
+          old = '        "> Validation-only development evidence. The confirmatory test split was not downloaded or opened.",\n'
+          new = (
+              '        (\n'
+              '            "> Validation-only development evidence. The confirmatory test split was not "\n'
+              '            "downloaded or opened."\n'
+              '        ),\n'
+          )
+          text = text.replace(old, new)
+          path.write_text(text, encoding="utf-8")
+          PY
+          uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_calibration.py
           uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_calibration.py
+          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_calibration.py
           if git diff --quiet -- benchmarks/routing/evaluate_calibration.py; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
