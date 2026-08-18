@@ -125,6 +125,20 @@ Every implementation checkpoint must finish with an explicit hostile audit befor
 
 Any material defect discovered by this audit must be corrected in the same checkpoint. Superseded public evidence must be removed or clearly replaced so that the repository has one authoritative interpretation.
 
+## Execution close report
+
+Every completed execution must end with an explicit research-quality close report rather than a pass/fail statement alone. The close report must include:
+
+- a compact table of the execution's authoritative results or contract outcomes;
+- an in-depth interpretation of what the results do and do not establish;
+- methodological and engineering limitations that could reduce scientific or industrial value;
+- problem-solving options or improvements, with an explanation of why each would increase methodological strength, perceived research value, reproducibility, or publicability;
+- a recommendation that distinguishes necessary repairs from optional future enhancements so that negative results are not tuned away;
+- the next locked blueprint action and a statement of what remains forbidden until that gate opens;
+- a final double-check of code, calculations, result semantics, leakage boundaries, reproducibility, CI behavior, and public wording for errors or misleading claims.
+
+Recommendations produced by this close report do not authorize blueprint drift. A proposed improvement that changes the active phase, model ladder, frozen hypothesis, data boundary, confirmatory protocol, or major methodology requires the normal approval gate before execution.
+
 ## Selection rule
 
 The winning router is the smallest valid configuration that minimizes damaging routing behavior at useful coverage. A more complex model does not win merely by having the highest uncalibrated accuracy.
