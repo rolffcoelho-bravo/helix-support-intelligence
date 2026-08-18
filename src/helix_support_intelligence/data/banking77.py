@@ -74,8 +74,7 @@ class Banking77Spec:
                 for key in ("train", "validation", "test", "quarantine")
             },
             expected_hashes={
-                key: _require_str(expected_hashes, key)
-                for key in ("train", "validation", "test")
+                key: _require_str(expected_hashes, key) for key in ("train", "validation", "test")
             },
         )
 
@@ -258,9 +257,7 @@ def verify_derived_contract(
 
     hashes = {
         "train": sha256_bytes(canonical_jsonl_bytes(train, spec.source_revision)),
-        "validation": sha256_bytes(
-            canonical_jsonl_bytes(validation, spec.source_revision)
-        ),
+        "validation": sha256_bytes(canonical_jsonl_bytes(validation, spec.source_revision)),
         "test": sha256_bytes(canonical_jsonl_bytes(test, spec.source_revision)),
     }
     if hashes != dict(spec.expected_hashes):
