@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: phase2-routing-calibration-${{ github.workflow }}-${{ github.ref }}
@@ -34,10 +34,8 @@ jobs:
       TOKENIZERS_PARALLELISM: "false"
 
     steps:
-      - name: Check out head branch
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -45,44 +43,11 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply and verify audited fold correction
-        id: source
+      - name: Verify audited calibration source and lock
         run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("benchmarks/routing/evaluate_calibration.py")
-          text = path.read_text(encoding="utf-8")
-          old_line = "            assignment[row_index] = position % folds"
-          new_block = (
-              "        offset_digest = hashlib.sha256(f\"{salt}\\t{label}\".encode()).digest()\n"
-              "        offset = int.from_bytes(offset_digest[:8], \"big\") % folds\n"
-              "        for position, (_, row_index) in enumerate(ordered):\n"
-              "            assignment[row_index] = (position + offset) % folds"
-          )
-          old_loop = (
-              "        for position, (_, row_index) in enumerate(ordered):\n"
-              + old_line
-          )
-          if "offset_digest = hashlib.sha256" not in text:
-              if old_loop not in text:
-                  raise SystemExit("Expected legacy fold-assignment loop not found")
-              text = text.replace(old_loop, new_block, 1)
-              path.write_text(text, encoding="utf-8")
-          PY
-          uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_calibration.py
-          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_calibration.py
           grep -q 'offset_digest = hashlib.sha256' benchmarks/routing/evaluate_calibration.py
           grep -q 'assignment\[row_index\] = (position + offset) % folds' benchmarks/routing/evaluate_calibration.py
           ! grep -q 'assignment\[row_index\] = position % folds' benchmarks/routing/evaluate_calibration.py
-          if git diff --quiet -- benchmarks/routing/evaluate_calibration.py; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Verify committed calibration lock
-        run: |
           test -f benchmarks/routing/evaluate_calibration.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_calibration.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_calibration.py.lock
@@ -102,12 +67,3 @@ jobs:
           path: artifacts/phase2-routing/calibration/
           if-no-files-found: error
           retention-days: 14
-
-      - name: Commit audited fold correction
-        if: steps.source.outputs.changed == 'true' && github.event_name == 'pull_request'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/routing/evaluate_calibration.py
-          git commit -m "Apply audited balanced calibration folds"
-          git push origin "HEAD:${{ github.head_ref }}"
