@@ -36,6 +36,8 @@ No performance result is claimed before a frozen, reproducible benchmark produce
 | Baseline | pending | pending | pending | pending | pending |
 | Release candidate | pending | pending | pending | pending | pending |
 
+Phase 2 development evidence is kept separate from release evidence. The current A0/A1 validation checkpoint is documented under `benchmarks/routing/results/`; it does not populate this release table because the confirmatory test remains unopened.
+
 ## Product workflow
 
 ```mermaid
@@ -148,11 +150,11 @@ Security concerns should be reported through the process in [SECURITY.md](SECURI
 
 ## Project status
 
-The repository foundation and Phase 1 data/evaluation contracts are complete. Public development proceeds through a finite sequence:
+The repository foundation and Phase 1 data/evaluation contracts are complete. Phase 2 routing work is active. Public development proceeds through a finite sequence:
 
 1. reproducible engineering foundation — **complete**;
 2. public-data and evaluation contracts — **complete**;
-3. ticket-routing baseline — **next**;
+3. ticket-routing baseline — **active; A0/A1 checkpoint complete, A2 next**;
 4. hybrid retrieval and ranking;
 5. evidence-grounded assistance;
 6. safety, observability, and system validation;
@@ -160,7 +162,7 @@ The repository foundation and Phase 1 data/evaluation contracts are complete. Pu
 
 The project reaches completion at a documented `v1.0.0` release. Further domains or capabilities will be treated as separate post-v1 work rather than unfinished obligations of the initial repository.
 
-The [Phase 0 exit report](docs/phase-reports/phase-0.md) and [Phase 1 exit report](docs/phase-reports/phase-1.md) record the gates used to close the completed stages. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md), including the public-material review.
+The [Phase 0 exit report](docs/phase-reports/phase-0.md), [Phase 1 exit report](docs/phase-reports/phase-1.md), and active [Phase 2 report](docs/phase-reports/phase-2.md) record the stage gates and current execution state. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md), including the public-material review.
 
 ## Author
 
