@@ -18,3 +18,6 @@ All notable public changes are documented here. The project follows semantic ver
 - Frozen Phase 2 routing model ladder and validation-only evaluation protocol.
 - Deterministic A0/A1 routing benchmark executed in GitHub Actions with reproducible evidence artifacts.
 - First public Phase 2 development checkpoint for the A1 TF-IDF + logistic-regression baseline, including calibration diagnostics, risk-coverage evidence, and confusion pairs.
+- Frozen A2 sentence-embedding benchmark using a pinned `all-MiniLM-L6-v2` revision plus the same linear classifier specification used for A1 comparison.
+- Committed uv script lock for the A2 scientific environment, preventing silent transitive dependency drift.
+- Reproducible A2 validation checkpoint with byte-identical independent reruns, A1 comparison, calibration diagnostics, risk-coverage evidence, confusion analysis, and descriptive CPU timing.
