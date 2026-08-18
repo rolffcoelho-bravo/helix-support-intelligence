@@ -415,9 +415,7 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
         dtype=np.int64,
     )
     true_intents = [example.intent for example in source_test]
-    sample_ids = [
-        data_api.sample_id(example, spec.source_revision) for example in source_test
-    ]
+    sample_ids = [data_api.sample_id(example, spec.source_revision) for example in source_test]
 
     calibration = _load_module(
         CALIBRATION_SCRIPT_PATH,
@@ -442,9 +440,7 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
     primary_costs = {key: float(value) for key, value in cost_rows.items()}
 
     raw_threshold = float(confirmatory["frozen_policies"]["A2_raw_threshold"])
-    calibrated_threshold = float(
-        confirmatory["frozen_policies"]["A2_temperature_threshold"]
-    )
+    calibrated_threshold = float(confirmatory["frozen_policies"]["A2_temperature_threshold"])
     raw_costs, raw_events = _policy_row_costs(
         true_intents,
         predicted_intents,
@@ -543,9 +539,7 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
             "verdict": _verdict(h3_interval),
             "raw_event_counts": dict(raw_events),
             "calibrated_event_counts": dict(calibrated_events),
-            "oos_independence_note": confirmatory["H3_confirmatory"][
-                "independence_reason"
-            ],
+            "oos_independence_note": confirmatory["H3_confirmatory"]["independence_reason"],
         },
         "H4_confirmatory": {
             "primary_estimand": confirmatory["H4_confirmatory"]["primary_estimand"],
