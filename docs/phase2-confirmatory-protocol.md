@@ -34,7 +34,7 @@ This distinction prevents the final paper or repository from overstating the ind
 
 H3 asks whether calibration reduces damaging automatic-routing cost.
 
-The fully independent primary estimand is:
+The fully independent estimand available in Phase 2 is:
 
 `mean BANKING77-test in-domain cost under frozen A2-temperature policy - mean BANKING77-test in-domain cost under frozen A2-raw policy`.
 
@@ -50,15 +50,17 @@ The event costs remain synthetic decision-analysis assumptions:
 
 The primary H3 statistic intentionally excludes a new OOS-population claim because no unseen OOS sample exists in Phase 2.
 
+**Scope limitation:** this is an independent confirmatory test of the **in-domain component of H3**, not a full independent confirmation of the original mixed in-domain/OOS development cost endpoint. The final Phase 2 interpretation must report the development mixed-cost result and the independent BANKING77 test component separately. A favorable BANKING77 test result cannot by itself relabel the full mixed H3 endpoint as confirmed.
+
 ### H3 uncertainty and verdict
 
 A paired nonparametric percentile bootstrap with 5,000 replicates, seed `20260819`, and 95% confidence interval resamples BANKING77 test rows while keeping the raw and calibrated row costs paired.
 
-- **Supported:** upper confidence bound for calibrated-minus-raw mean cost is below `0`.
-- **Unsupported:** lower confidence bound is at or above `0`.
-- **Inconclusive:** the interval overlaps `0`.
+- **Supported component:** upper confidence bound for calibrated-minus-raw mean in-domain cost is below `0`.
+- **Unsupported component:** lower confidence bound is at or above `0`.
+- **Inconclusive component:** the interval overlaps `0`.
 
-The development OOS-mixture cost may be discussed only as previously observed auxiliary context and cannot determine the confirmatory verdict.
+The development OOS-mixture cost may be discussed only as previously observed auxiliary context and cannot determine the independent component verdict.
 
 ## H4 confirmatory estimand
 
@@ -107,6 +109,7 @@ The GitHub Actions workflow `.github/workflows/phase2-routing-confirmatory.yml`:
 - has no `pull_request` or `push` trigger;
 - has read-only repository permissions;
 - requires the exact authorization string `OPEN_FROZEN_TEST_ONCE`;
+- verifies the pre-confirmatory Git-blob integrity manifest before preflight;
 - runs a no-test preflight before the test-access step;
 - reuses the audited CPU-only A2 dependency lock;
 - uploads evidence but does not write results back to the repository automatically.
@@ -115,9 +118,9 @@ An infrastructure failure before any test metric is emitted may be retried. Once
 
 ## Interpretation discipline
 
-A confirmatory result can support, fail to support, or be inconclusive for H3 and H4. It cannot trigger a new Phase 2 model search.
+A confirmatory result can support, fail to support, or be inconclusive for the independent H3 in-domain component and for H4. It cannot trigger a new Phase 2 model search.
 
-A negative H3 result remains a valid scientific result. A positive H4 result remains conditional on the frozen BANKING77 domain, synthetic event-cost assumptions for cost summaries, and the absence of independent production traffic.
+A negative H3 component result remains a valid scientific result. A positive H4 result remains conditional on the frozen BANKING77 domain, synthetic event-cost assumptions for cost summaries, and the absence of independent production traffic.
 
 The confirmatory evaluation does not validate live production latency, real-bank economics, real customer harm, or independent OOS generalization.
 
