@@ -48,6 +48,7 @@
     "weights_are_real_bank_economics": false
   },
   "H3_confirmatory": {
+    "scope": "independent_in_domain_component_only",
     "question": "Does the frozen calibrated A2 decision policy reduce damaging automatic-routing cost relative to the frozen raw-A2 comparator on independent BANKING77 test cases?",
     "primary_estimand": "mean_test_in_domain_cost_A2_temperature_minus_A2_raw",
     "independence_reason": "Only the BANKING77 test in-domain component is unseen. The 160-query synthetic OOS benchmark was used during development and therefore cannot supply independent confirmatory evidence.",
@@ -56,7 +57,9 @@
     "support_rule": "supported if the paired-bootstrap 95% confidence interval upper bound for temperature-minus-raw mean in-domain cost is below 0",
     "unsupported_rule": "unsupported if the paired-bootstrap 95% confidence interval lower bound is at or above 0",
     "inconclusive_rule": "inconclusive otherwise",
-    "development_oos_mixture_role": "auxiliary_context_only_not_independent_confirmatory_evidence"
+    "development_oos_mixture_role": "auxiliary_context_only_not_independent_confirmatory_evidence",
+    "full_original_mixed_endpoint_confirmed_by_this_test": false,
+    "phase2_interpretation_rule": "Report the development mixed-cost H3 result and this independent in-domain component separately. This test alone cannot upgrade the original mixed in-domain/OOS H3 endpoint to fully confirmed because no unseen OOS confirmatory sample exists."
   },
   "H4_confirmatory": {
     "question": "Does selective abstention reduce routing error risk on independent BANKING77 test cases?",
@@ -105,6 +108,7 @@
     "test_result_may_change_threshold": false,
     "test_result_may_change_cost_matrix": false,
     "test_result_may_change_hypothesis_definition": false,
+    "H3_full_mixed_endpoint_has_independent_confirmatory_sample": false,
     "phase3_may_start_before_phase2_close": false
   }
 }
