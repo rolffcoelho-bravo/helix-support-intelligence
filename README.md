@@ -3,7 +3,7 @@
 > Production-oriented search, routing, recommendation, and evidence-grounded assistance for customer-support operations.
 
 [![CI](https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/workflows/ci.yml)
-[![Status](https://img.shields.io/badge/status-Phase%200%20complete-1f6f5b)](#project-status)
+[![Status](https://img.shields.io/badge/status-Phase%201%20complete-1f6f5b)](#project-status)
 [![Python](https://img.shields.io/badge/python-3.12%2B-3776ab)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-6b7280)](LICENSE)
 
@@ -107,8 +107,9 @@ The stable development commands are:
 make lint            # static lint and formatting checks
 make typecheck       # strict typing
 make test            # unit tests
+make data-check      # frozen Phase 1 data and contract invariants
 make publication-audit
-make quality         # all release-blocking Phase 0 checks
+make quality         # all current release-blocking checks
 ```
 
 ## Technology direction
@@ -147,11 +148,11 @@ Security concerns should be reported through the process in [SECURITY.md](SECURI
 
 ## Project status
 
-The repository foundation is complete. Public development proceeds through a finite sequence:
+The repository foundation and Phase 1 data/evaluation contracts are complete. Public development proceeds through a finite sequence:
 
 1. reproducible engineering foundation — **complete**;
-2. public-data and evaluation contracts — **next**;
-3. ticket-routing baseline;
+2. public-data and evaluation contracts — **complete**;
+3. ticket-routing baseline — **next**;
 4. hybrid retrieval and ranking;
 5. evidence-grounded assistance;
 6. safety, observability, and system validation;
@@ -159,7 +160,7 @@ The repository foundation is complete. Public development proceeds through a fin
 
 The project reaches completion at a documented `v1.0.0` release. Further domains or capabilities will be treated as separate post-v1 work rather than unfinished obligations of the initial repository.
 
-The [Phase 0 exit report](docs/phase-reports/phase-0.md) records the checks used to close the foundation stage. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md), including the public-material review.
+The [Phase 0 exit report](docs/phase-reports/phase-0.md) and [Phase 1 exit report](docs/phase-reports/phase-1.md) record the gates used to close the completed stages. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md), including the public-material review.
 
 ## Author
 
