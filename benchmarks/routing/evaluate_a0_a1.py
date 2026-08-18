@@ -107,7 +107,7 @@ def _risk_coverage(
     order = np.argsort(-confidence, kind="stable")
     rows: list[dict[str, float | int]] = []
     for coverage in RISK_COVERAGE_POINTS:
-        accepted = max(1, min(len(order), int(round(coverage * len(order)))))
+        accepted = max(1, min(len(order), round(coverage * len(order))))
         selected = order[:accepted]
         accuracy = float(np.mean(predicted[selected] == y_true[selected]))
         rows.append(
@@ -271,7 +271,10 @@ def _markdown_report(result: dict[str, object]) -> str:
     lines = [
         "# Phase 2 A0/A1 Development Benchmark",
         "",
-        "> Validation evidence only. The confirmatory BANKING77 test split was not downloaded or opened.",
+        (
+            "> Validation evidence only. The confirmatory BANKING77 test split was not "
+            "downloaded or opened."
+        ),
         "",
         "| Model | Macro-F1 | Balanced accuracy | Top-3 recall | ECE | Brier |",
         "|---|---:|---:|---:|---:|---:|",
@@ -295,7 +298,11 @@ def _markdown_report(result: dict[str, object]) -> str:
             "",
             "## Interpretation boundary",
             "",
-            "These are Phase 2 development results on the frozen validation partition. They may guide the bounded model ladder, calibration, and selective-routing work, but they are not release or test-set claims.",
+            (
+                "These are Phase 2 development results on the frozen validation partition. "
+                "They may guide the bounded model ladder, calibration, and selective-routing "
+                "work, but they are not release or test-set claims."
+            ),
             "",
         ]
     )
