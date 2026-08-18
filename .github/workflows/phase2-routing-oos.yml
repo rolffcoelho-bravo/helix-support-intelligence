@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: phase2-routing-oos-${{ github.workflow }}-${{ github.ref }}
@@ -38,10 +38,8 @@ jobs:
       TOKENIZERS_PARALLELISM: "false"
 
     steps:
-      - name: Check out head branch
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -49,46 +47,11 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply mechanical source fixes
-        id: source
+      - name: Verify frozen OOS source and CPU-only lock
         run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("benchmarks/routing/evaluate_oos.py")
-          text = path.read_text(encoding="utf-8")
-          old = '        "> Frozen OOS benchmark and validation-only in-domain reference. The confirmatory BANKING77 test split was not downloaded or opened.",\n'
-          new = (
-              '        (\n'
-              '            "> Frozen OOS benchmark and validation-only in-domain reference. "\n'
-              '            "The confirmatory BANKING77 test split was not downloaded or opened."\n'
-              '        ),\n'
-          )
-          text = text.replace(old, new)
-          path.write_text(text, encoding="utf-8")
-          PY
-          uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_oos.py
-          uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_oos.py
           uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_oos.py
-          if git diff --quiet -- benchmarks/routing/evaluate_oos.py; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Resolve OOS lock when absent or source changed
-        id: lock
-        run: |
-          if [ ! -f benchmarks/routing/evaluate_oos.py.lock ] || [ "${{ steps.source.outputs.changed }}" = "true" ]; then
-            rm -f benchmarks/routing/evaluate_oos.py.lock
-            uv lock --script benchmarks/routing/evaluate_oos.py
-            echo "generated=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "generated=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Audit CPU-only OOS lock
-        run: |
+          uvx --from ruff==0.16.3 ruff format --check benchmarks/routing/evaluate_oos.py
+          test -f benchmarks/routing/evaluate_oos.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
 
@@ -100,21 +63,10 @@ jobs:
       - name: Publish OOS summary
         run: cat artifacts/phase2-routing/oos/report.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload OOS evidence and lock
+      - name: Upload OOS evidence
         uses: actions/upload-artifact@v4
         with:
           name: phase2-routing-oos-${{ github.sha }}
-          path: |
-            artifacts/phase2-routing/oos/
-            benchmarks/routing/evaluate_oos.py.lock
+          path: artifacts/phase2-routing/oos/
           if-no-files-found: error
           retention-days: 14
-
-      - name: Commit mechanical fixes and OOS lock
-        if: (steps.source.outputs.changed == 'true' || steps.lock.outputs.generated == 'true') && github.event_name == 'pull_request'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/routing/evaluate_oos.py benchmarks/routing/evaluate_oos.py.lock
-          git commit -m "Fix and lock Phase 2 OOS benchmark"
-          git push origin "HEAD:${{ github.head_ref }}"
