@@ -1,0 +1,88 @@
+name: Phase 2 Routing Calibration
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-calibration.yml"
+      - "benchmarks/routing/evaluate_calibration.py"
+      - "benchmarks/routing/evaluate_calibration.py.lock"
+      - "benchmarks/routing/results/a0_a1_validation_v1.json"
+      - "benchmarks/routing/results/a2_validation_v2.json"
+      - "configs/data/banking77.json"
+      - "configs/models/routing_a2.json"
+      - "configs/models/routing_calibration.json"
+      - "src/helix_support_intelligence/data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase2-routing-calibration-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calibration-validation:
+    name: Cross-fitted A1/A2 calibration benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Resolve calibration lock when absent
+        id: lock
+        run: |
+          if [ ! -f benchmarks/routing/evaluate_calibration.py.lock ]; then
+            uv lock --script benchmarks/routing/evaluate_calibration.py
+            echo "generated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "generated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Audit CPU-only calibration lock
+        run: |
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_calibration.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_calibration.py.lock
+
+      - name: Run cross-fitted calibration benchmark
+        run: >-
+          uv run --locked benchmarks/routing/evaluate_calibration.py
+          --output-dir artifacts/phase2-routing/calibration
+
+      - name: Publish benchmark summary
+        run: cat artifacts/phase2-routing/calibration/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload calibration evidence and lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-routing-calibration-${{ github.sha }}
+          path: |
+            artifacts/phase2-routing/calibration/
+            benchmarks/routing/evaluate_calibration.py.lock
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Commit generated calibration lock
+        if: steps.lock.outputs.generated == 'true' && github.event_name == 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/routing/evaluate_calibration.py.lock
+          git commit -m "Lock Phase 2 calibration benchmark environment"
+          git push origin "HEAD:${{ github.head_ref }}"
