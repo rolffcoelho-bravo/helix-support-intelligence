@@ -173,8 +173,10 @@ def _fold_assignment(
     assignment = np.full(len(validation), -1, dtype=np.int64)
     for label in labels:
         ordered = sorted(label_to_rows[label])
+        offset_digest = hashlib.sha256(f"{salt}\t{label}".encode()).digest()
+        offset = int.from_bytes(offset_digest[:8], "big") % folds
         for position, (_, row_index) in enumerate(ordered):
-            assignment[row_index] = position % folds
+            assignment[row_index] = (position + offset) % folds
     if np.any(assignment < 0):
         raise RuntimeError("calibration fold assignment is incomplete")
     return assignment
