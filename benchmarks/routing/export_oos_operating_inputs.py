@@ -243,13 +243,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=(
-            REPO_ROOT
-            / "artifacts"
-            / "phase2-routing"
-            / "operating"
-            / "oos_inputs.csv"
-        ),
+        default=(REPO_ROOT / "artifacts" / "phase2-routing" / "operating" / "oos_inputs.csv"),
     )
     args = parser.parse_args()
     run(args.output.resolve())
