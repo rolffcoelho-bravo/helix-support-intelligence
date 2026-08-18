@@ -32,6 +32,9 @@
   },
   "dependency_policy": {
     "sentence_transformers": "5.5.1",
+    "torch": "2.13.0",
+    "torch_variant": "cpu_only",
+    "torch_index": "https://download.pytorch.org/whl/cpu",
     "scikit_learn": "1.8.0",
     "numpy": "2.3.5",
     "scipy": "1.17.0",
