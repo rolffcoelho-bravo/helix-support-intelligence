@@ -5,7 +5,14 @@
 #   "scikit-learn==1.8.0",
 #   "scipy==1.17.0",
 #   "sentence-transformers==5.5.1",
+#   "torch==2.13.0",
 # ]
+# [tool.uv.sources]
+# torch = { index = "pytorch-cpu" }
+# [[tool.uv.index]]
+# name = "pytorch-cpu"
+# url = "https://download.pytorch.org/whl/cpu"
+# explicit = true
 # ///
 """Run the frozen Phase 2 A2 routing benchmark on validation only."""
 
@@ -36,7 +43,7 @@ from sklearn.metrics import balanced_accuracy_score, f1_score
 
 ECE_BINS = 15
 RISK_COVERAGE_POINTS = tuple(step / 10 for step in range(1, 11))
-RUN_ID = "phase2-development-a2-v1"
+RUN_ID = "phase2-development-a2-v2"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_CONFIG_PATH = REPO_ROOT / "configs" / "data" / "banking77.json"
@@ -189,36 +196,35 @@ def _risk_coverage_delta(
     return rows
 
 
-def _confusion_change(
+def _a1_top_confusion_change(
     a1_metrics: dict[str, object],
-    a2_metrics: dict[str, object],
+    y_true: np.ndarray,
+    a2_predicted: np.ndarray,
+    labels: list[str],
 ) -> list[dict[str, str | int]]:
     a1_rows = a1_metrics["top_confusion_pairs"]
-    a2_rows = a2_metrics["top_confusion_pairs"]
     assert isinstance(a1_rows, list)
-    assert isinstance(a2_rows, list)
-
-    def as_map(rows: list[object]) -> dict[tuple[str, str], int]:
-        mapped: dict[tuple[str, str], int] = {}
-        for row in rows:
-            assert isinstance(row, dict)
-            key = (str(row["true_intent"]), str(row["predicted_intent"]))
-            mapped[key] = int(row["count"])
-        return mapped
-
-    a1_map = as_map(a1_rows)
-    a2_map = as_map(a2_rows)
-    keys = sorted(set(a1_map) | set(a2_map))
-    return [
-        {
-            "true_intent": key[0],
-            "predicted_intent": key[1],
-            "a1_count": a1_map.get(key, 0),
-            "a2_count": a2_map.get(key, 0),
-            "a2_minus_a1": a2_map.get(key, 0) - a1_map.get(key, 0),
-        }
-        for key in keys
-    ]
+    a2_errors = Counter(
+        (labels[int(true_index)], labels[int(pred_index)])
+        for true_index, pred_index in zip(y_true, a2_predicted, strict=True)
+        if true_index != pred_index
+    )
+    rows: list[dict[str, str | int]] = []
+    for row in a1_rows:
+        assert isinstance(row, dict)
+        key = (str(row["true_intent"]), str(row["predicted_intent"]))
+        a1_count = int(row["count"])
+        a2_count = a2_errors.get(key, 0)
+        rows.append(
+            {
+                "true_intent": key[0],
+                "predicted_intent": key[1],
+                "a1_count": a1_count,
+                "a2_count": a2_count,
+                "a2_minus_a1": a2_count - a1_count,
+            }
+        )
+    return rows
 
 
 def _write_predictions(
@@ -409,7 +415,12 @@ def run(output_dir: Path) -> dict[str, object]:
             float(metrics["multiclass_brier_score"]) - float(a1_metrics["multiclass_brier_score"])
         ),
         "risk_coverage_delta": _risk_coverage_delta(a1_metrics, metrics),
-        "top_confusion_pair_change": _confusion_change(a1_metrics, metrics),
+        "a1_top_confusion_pair_change": _a1_top_confusion_change(
+            a1_metrics,
+            y_validation,
+            predicted,
+            labels,
+        ),
     }
 
     result: dict[str, object] = {
@@ -437,6 +448,7 @@ def run(output_dir: Path) -> dict[str, object]:
             "scikit_learn": sklearn.__version__,
             "sentence_transformers": sentence_transformers.__version__,
             "torch": torch.__version__,
+            "torch_cuda_available": torch.cuda.is_available(),
             "omp_num_threads": os.environ.get("OMP_NUM_THREADS"),
             "openblas_num_threads": os.environ.get("OPENBLAS_NUM_THREADS"),
         },
@@ -463,9 +475,7 @@ def run(output_dir: Path) -> dict[str, object]:
         "model_load_seconds": model_load_seconds,
         "train_encoding_seconds": train_encoding_seconds,
         "validation_encoding_seconds": validation_encoding_seconds,
-        "validation_encoding_ms_per_example": (
-            1000.0 * validation_encoding_seconds / len(validation)
-        ),
+        "validation_encoding_ms_per_example": 1000.0 * validation_encoding_seconds / len(validation),
         "classifier_fit_seconds": classifier_fit_seconds,
         "classifier_validation_prediction_seconds": prediction_seconds,
     }
