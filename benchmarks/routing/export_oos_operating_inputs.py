@@ -14,7 +14,7 @@
 # url = "https://download.pytorch.org/whl/cpu"
 # explicit = true
 # ///
-"""Export frozen OOS confidences for private cost-selection analysis."""
+"""Export public operating inputs for the private routing-cost analysis."""
 
 from __future__ import annotations
 
@@ -35,6 +35,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_CONFIG_PATH = REPO_ROOT / "configs" / "data" / "banking77.json"
 A2_CONFIG_PATH = REPO_ROOT / "configs" / "models" / "routing_a2.json"
 CALIBRATION_CONFIG_PATH = REPO_ROOT / "configs" / "models" / "routing_calibration.json"
+OPERATIONS_CONFIG_PATH = REPO_ROOT / "configs" / "models" / "routing_operations.json"
 OOS_BENCHMARK_PATH = REPO_ROOT / "data" / "oos" / "routing_oos_v1.json"
 CALIBRATION_SCRIPT_PATH = REPO_ROOT / "benchmarks" / "routing" / "evaluate_calibration.py"
 
@@ -96,36 +97,209 @@ def _temperature_bounds(config: dict[str, object]) -> tuple[float, float]:
     raise ValueError("temperature scaling bounds missing")
 
 
-def _fold_specific_oos_confidences(
+def _operations() -> tuple[dict[str, dict[str, object]], set[str]]:
+    payload = json.loads(OPERATIONS_CONFIG_PATH.read_text(encoding="utf-8"))
+    intents = payload["intents"]
+    queues = payload["queues"]
+    if not isinstance(intents, dict) or not isinstance(queues, list):
+        raise TypeError("invalid routing operations configuration")
+    return intents, {str(queue) for queue in queues}
+
+
+def _event_class(
+    true_intent: str,
+    predicted_intent: str,
+    operations: dict[str, dict[str, object]],
+) -> str:
+    if true_intent == predicted_intent:
+        return "correct_route"
+    true_record = operations[true_intent]
+    predicted_record = operations[predicted_intent]
+    if bool(true_record["high_risk"]):
+        return "unsafe_high_risk_auto_route"
+    if str(true_record["queue"]) == str(predicted_record["queue"]):
+        return "wrong_intent_same_queue"
+    return "wrong_queue"
+
+
+def _fold_temperatures(
     calibration: Any,
     validation_probabilities: np.ndarray,
-    oos_probabilities: np.ndarray,
     y_validation: np.ndarray,
     folds: np.ndarray,
     bounds: tuple[float, float],
-) -> np.ndarray:
-    fold_confidences: list[np.ndarray] = []
-    for fold in range(5):
-        fit_mask = folds != fold
-        temperature = calibration._temperature_fit(
-            validation_probabilities[fit_mask],
-            y_validation[fit_mask],
+) -> list[float]:
+    return [
+        calibration._temperature_fit(
+            validation_probabilities[folds != fold],
+            y_validation[folds != fold],
             bounds,
         )
-        calibrated_oos = calibration._temperature_apply(oos_probabilities, temperature)
-        fold_confidences.append(np.max(calibrated_oos, axis=1))
-    return np.stack(fold_confidences, axis=0)
+        for fold in range(5)
+    ]
 
 
-def run(output_path: Path) -> None:
+def _cross_fitted_validation_probabilities(
+    calibration: Any,
+    raw_probabilities: np.ndarray,
+    folds: np.ndarray,
+    temperatures: list[float],
+) -> np.ndarray:
+    output = np.zeros_like(raw_probabilities)
+    for fold, temperature in enumerate(temperatures):
+        score_mask = folds == fold
+        output[score_mask] = calibration._temperature_apply(
+            raw_probabilities[score_mask],
+            temperature,
+        )
+    return output
+
+
+def _fold_specific_oos_confidences(
+    calibration: Any,
+    raw_oos_probabilities: np.ndarray,
+    temperatures: list[float],
+) -> np.ndarray:
+    return np.stack(
+        [
+            np.max(
+                calibration._temperature_apply(raw_oos_probabilities, temperature),
+                axis=1,
+            )
+            for temperature in temperatures
+        ],
+        axis=0,
+    )
+
+
+def _write_validation_inputs(
+    path: Path,
+    validation: list[Any],
+    labels: list[str],
+    source_revision: str,
+    data_api: Any,
+    folds: np.ndarray,
+    model_exports: dict[str, dict[str, np.ndarray]],
+    operations: dict[str, dict[str, object]],
+) -> None:
+    fieldnames = [
+        "sample_id",
+        "true_intent",
+        "true_queue",
+        "true_high_risk",
+        "fold",
+    ]
+    for model_id in ("A1", "A2"):
+        fieldnames.extend(
+            [
+                f"{model_id}_predicted_intent",
+                f"{model_id}_predicted_queue",
+                f"{model_id}_event",
+                f"{model_id}_raw_confidence",
+                f"{model_id}_temperature_confidence",
+            ]
+        )
+
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer.writeheader()
+        for index, example in enumerate(validation):
+            true_intent = str(example.intent)
+            true_record = operations[true_intent]
+            row: dict[str, object] = {
+                "sample_id": data_api.sample_id(example, source_revision),
+                "true_intent": true_intent,
+                "true_queue": str(true_record["queue"]),
+                "true_high_risk": str(bool(true_record["high_risk"])).lower(),
+                "fold": int(folds[index]),
+            }
+            for model_id in ("A1", "A2"):
+                predicted_index = int(model_exports[model_id]["predicted_index"][index])
+                predicted_intent = labels[predicted_index]
+                predicted_record = operations[predicted_intent]
+                row.update(
+                    {
+                        f"{model_id}_predicted_intent": predicted_intent,
+                        f"{model_id}_predicted_queue": str(predicted_record["queue"]),
+                        f"{model_id}_event": _event_class(
+                            true_intent,
+                            predicted_intent,
+                            operations,
+                        ),
+                        f"{model_id}_raw_confidence": (
+                            f"{float(model_exports[model_id]['raw_confidence'][index]):.12f}"
+                        ),
+                        f"{model_id}_temperature_confidence": (
+                            f"{float(model_exports[model_id]['temperature_confidence'][index]):.12f}"
+                        ),
+                    }
+                )
+            writer.writerow(row)
+
+
+def _write_oos_inputs(
+    path: Path,
+    records: list[dict[str, str]],
+    labels: list[str],
+    model_exports: dict[str, dict[str, np.ndarray]],
+    operations: dict[str, dict[str, object]],
+) -> None:
+    fold_fields = [
+        f"{model_id}_temperature_fold_{fold}_confidence"
+        for model_id in ("A1", "A2")
+        for fold in range(5)
+    ]
+    fieldnames = ["oos_id", "category", "tier"]
+    for model_id in ("A1", "A2"):
+        fieldnames.extend(
+            [
+                f"{model_id}_raw_predicted_intent",
+                f"{model_id}_raw_predicted_queue",
+                f"{model_id}_raw_confidence",
+            ]
+        )
+    fieldnames.extend(fold_fields)
+
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer.writeheader()
+        for index, record in enumerate(records):
+            row: dict[str, object] = {
+                "oos_id": record["oos_id"],
+                "category": record["category"],
+                "tier": record["tier"],
+            }
+            for model_id in ("A1", "A2"):
+                predicted_index = int(model_exports[model_id]["oos_predicted_index"][index])
+                predicted_intent = labels[predicted_index]
+                predicted_queue = str(operations[predicted_intent]["queue"])
+                row.update(
+                    {
+                        f"{model_id}_raw_predicted_intent": predicted_intent,
+                        f"{model_id}_raw_predicted_queue": predicted_queue,
+                        f"{model_id}_raw_confidence": (
+                            f"{float(model_exports[model_id]['oos_raw_confidence'][index]):.12f}"
+                        ),
+                    }
+                )
+                fold_values = model_exports[model_id]["oos_fold_temperature_confidence"]
+                for fold in range(5):
+                    row[f"{model_id}_temperature_fold_{fold}_confidence"] = (
+                        f"{float(fold_values[fold, index]):.12f}"
+                    )
+            writer.writerow(row)
+
+
+def run(output_dir: Path) -> None:
     calibration = _load_module(CALIBRATION_SCRIPT_PATH, "helix_calibration_export")
     data_api = _data_module()
     spec = data_api.Banking77Spec.from_json(DATA_CONFIG_PATH)
     a2_config = json.loads(A2_CONFIG_PATH.read_text(encoding="utf-8"))
     calibration_config = json.loads(CALIBRATION_CONFIG_PATH.read_text(encoding="utf-8"))
+    operations, queues = _operations()
     records = _oos_records()
 
-    with tempfile.TemporaryDirectory(prefix="helix-oos-operating-export-") as temp:
+    with tempfile.TemporaryDirectory(prefix="helix-operating-export-") as temp:
         train_csv = Path(temp) / "train.csv"
         _download(spec.train_url, train_csv)
         if data_api.sha256_file(train_csv) != spec.train_sha256:
@@ -137,6 +311,14 @@ def run(output_path: Path) -> None:
         raise ValueError("frozen BANKING77 derived counts drifted")
 
     labels = sorted({example.intent for example in train})
+    if set(labels) != set(operations):
+        missing = sorted(set(labels) - set(operations))
+        extra = sorted(set(operations) - set(labels))
+        raise ValueError(f"routing operations coverage drifted: missing={missing}, extra={extra}")
+    for intent, record in operations.items():
+        if str(record["queue"]) not in queues:
+            raise ValueError(f"unknown queue for {intent}: {record['queue']}")
+
     label_to_index = {label: index for index, label in enumerate(labels)}
     x_train = [example.text for example in train]
     x_validation = [example.text for example in validation]
@@ -155,13 +337,11 @@ def run(output_path: Path) -> None:
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
 
-    a1_all = calibration._fit_a1(x_train, y_train, x_evaluation)
-    a2_all = calibration._fit_a2(x_train, y_train, x_evaluation, a2_config)
-    split_at = len(validation)
-    probabilities = {
-        "A1": (a1_all[:split_at], a1_all[split_at:]),
-        "A2": (a2_all[:split_at], a2_all[split_at:]),
+    raw_all = {
+        "A1": calibration._fit_a1(x_train, y_train, x_evaluation),
+        "A2": calibration._fit_a2(x_train, y_train, x_evaluation, a2_config),
     }
+    split_at = len(validation)
 
     cross_fitting = calibration_config["cross_fitting"]
     assert isinstance(cross_fitting, dict)
@@ -178,79 +358,104 @@ def run(output_path: Path) -> None:
         raise ValueError("audited calibration fold assignment drifted")
 
     bounds = _temperature_bounds(calibration_config)
-    exports: dict[str, dict[str, np.ndarray]] = {}
+    model_exports: dict[str, dict[str, np.ndarray]] = {}
     for model_id in ("A1", "A2"):
-        validation_probabilities, oos_probabilities = probabilities[model_id]
-        exports[model_id] = {
-            "raw_confidence": np.max(oos_probabilities, axis=1),
-            "raw_predicted_index": np.argmax(oos_probabilities, axis=1),
-            "fold_temperature_confidence": _fold_specific_oos_confidences(
+        validation_probabilities = raw_all[model_id][:split_at]
+        oos_probabilities = raw_all[model_id][split_at:]
+        temperatures = _fold_temperatures(
+            calibration,
+            validation_probabilities,
+            y_validation,
+            folds,
+            bounds,
+        )
+        calibrated_validation = _cross_fitted_validation_probabilities(
+            calibration,
+            validation_probabilities,
+            folds,
+            temperatures,
+        )
+        model_exports[model_id] = {
+            "predicted_index": np.argmax(validation_probabilities, axis=1),
+            "raw_confidence": np.max(validation_probabilities, axis=1),
+            "temperature_confidence": np.max(calibrated_validation, axis=1),
+            "oos_predicted_index": np.argmax(oos_probabilities, axis=1),
+            "oos_raw_confidence": np.max(oos_probabilities, axis=1),
+            "oos_fold_temperature_confidence": _fold_specific_oos_confidences(
                 calibration,
-                validation_probabilities,
                 oos_probabilities,
-                y_validation,
-                folds,
-                bounds,
+                temperatures,
             ),
         }
 
-    fold_fields = [
-        f"{model_id}_temperature_fold_{fold}_confidence"
-        for model_id in ("A1", "A2")
-        for fold in range(5)
-    ]
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(
-            stream,
-            fieldnames=[
-                "oos_id",
-                "category",
-                "tier",
-                "A1_raw_predicted_intent",
-                "A1_raw_confidence",
-                "A2_raw_predicted_intent",
-                "A2_raw_confidence",
-                *fold_fields,
-            ],
-        )
-        writer.writeheader()
-        for index, record in enumerate(records):
-            row: dict[str, object] = {
-                "oos_id": record["oos_id"],
-                "category": record["category"],
-                "tier": record["tier"],
-                "A1_raw_predicted_intent": labels[
-                    int(exports["A1"]["raw_predicted_index"][index])
-                ],
-                "A1_raw_confidence": f"{float(exports['A1']['raw_confidence'][index]):.12f}",
-                "A2_raw_predicted_intent": labels[
-                    int(exports["A2"]["raw_predicted_index"][index])
-                ],
-                "A2_raw_confidence": f"{float(exports['A2']['raw_confidence'][index]):.12f}",
-            }
-            for model_id in ("A1", "A2"):
-                fold_values = exports[model_id]["fold_temperature_confidence"]
-                for fold in range(5):
-                    row[f"{model_id}_temperature_fold_{fold}_confidence"] = (
-                        f"{float(fold_values[fold, index]):.12f}"
-                    )
-            writer.writerow(row)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    _write_validation_inputs(
+        output_dir / "validation_inputs.csv",
+        validation,
+        labels,
+        spec.source_revision,
+        data_api,
+        folds,
+        model_exports,
+        operations,
+    )
+    _write_oos_inputs(
+        output_dir / "oos_inputs.csv",
+        records,
+        labels,
+        model_exports,
+        operations,
+    )
 
+    event_counts: dict[str, dict[str, int]] = {}
+    for model_id in ("A1", "A2"):
+        counts = {
+            "correct_route": 0,
+            "wrong_intent_same_queue": 0,
+            "wrong_queue": 0,
+            "unsafe_high_risk_auto_route": 0,
+        }
+        predicted = model_exports[model_id]["predicted_index"]
+        for example, predicted_index in zip(validation, predicted, strict=True):
+            event = _event_class(example.intent, labels[int(predicted_index)], operations)
+            counts[event] += 1
+        event_counts[model_id] = counts
+
+    manifest = {
+        "version": "routing-operating-inputs-v1",
+        "test_set_opened": False,
+        "validation_rows": len(validation),
+        "oos_rows": len(records),
+        "fold_counts": fold_counts,
+        "intent_count": len(labels),
+        "queue_count": len(queues),
+        "high_risk_intent_count": sum(
+            1 for record in operations.values() if bool(record["high_risk"])
+        ),
+        "full_automation_validation_event_counts": event_counts,
+        "private_cost_weights_included": False,
+    }
+    (output_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    print(f"Exported {len(validation)} validation operating-input rows")
     print(f"Exported {len(records)} frozen OOS operating-input rows")
-    print("Preserved five fold-specific temperature confidences per model")
+    print("Preserved five fold-specific temperature confidences per model for OOS")
+    print("Private cost weights included: false")
     print("Confirmatory test opened: false")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--output",
+        "--output-dir",
         type=Path,
-        default=(REPO_ROOT / "artifacts" / "phase2-routing" / "operating" / "oos_inputs.csv"),
+        default=(REPO_ROOT / "artifacts" / "phase2-routing" / "operating"),
     )
     args = parser.parse_args()
-    run(args.output.resolve())
+    run(args.output_dir.resolve())
 
 
 if __name__ == "__main__":
