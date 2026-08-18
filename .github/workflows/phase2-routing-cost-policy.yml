@@ -7,6 +7,7 @@ on:
       - ".github/workflows/phase2-routing-cost-policy.yml"
       - "benchmarks/routing/evaluate_cost_policy.py"
       - "benchmarks/routing/export_oos_operating_inputs.py"
+      - "benchmarks/routing/audit_threshold_transfer.py"
       - "benchmarks/routing/evaluate_oos.py.lock"
       - "configs/models/routing_cost_matrix.json"
       - "configs/models/routing_oos.json"
@@ -46,8 +47,12 @@ jobs:
 
       - name: Verify frozen cost source and OOS scientific environment
         run: |
-          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_cost_policy.py
-          uvx --from ruff==0.16.3 ruff format --check benchmarks/routing/evaluate_cost_policy.py
+          uvx --from ruff==0.16.3 ruff check \
+            benchmarks/routing/evaluate_cost_policy.py \
+            benchmarks/routing/audit_threshold_transfer.py
+          uvx --from ruff==0.16.3 ruff format --check \
+            benchmarks/routing/evaluate_cost_policy.py \
+            benchmarks/routing/audit_threshold_transfer.py
           test -f benchmarks/routing/evaluate_oos.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
@@ -65,6 +70,16 @@ jobs:
           --validation-inputs artifacts/phase2-routing/operating/validation_inputs.csv
           --oos-inputs artifacts/phase2-routing/operating/oos_inputs.csv
           --output-dir artifacts/phase2-routing/cost-policy
+
+      - name: Audit transfer to final calibration scale
+        run: |
+          cp benchmarks/routing/evaluate_oos.py.lock benchmarks/routing/audit_threshold_transfer.py.lock
+          uv run --locked benchmarks/routing/audit_threshold_transfer.py \
+            --validation-inputs artifacts/phase2-routing/operating/validation_inputs.csv \
+            --oos-inputs artifacts/phase2-routing/operating/oos_inputs.csv \
+            --cost-results artifacts/phase2-routing/cost-policy/results.json \
+            --output artifacts/phase2-routing/cost-policy/threshold-transfer-audit.json
+          rm benchmarks/routing/audit_threshold_transfer.py.lock
 
       - name: Publish cost-policy summary
         run: cat artifacts/phase2-routing/cost-policy/report.md >> "$GITHUB_STEP_SUMMARY"
