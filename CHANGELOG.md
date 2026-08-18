@@ -29,5 +29,10 @@ All notable public changes are documented here. The project follows semantic ver
 - Audited cost-policy checkpoint preserving the negative H3 development result for A2 calibration and the positive H4 selective-routing development result.
 - Full-refit threshold-transfer audit separating unbiased cross-fitted development selection from the final calibration probability scale without cost re-optimization.
 - Frozen `routing-selected-v1` development configuration: A2, temperature scaling, and a robust full-refit-scale selective-routing threshold.
+- Public router model card and framework-neutral `POST /v1/tickets/route` domain contract tied to `routing-selected-v1`.
+- Phase 2-specific route request schema under `data/contracts/phase2/`, preserving the already-closed Phase 1 root contract suite.
+- Fail-closed route-contract tests covering low-confidence abstention, scorer failures, malformed runtime outputs, direct configuration validation, queue mapping, schema surface, and exact inclusive threshold semantics.
+- Audited route-contract checkpoint with 70 passing tests, strict typing, Phase 1 contract preservation, and publication-audit confirmation.
 - Regression tests protecting calibration fold balance, method selection, guardrail outcomes, bounded reproducibility, frozen routing selection, read-only workflow permissions, and confirmatory-test isolation.
 - Mandatory end-of-checkpoint execution-audit gate covering code correctness, metric interpretation, split integrity, reproducibility, dependency/hardware consistency, CI behavior, and public claim wording.
+- Mandatory execution-close report requiring a results table, interpretation, limitations, methodological/value assessment, improvement recommendations, next locked blueprint action, and final code/result double-check.
