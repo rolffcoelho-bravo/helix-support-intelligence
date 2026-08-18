@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
 ROOT = Path(__file__).resolve().parents[1]
 SELECTED = ROOT / "configs" / "models" / "routing_selected_v1.json"
@@ -10,7 +11,10 @@ COST_WORKFLOW = ROOT / ".github" / "workflows" / "phase2-routing-cost-policy.yml
 
 
 def _json(path: Path) -> dict[str, object]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    payload: object = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TypeError(f"expected JSON object in {path}")
+    return cast(dict[str, object], payload)
 
 
 def test_selected_router_is_frozen_a2_temperature_policy() -> None:
