@@ -1,0 +1,75 @@
+name: Phase 2 Routing Confirmatory Preflight
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-confirmatory-preflight.yml"
+      - ".github/workflows/phase2-routing-confirmatory.yml"
+      - "benchmarks/routing/evaluate_confirmatory.py"
+      - "benchmarks/routing/verify_preconfirmatory_freeze.py"
+      - "benchmarks/routing/evaluate_a2.py.lock"
+      - "benchmarks/routing/evaluate_calibration.py"
+      - "configs/data/banking77.json"
+      - "configs/models/routing_a2.json"
+      - "configs/models/routing_selected_v1.json"
+      - "configs/models/routing_confirmatory_v1.json"
+      - "configs/models/routing_cost_matrix.json"
+      - "configs/models/routing_operations.json"
+      - "configs/models/routing_preconfirmatory_manifest_v1.json"
+      - "docs/phase2-confirmatory-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-routing-confirmatory-preflight-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    name: No-test confirmatory preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Verify scientific source and CPU lock
+        run: |
+          uvx --from ruff==0.16.3 ruff check \
+            benchmarks/routing/evaluate_confirmatory.py \
+            benchmarks/routing/verify_preconfirmatory_freeze.py
+          uvx --from ruff==0.16.3 ruff format --check \
+            benchmarks/routing/evaluate_confirmatory.py \
+            benchmarks/routing/verify_preconfirmatory_freeze.py
+          test -f benchmarks/routing/evaluate_a2.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_a2.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_a2.py.lock
+
+      - name: Verify pre-confirmatory artifact freeze
+        run: python benchmarks/routing/verify_preconfirmatory_freeze.py
+
+      - name: Execute locked no-test preflight
+        run: |
+          cp benchmarks/routing/evaluate_a2.py.lock benchmarks/routing/evaluate_confirmatory.py.lock
+          uv run --locked benchmarks/routing/evaluate_confirmatory.py --preflight-only
+          rm benchmarks/routing/evaluate_confirmatory.py.lock
+
+      - name: Assert workflow contains no test authorization token
+        run: |
+          ! grep -q -- '--authorize-test-open' .github/workflows/phase2-routing-confirmatory-preflight.yml
+          ! grep -q 'OPEN_FROZEN_TEST_ONCE' .github/workflows/phase2-routing-confirmatory-preflight.yml
