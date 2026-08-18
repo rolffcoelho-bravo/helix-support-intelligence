@@ -29,28 +29,40 @@
       "full_validation_temperature": 0.45797404927014607
     }
   ],
+  "calibration_evaluation": {
+    "primary_protocol": "five_fold_cross_fitted_temperature",
+    "folds": 5,
+    "fold_assignment_source": "routing-calibration-v1 audited balanced folds",
+    "salt": "helix-phase2-calibration-v1-2026-08-18",
+    "per_fold_rule": "Fit temperature on four validation folds. Score the held-out in-domain fold and the entire frozen OOS set using that same fitted temperature.",
+    "aggregate_rule": "Report validation-row-count weighted mean of fold AUROC and fold in-domain FPR at declared OOS recall, plus fold range.",
+    "full_validation_temperature_role": "production-configuration diagnostic only; not the primary OOS performance estimate"
+  },
   "diagnostics": {
     "report_raw_variants": true,
-    "raw_variants_may_win_selection": false
+    "raw_variants_may_win_selection": false,
+    "report_full_validation_temperature_variant": true,
+    "full_validation_temperature_variant_may_win_primary_selection": false
   },
   "score": {
     "definition": "1 - maximum calibrated in-domain class probability",
     "higher_means": "more_out_of_scope"
   },
   "metrics": {
-    "primary": "oos_auroc",
+    "primary": "cross_fitted_oos_auroc",
     "required": [
-      "oos_auroc",
-      "in_domain_fpr_at_oos_recall",
+      "cross_fitted_oos_auroc",
+      "cross_fitted_in_domain_fpr_at_oos_recall",
+      "fold_range",
       "score_quantiles",
       "tier_diagnostics",
       "category_diagnostics"
     ],
     "declared_oos_recall": 0.95,
-    "fpr_threshold_rule": "Empirical OOS-score 0.05 quantile using lower order statistic; classify OOS when score >= threshold. This metric-specific threshold is diagnostic and is not the final operating threshold."
+    "fpr_threshold_rule": "Within each fold, use the empirical OOS-score 0.05 quantile with lower order statistic; classify OOS when score >= threshold. This metric-specific threshold is diagnostic and is not the final operating threshold."
   },
   "selection": {
-    "purpose": "Compare OOS separation of the surviving calibrated A1 reference and calibrated A2 candidate.",
+    "purpose": "Compare OOS separation of the surviving calibrated A1 reference and calibrated A2 candidate without using the full-validation calibrator on its own fitting rows for the primary estimate.",
     "final_operating_threshold_selected_here": false,
     "routing_cost_used_here": false,
     "test_set_may_be_opened": false,
