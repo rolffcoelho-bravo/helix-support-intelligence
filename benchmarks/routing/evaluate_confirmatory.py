@@ -100,6 +100,10 @@ def preflight() -> dict[str, object]:
         raise ValueError("confirmatory protocol status drifted")
     if confirmatory["governance"]["manual_authorization_token"] != AUTHORIZATION_TOKEN:
         raise ValueError("confirmatory authorization token drifted")
+    if confirmatory["H3_confirmatory"]["scope"] != "independent_in_domain_component_only":
+        raise ValueError("H3 confirmatory scope drifted")
+    if confirmatory["H3_confirmatory"]["full_original_mixed_endpoint_confirmed_by_this_test"] is not False:
+        raise ValueError("H3 mixed-endpoint interpretation drifted")
     if selected["version"] != "routing-selected-v1" or selected["model"]["id"] != "A2":
         raise ValueError("selected model drifted")
     if selected["model"]["encoder_revision"] != a2["representation"]["revision"]:
@@ -150,6 +154,7 @@ def preflight() -> dict[str, object]:
         "temperature": selected["calibration"]["temperature"],
         "selected_threshold": selected["operating_policy"]["threshold"],
         "raw_comparator_threshold": confirmatory["frozen_policies"]["A2_raw_threshold"],
+        "H3_scope": confirmatory["H3_confirmatory"]["scope"],
         "bootstrap_replicates": confirmatory["uncertainty"]["replicates"],
     }
 
@@ -340,7 +345,7 @@ def _report(result: dict[str, Any]) -> str:
             f"| ECE | {float(metrics['expected_calibration_error_15bin']):.4f} |",
             f"| Brier | {float(metrics['multiclass_brier_score']):.4f} |",
             "",
-            f"H3 confirmatory verdict: **{h3['verdict']}**.",
+            f"H3 independent in-domain component verdict: **{h3['verdict']}**.",
             f"H4 confirmatory verdict: **{h4['verdict']}**.",
             "",
             (
@@ -531,6 +536,7 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
             "event_counts": dict(calibrated_events),
         },
         "H3_confirmatory": {
+            "scope": confirmatory["H3_confirmatory"]["scope"],
             "primary_estimand": confirmatory["H3_confirmatory"]["primary_estimand"],
             "raw_mean_in_domain_cost": float(np.mean(raw_costs)),
             "calibrated_mean_in_domain_cost": float(np.mean(calibrated_costs)),
@@ -540,6 +546,7 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
             "raw_event_counts": dict(raw_events),
             "calibrated_event_counts": dict(calibrated_events),
             "oos_independence_note": confirmatory["H3_confirmatory"]["independence_reason"],
+            "full_original_mixed_endpoint_confirmed_by_this_test": False,
         },
         "H4_confirmatory": {
             "primary_estimand": confirmatory["H4_confirmatory"]["primary_estimand"],
@@ -556,6 +563,7 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
             "threshold_changed_after_test": False,
             "cost_matrix_changed_after_test": False,
             "oos_benchmark_counted_as_independent_confirmatory_evidence": False,
+            "H3_full_mixed_endpoint_claimed_confirmed": False,
         },
     }
 
