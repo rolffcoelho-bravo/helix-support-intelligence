@@ -80,7 +80,7 @@
       "validation_accuracy": 0.8562753036437247
     }
   },
-  "next_locked_action": "Freeze and run the calibration comparison for A1 on validation, while preparing the bounded A2 dependency path; do not open the confirmatory test.",
+  "next_locked_action": "Implement A2 sentence embeddings plus a linear classifier under the same train/validation protocol; preserve A1 outputs for later calibration comparison and do not open the confirmatory test.",
   "reproducibility": {
     "a1_predictions_sha256": "59bd49532cc904ce89cc66f5caabddb3ddd887111b26bc6012721c6249e6a2b4",
     "independent_rerun_byte_identical": true,
