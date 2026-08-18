@@ -23,7 +23,7 @@ from helix_support_intelligence.domain.routing import (
 ROOT = Path(__file__).resolve().parents[1]
 SELECTED = ROOT / "configs" / "models" / "routing_selected_v1.json"
 OPERATIONS = ROOT / "configs" / "models" / "routing_operations.json"
-REQUEST_SCHEMA = ROOT / "data" / "contracts" / "routing_request.schema.json"
+REQUEST_SCHEMA = ROOT / "data" / "contracts" / "phase2" / "routing_request.schema.json"
 RESPONSE_SCHEMA = ROOT / "data" / "contracts" / "routing.schema.json"
 
 
