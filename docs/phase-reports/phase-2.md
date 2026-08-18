@@ -1,7 +1,7 @@
 # Phase 2 Exit Report
 
 - Phase: Routing baseline and selective decision policy
-- Status: Active — development selection and implementation contracts complete; final pre-confirmatory audit next
+- Status: Active — final pre-confirmatory audit passed; one-shot registered confirmatory evaluation next
 - Date opened: 2026-08-18
 - Public version: 0.1.0
 
@@ -29,6 +29,7 @@
 - [x] Router model card.
 - [x] `/v1/tickets/route` contract tests.
 - [x] One frozen development routing configuration and operating threshold.
+- [x] Final pre-confirmatory hostile audit and machine-checkable freeze.
 - [ ] Registered confirmatory result for H3 and H4.
 
 ## Model ladder
@@ -158,9 +159,48 @@ The Phase 2 request schema is intentionally namespaced below `data/contracts/pha
 
 The same audit corrected temperature validation semantics, hardened direct configuration and runtime scorer boundaries, and added an exact inclusive-threshold regression test.
 
-Latest release-blocking quality gate: Ruff passed, strict mypy passed, **70 tests passed**, Phase 1 offline data contracts passed, and publication audit passed. No Phase 2 scientific metric or selected policy changed.
+Latest release-blocking quality gate: Ruff passed, strict mypy passed, **77 tests passed**, Phase 1 offline data contracts passed, and publication audit passed. No Phase 2 scientific metric or selected policy changed.
 
 Permanent evidence: `docs/routing-model-card.md`, `benchmarks/routing/results/route_contract_v1.{json,md}`, `src/helix_support_intelligence/domain/routing.py`, and `tests/test_phase2_route_contract.py`.
+
+## Final pre-confirmatory hostile audit
+
+The final pre-confirmatory gate passed before any BANKING77 test access.
+
+The audit added a machine-checkable freeze, `routing-preconfirmatory-freeze-v1`, that pins **35** selection-critical scientific and execution artifacts by Git blob SHA. The manual confirmatory workflow verifies that manifest before running a locked no-test preflight and before any test-access step can execute.
+
+Authoritative gate results:
+
+- release CI run `32197909626`: **passed**;
+- Ruff lint and format: passed;
+- strict mypy: passed;
+- pytest: **77 passed**;
+- Phase 1 offline data contracts: passed;
+- publication audit: passed;
+- no-test confirmatory preflight run `32197909434`: **passed**;
+- frozen artifacts verified: **35**;
+- selected model: A2;
+- frozen temperature: `0.457974`;
+- frozen selected threshold: `0.892704`;
+- frozen raw-A2 H3 comparator threshold: `0.367217`;
+- paired bootstrap registration: 5,000 replicates, seed `20260819`;
+- confirmatory test opened: **false**.
+
+### H3 independence correction
+
+The audit identified one publication-critical limitation before test access. The 160-query synthetic OOS benchmark was used during development operating-policy selection. It therefore cannot be reused as independent confirmatory evidence.
+
+The registered confirmatory H3 scope is consequently limited to the unseen BANKING77 **in-domain cost component**: frozen calibrated A2 policy versus frozen raw-A2 comparator. The original mixed in-domain/OOS development H3 endpoint cannot be relabeled fully confirmed from the BANKING77 test alone because Phase 2 has no unseen OOS confirmatory sample.
+
+This narrows the future claim without changing any development result or selection. H3 remains unsupported on the development mixed-cost endpoint; H4 remains supported on development selective-risk evidence.
+
+### Code and workflow corrections
+
+The preflight also caught a real contract-path defect before the one-shot test was consumed: the confirmatory evaluator initially read derived hashes from a nonexistent `split.expected` location instead of the frozen top-level `expected` object in the BANKING77 contract. That path was corrected and the locked preflight subsequently passed.
+
+The audit also separated generic dependency-free contract tests from the scientific runtime, resolved formatting defects, and removed a self-referential workflow assertion. None of these changes moved the model, temperature, threshold, costs, OOS benchmark, or hypotheses.
+
+Permanent evidence: `benchmarks/routing/results/preconfirmatory_audit_v1.{json,md}`, `configs/models/routing_preconfirmatory_manifest_v1.json`, `benchmarks/routing/verify_preconfirmatory_freeze.py`, `configs/models/routing_confirmatory_v1.json`, and `docs/phase2-confirmatory-protocol.md`.
 
 ## Post-execution audit rule
 
@@ -170,14 +210,14 @@ Every execution close must also provide a results table, interpretation, limitat
 
 ## Test-set status
 
-The official BANKING77 test split remains confirmatory and has not been downloaded or opened by the Phase 2 routing development workflows. It remains unauthorized for model selection, calibration selection, feature selection, error-driven tuning, OOS benchmark construction, cost-weight selection, or operating-threshold selection.
+The official BANKING77 test split remains confirmatory and **has not been downloaded or opened** by the Phase 2 development or pre-confirmatory workflows. The successful preflight explicitly reported `test_set_opened=false`.
 
-The confirmatory test is not permitted to change `routing-selected-v1`; it can only evaluate the frozen configuration and registered hypotheses.
+The test remains unauthorized for model selection, calibration selection, feature selection, error-driven tuning, OOS benchmark construction, cost-weight selection, or threshold selection. It cannot change `routing-selected-v1`; it can only evaluate the frozen configuration under `routing-confirmatory-v1`.
 
 ## Current decision
 
-The model ladder, calibration choice, OOS benchmark, public cost matrix, selective operating point, frozen development router, model card, and route implementation contract are complete. **A2 + temperature scaling remains the selected calibrated development router. H3 is unsupported on development cost evidence; H4 is supported on development selective-routing evidence. Neither is yet a confirmatory verdict.**
+The model ladder, calibration choice, OOS benchmark, public cost matrix, selective operating point, frozen development router, model card, route implementation contract, confirmatory protocol, and final pre-confirmatory integrity audit are complete. **A2 + temperature scaling remains the selected calibrated development router. H3 remains unsupported on development mixed-cost evidence; H4 remains supported on development selective-routing evidence. The confirmatory test has not yet produced a scientific result.**
 
-Phase 2 remains open for exactly two gates: the final pre-confirmatory hostile audit and the one registered confirmatory evaluation.
+Phase 2 remains open for exactly **one** gate: the registered one-shot confirmatory evaluation, followed by its mandatory post-result audit and formal Phase 2 closure.
 
-**Next locked action:** run the final pre-confirmatory Phase 2 hostile audit across all frozen data, model, calibration, OOS, cost, threshold, contract, workflow, evidence, and public-claim surfaces. Do not open the BANKING77 confirmatory test until that audit passes. Phase 3 retrieval remains forbidden.
+**Next locked action:** after explicit approval, run the manual one-shot BANKING77 confirmatory evaluation using the exact frozen authorization gate. Permanently record and hostile-audit the result before closing Phase 2. **Phase 3 retrieval remains forbidden until Phase 2 is formally closed.**
