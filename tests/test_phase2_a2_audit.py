@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs" / "models" / "routing_a2.json"
@@ -12,7 +13,7 @@ SUPERSEDED_MD = ROOT / "benchmarks" / "routing" / "results" / "a2_validation_v1.
 
 
 def _load_json(path: Path) -> dict[str, object]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return cast(dict[str, object], json.loads(path.read_text(encoding="utf-8")))
 
 
 def test_a2_declared_cpu_environment_matches_lock() -> None:
