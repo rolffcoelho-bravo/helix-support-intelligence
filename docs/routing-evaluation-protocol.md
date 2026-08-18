@@ -31,7 +31,7 @@ No additional classifier family enters Phase 2 merely because a preferred candid
 
 ## Calibration and selective routing
 
-Raw class scores and calibrated probabilities are separate experimental objects. Temperature scaling, isotonic regression, and Platt-style calibration may be compared only when mathematically appropriate for the candidate output.
+Raw class scores and calibrated probabilities are separate experimental objects. Temperature scaling, isotonic regression, and Platt-style calibration may be compared only where mathematically appropriate for the candidate output.
 
 An automatic route is permitted only when the frozen operating policy accepts the prediction. Otherwise the terminal decision is `ESCALATE_LOW_CONFIDENCE` or another already-declared non-automatic state required by the routing contract.
 
@@ -80,6 +80,21 @@ Phase 2 is responsible for two blueprint hypotheses:
 - **H4:** selective abstention reduces risk; primary endpoint: selective risk at fixed coverage.
 
 These questions are evaluated only after the model ladder, metrics, data versions, calibration candidates, and operating-policy semantics are frozen.
+
+## Development checkpoints
+
+Validation-only checkpoints may be published before Phase 2 closes, provided they are clearly separated from release evidence and cannot silently alter the frozen selection protocol.
+
+The first checkpoint, `phase2-a0-a1-validation-v1`, records:
+
+- the A0 most-frequent and seeded stratified lower bounds;
+- the fixed A1 TF-IDF plus logistic-regression baseline;
+- raw calibration diagnostics;
+- risk-coverage evidence;
+- principal confusion pairs;
+- independent rerun hashes.
+
+The checkpoint lives under `benchmarks/routing/results/`. Its numbers do not populate the README release benchmark table because the confirmatory test remains unopened.
 
 ## Selection rule
 
