@@ -475,7 +475,9 @@ def run(output_dir: Path) -> dict[str, object]:
         "model_load_seconds": model_load_seconds,
         "train_encoding_seconds": train_encoding_seconds,
         "validation_encoding_seconds": validation_encoding_seconds,
-        "validation_encoding_ms_per_example": 1000.0 * validation_encoding_seconds / len(validation),
+        "validation_encoding_ms_per_example": (
+            1000.0 * validation_encoding_seconds / len(validation)
+        ),
         "classifier_fit_seconds": classifier_fit_seconds,
         "classifier_validation_prediction_seconds": prediction_seconds,
     }
