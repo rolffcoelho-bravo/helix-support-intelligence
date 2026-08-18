@@ -1,0 +1,68 @@
+{
+  "version": "routing-oos-evaluation-v1",
+  "phase": 2,
+  "status": "frozen_before_model_scoring",
+  "benchmark": {
+    "path": "data/oos/routing_oos_v1.json",
+    "version": "routing-oos-v1",
+    "expected_oos_queries": 160,
+    "expected_categories": 20,
+    "tiers": ["near", "medium", "far_support"],
+    "taxonomy_overlap_policy": "Categories must represent capabilities absent from the frozen 77-intent BANKING77 taxonomy. Exact text overlap with train or validation is forbidden."
+  },
+  "in_domain_reference": {
+    "partition": "validation",
+    "rows": 1976,
+    "sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455"
+  },
+  "eligible_models": [
+    {
+      "id": "A1_temperature",
+      "base_model": "A1",
+      "calibration": "temperature_scaling",
+      "full_validation_temperature": 0.3464179550044782
+    },
+    {
+      "id": "A2_temperature",
+      "base_model": "A2",
+      "calibration": "temperature_scaling",
+      "full_validation_temperature": 0.45797404927014607
+    }
+  ],
+  "diagnostics": {
+    "report_raw_variants": true,
+    "raw_variants_may_win_selection": false
+  },
+  "score": {
+    "definition": "1 - maximum calibrated in-domain class probability",
+    "higher_means": "more_out_of_scope"
+  },
+  "metrics": {
+    "primary": "oos_auroc",
+    "required": [
+      "oos_auroc",
+      "in_domain_fpr_at_oos_recall",
+      "score_quantiles",
+      "tier_diagnostics",
+      "category_diagnostics"
+    ],
+    "declared_oos_recall": 0.95,
+    "fpr_threshold_rule": "Empirical OOS-score 0.05 quantile using lower order statistic; classify OOS when score >= threshold. This metric-specific threshold is diagnostic and is not the final operating threshold."
+  },
+  "selection": {
+    "purpose": "Compare OOS separation of the surviving calibrated A1 reference and calibrated A2 candidate.",
+    "final_operating_threshold_selected_here": false,
+    "routing_cost_used_here": false,
+    "test_set_may_be_opened": false,
+    "A3_reentry_allowed": false,
+    "additional_OOS_detector_family_allowed": false
+  },
+  "audit": {
+    "benchmark_must_be_frozen_before_scores": true,
+    "exact_normalized_overlap_check_against_train_validation": true,
+    "all_categories_reported": true,
+    "near_tier_reported_separately": true,
+    "cross_runner_reproducibility_required": true,
+    "public_claim_audit_required": true
+  }
+}
