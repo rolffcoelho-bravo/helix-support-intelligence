@@ -24,7 +24,7 @@ def _download(url: str, destination: Path) -> None:
     """Download one pinned source file without following repository branch names."""
 
     request = urllib.request.Request(url, headers={"User-Agent": "helix-support-intelligence/0.1"})
-    with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310
+    with urllib.request.urlopen(request, timeout=60) as response:
         destination.write_bytes(response.read())
 
 
