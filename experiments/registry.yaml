@@ -1,0 +1,21 @@
+schema_version: 1
+status: phase-1-contract-frozen
+publication_rule: >-
+  Public entries are added only after publication review. Unpublished hypotheses,
+  private acceptance thresholds, cost weights, and remediation logic remain outside
+  the public repository.
+required_fields:
+  - experiment_id
+  - workstream
+  - status
+  - dataset_versions
+  - split_hashes
+  - baseline
+  - candidate
+  - primary_metric
+  - secondary_metrics
+  - seeds
+  - software_lock_hash
+  - result
+  - decision
+experiments: []
