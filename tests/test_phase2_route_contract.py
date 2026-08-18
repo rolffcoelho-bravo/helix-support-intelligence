@@ -15,6 +15,7 @@ from helix_support_intelligence.domain.routing import (
     RouteEndpoint,
     RouteRequest,
     RoutingContractError,
+    RoutingPolicyConfig,
     TerminalDecision,
     Urgency,
 )
@@ -166,6 +167,30 @@ def test_low_confidence_prediction_abstains_without_exposing_route_destination()
     assert decision.top_alternatives[0].intent == "declined_card_payment"
 
 
+def test_threshold_comparison_is_inclusive_at_frozen_value() -> None:
+    queues = {"route_me": "queue_a", "other": "queue_b"}
+    config = RoutingPolicyConfig(
+        model_id="A2",
+        model_version="routing-selected-v1",
+        temperature=1.0,
+        threshold=0.892704,
+        queue_by_intent=queues,
+    )
+    at_boundary = RouteEndpoint(
+        FakeScorer({"route_me": 0.892704, "other": 0.107296}),
+        config,
+    ).handle(_request())
+    below_boundary = RouteEndpoint(
+        FakeScorer({"route_me": 0.892703, "other": 0.107297}),
+        config,
+    ).handle(_request())
+
+    assert at_boundary.confidence == pytest.approx(0.892704)
+    assert at_boundary.decision is TerminalDecision.AUTO_ROUTE
+    assert below_boundary.confidence == pytest.approx(0.892703)
+    assert below_boundary.decision is TerminalDecision.ESCALATE_LOW_CONFIDENCE
+
+
 def test_scorer_failure_and_intent_set_drift_fail_closed() -> None:
     valid = _distribution("declined_card_payment", 0.30)
     scorer_failure = RouteEndpoint.from_config_files(
@@ -231,3 +256,7 @@ def test_request_schema_matches_framework_neutral_parser_surface() -> None:
     assert set(properties) == {"request_id", "text", "urgency"}
     assert set(required) == {"request_id", "text"}
     assert schema["additionalProperties"] is False
+
+    text_property = properties["text"]
+    assert isinstance(text_property, dict)
+    assert text_property["pattern"] == "\\S"
