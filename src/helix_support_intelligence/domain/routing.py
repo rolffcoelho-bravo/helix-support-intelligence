@@ -175,8 +175,8 @@ class RouteEndpoint:
         if calibration_method != "temperature_scaling":
             raise RoutingContractError("selected router must use temperature_scaling")
 
-        temperature = _require_probability_like(calibration, "temperature", strictly_positive=True)
-        threshold = _require_probability_like(policy, "threshold")
+        temperature = _require_positive_number(calibration, "temperature")
+        threshold = _require_probability(policy, "threshold")
 
         queues: dict[str, str] = {}
         for intent, row in intent_rows.items():
@@ -323,17 +323,21 @@ def _require_string(payload: Mapping[str, object], key: str) -> str:
     return value
 
 
-def _require_probability_like(
-    payload: Mapping[str, object],
-    key: str,
-    *,
-    strictly_positive: bool = False,
-) -> float:
+def _require_positive_number(payload: Mapping[str, object], key: str) -> float:
     value = payload.get(key)
     if isinstance(value, bool) or not isinstance(value, int | float):
         raise RoutingContractError(f"{key} must be numeric")
     number = float(value)
-    lower_ok = number > 0.0 if strictly_positive else number >= 0.0
-    if not math.isfinite(number) or not lower_ok or number > 1.0:
-        raise RoutingContractError(f"{key} is outside its declared range")
+    if not math.isfinite(number) or number <= 0.0:
+        raise RoutingContractError(f"{key} must be positive and finite")
+    return number
+
+
+def _require_probability(payload: Mapping[str, object], key: str) -> float:
+    value = payload.get(key)
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise RoutingContractError(f"{key} must be numeric")
+    number = float(value)
+    if not math.isfinite(number) or number < 0.0 or number > 1.0:
+        raise RoutingContractError(f"{key} must be in [0, 1]")
     return number
