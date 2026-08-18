@@ -52,8 +52,10 @@ The framework-neutral endpoint contract is:
 
 - method: `POST`;
 - path: `/v1/tickets/route`;
-- request schema: `data/contracts/routing_request.schema.json`;
+- request schema: `data/contracts/phase2/routing_request.schema.json`;
 - response schema: `data/contracts/routing.schema.json`.
+
+The Phase 2 request schema is namespaced below `data/contracts/phase2/` so the already-closed Phase 1 root contract suite remains unchanged.
 
 The domain implementation lives in `src/helix_support_intelligence/domain/routing.py`. It intentionally depends on an injected `IntentScorer` interface rather than importing FastAPI, sentence-transformers, scikit-learn, or another provider/framework SDK into the domain contract.
 
