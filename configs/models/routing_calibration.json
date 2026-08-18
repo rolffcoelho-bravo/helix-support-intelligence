@@ -1,0 +1,88 @@
+{
+  "version": "routing-calibration-v1",
+  "phase": 2,
+  "status": "frozen_before_evaluation",
+  "eligible_models": ["A1", "A2"],
+  "excluded_models": {
+    "A3": "rejected by the frozen A3 validation checkpoint; calibration cannot resurrect a rejected classifier"
+  },
+  "data": {
+    "dataset_contract": "banking77-helix-v1",
+    "fit_partition": "train",
+    "calibration_partition": "validation",
+    "confirmatory_partition": "test",
+    "test_set_may_select_calibrator": false,
+    "test_set_may_select_threshold": false
+  },
+  "cross_fitting": {
+    "enabled": true,
+    "folds": 5,
+    "stratification": "intent",
+    "assignment": "within-intent stable-sample-id ordering with round-robin fold assignment",
+    "salt": "helix-phase2-calibration-v1-2026-08-18",
+    "fit_folds_per_iteration": 4,
+    "score_fold_per_iteration": 1,
+    "full_validation_refit_only_after_method_selection": true
+  },
+  "methods": [
+    {
+      "id": "temperature_scaling",
+      "family": "multiclass_temperature",
+      "input": "log_probabilities_as_softmax_equivalent_logits",
+      "temperature_bounds": [0.05, 10.0],
+      "optimization_objective": "negative_log_likelihood"
+    },
+    {
+      "id": "isotonic_regression",
+      "family": "one_vs_rest_isotonic_then_row_normalize",
+      "out_of_bounds": "clip",
+      "zero_row_fallback": "raw_probabilities"
+    },
+    {
+      "id": "platt_scaling",
+      "family": "one_vs_rest_logistic_then_row_normalize",
+      "input": "per_class_log_odds",
+      "solver": "lbfgs",
+      "C": 1000000.0,
+      "max_iter": 1000
+    }
+  ],
+  "evaluation": {
+    "raw_baseline_required": true,
+    "primary_selection_metric": "multiclass_brier_score",
+    "secondary_selection_metrics": ["negative_log_likelihood", "expected_calibration_error_15bin"],
+    "classification_guardrails": {
+      "max_macro_f1_drop_vs_raw": 0.005,
+      "max_top3_recall_drop_vs_raw": 0.002
+    },
+    "report_metrics": [
+      "macro_f1",
+      "balanced_accuracy",
+      "top3_recall",
+      "expected_calibration_error_15bin",
+      "multiclass_brier_score",
+      "negative_log_likelihood",
+      "mean_max_probability",
+      "risk_coverage"
+    ],
+    "operating_threshold_selected_here": false,
+    "routing_cost_used_for_method_selection_here": false
+  },
+  "dependency_policy": {
+    "python": ">=3.12,<3.13",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "scikit_learn": "1.8.0",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.13.0",
+    "torch_variant": "cpu_only",
+    "torch_index": "https://download.pytorch.org/whl/cpu",
+    "script_lock_required": true
+  },
+  "anti_shopping": {
+    "additional_calibration_family_allowed": false,
+    "fold_count_change_after_results_allowed": false,
+    "selection_metric_change_after_results_allowed": false,
+    "A3_reentry_allowed": false
+  }
+}
