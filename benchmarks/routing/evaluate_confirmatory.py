@@ -138,7 +138,7 @@ def preflight() -> dict[str, object]:
         raise ValueError("routing operation intent count drifted")
 
     source = data["source"]
-    expected = data["split"]["expected"]
+    expected = data["expected"]
     expected_test_rows = int(confirmatory["data"]["confirmatory_rows"])
     if int(source["examples"]["test"]) != expected_test_rows:
         raise ValueError("confirmatory row count contract drifted")
