@@ -73,10 +73,7 @@ def _distribution(target: str, target_probability: float) -> dict[str, float]:
     intents = sorted(_queues())
     assert target in intents
     remainder = (1.0 - target_probability) / (len(intents) - 1)
-    return {
-        intent: target_probability if intent == target else remainder
-        for intent in intents
-    }
+    return {intent: target_probability if intent == target else remainder for intent in intents}
 
 
 def _request() -> RouteRequest:
@@ -170,9 +167,9 @@ def test_low_confidence_prediction_abstains_without_exposing_route_destination()
 
 
 def test_scorer_failure_and_intent_set_drift_fail_closed() -> None:
-    queues = _queues()
+    valid = _distribution("declined_card_payment", 0.30)
     scorer_failure = RouteEndpoint.from_config_files(
-        FakeScorer(queues, error=RuntimeError("offline")),
+        FakeScorer(valid, error=RuntimeError("offline")),
         SELECTED,
         OPERATIONS,
     ).handle(_request())
