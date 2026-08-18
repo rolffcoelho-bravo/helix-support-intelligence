@@ -2,7 +2,7 @@
   "version": "routing-preconfirmatory-freeze-v1",
   "phase": 2,
   "status": "frozen_before_confirmatory_test_open",
-  "frozen_parent_commit_sha": "13499c6a8def969327d1c95f202b10c1a28f24af",
+  "frozen_parent_commit_sha": "1c99adf99c15165266fcd65608b3bb9521469bd5",
   "test_set_opened": false,
   "hash_semantics": "Git blob SHA-1: sha1(b'blob ' + decimal_byte_length + b'\\0' + file_bytes)",
   "purpose": "Machine-checkable freeze of the selection-critical Phase 2 scientific and execution surface before the one registered BANKING77 confirmatory evaluation.",
@@ -40,7 +40,7 @@
     "docs/phase2-confirmatory-protocol.md": "a6ad7d83485967d82a114fe8affed79ab57232dc",
     ".github/workflows/ci.yml": "3247e53c92605767919c65293f63b5fa0b3ab02d",
     ".github/workflows/phase2-routing-confirmatory.yml": "e31e6b807d88b3e3f7838060e8dd1d8e6293d2e2",
-    ".github/workflows/phase2-routing-confirmatory-preflight.yml": "3d8e0fd68c92a54b0c4e54689104e108e62155ee",
+    ".github/workflows/phase2-routing-confirmatory-preflight.yml": "fe9a9bf16692aa1c4aaaa7a3347855cb2583a582",
     "tests/test_phase2_confirmatory_protocol.py": "b6136f2270f2429b8f69fee1368ca1da1b3c2728"
   },
   "governance": {
