@@ -1,0 +1,140 @@
+{
+  "checkpoint_id": "phase2-a2-validation-v2",
+  "status": "development_validation_only",
+  "decision": "A2_survives_validation",
+  "test_set_opened": false,
+  "audit_revision": {
+    "supersedes": "phase2-a2-validation-v1",
+    "reason": "Post-execution audit corrected a top-20 confusion-comparison bug, aligned the lock with CPU-only PyTorch execution, and replaced an invalid byte-identical reproducibility claim with exact-decision plus bounded-numerical reproducibility.",
+    "aggregate_model_metrics_changed": false,
+    "risk_coverage_changed": false
+  },
+  "data": {
+    "dataset_contract": "banking77-helix-v1",
+    "derived_train_rows": 7904,
+    "derived_validation_rows": 1976,
+    "quarantine_rows": 123,
+    "derived_train_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "derived_validation_sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455",
+    "source_revision": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+    "source_train_sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b"
+  },
+  "specification": {
+    "config_version": "routing-a2-v1",
+    "encoder": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+      "embedding_dimension": 384,
+      "normalize_embeddings": true,
+      "fine_tuned": false,
+      "batch_size": 64,
+      "device": "cpu"
+    },
+    "classifier": {
+      "family": "logistic_regression",
+      "C": 1.0,
+      "solver": "lbfgs",
+      "max_iter": 1000,
+      "tol": 0.0001,
+      "class_weight": null,
+      "iterations": [32]
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "scikit_learn": "1.8.0",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.13.0+cpu",
+    "torch_cuda_available": false,
+    "torch_index": "https://download.pytorch.org/whl/cpu",
+    "thread_count": 1,
+    "cuda_or_nvidia_packages_in_lock": false
+  },
+  "metrics": {
+    "accuracy": 0.9023279352226721,
+    "macro_f1": 0.8986018659321521,
+    "balanced_accuracy": 0.8963047778135971,
+    "top3_recall": 0.9731781376518218,
+    "expected_calibration_error_15bin": 0.29098596275982835,
+    "multiclass_brier_score": 0.25011591410528966,
+    "mean_max_probability": 0.6113996597809781
+  },
+  "comparison_to_frozen_a1": {
+    "macro_f1_delta": 0.05640817134214404,
+    "balanced_accuracy_delta": 0.05558726771449207,
+    "top3_recall_delta": 0.019736842105263164,
+    "ece_delta": -0.19855517423333424,
+    "brier_delta": -0.24495719687929407
+  },
+  "risk_coverage": [
+    {"coverage": 0.1, "a1_selective_risk": 0.005050505050505083, "a2_selective_risk": 0.0},
+    {"coverage": 0.2, "a1_selective_risk": 0.0075949367088608, "a2_selective_risk": 0.0025316455696202667},
+    {"coverage": 0.3, "a1_selective_risk": 0.010118043844856706, "a2_selective_risk": 0.001686340640809414},
+    {"coverage": 0.4, "a1_selective_risk": 0.01898734177215189, "a2_selective_risk": 0.0012658227848101333},
+    {"coverage": 0.5, "a1_selective_risk": 0.0253036437246964, "a2_selective_risk": 0.004048582995951455},
+    {"coverage": 0.6, "a1_selective_risk": 0.04384485666104554, "a2_selective_risk": 0.005059021922428353},
+    {"coverage": 0.7, "a1_selective_risk": 0.06073752711496749, "a2_selective_risk": 0.01590744757772955},
+    {"coverage": 0.8, "a1_selective_risk": 0.08096141682479441, "a2_selective_risk": 0.02909550917141046},
+    {"coverage": 0.9, "a1_selective_risk": 0.10011248593925759, "a2_selective_risk": 0.05455568053993254},
+    {"coverage": 1.0, "a1_selective_risk": 0.14372469635627527, "a2_selective_risk": 0.09767206477732793}
+  ],
+  "a1_top_confusion_pair_changes": [
+    {"true_intent": "balance_not_updated_after_bank_transfer", "predicted_intent": "transfer_not_received_by_recipient", "a1_count": 5, "a2_count": 5, "a2_minus_a1": 0},
+    {"true_intent": "topping_up_by_card", "predicted_intent": "top_up_by_cash_or_cheque", "a1_count": 4, "a2_count": 0, "a2_minus_a1": -4},
+    {"true_intent": "compromised_card", "predicted_intent": "lost_or_stolen_card", "a1_count": 4, "a2_count": 1, "a2_minus_a1": -3},
+    {"true_intent": "declined_transfer", "predicted_intent": "failed_transfer", "a1_count": 4, "a2_count": 6, "a2_minus_a1": 2},
+    {"true_intent": "top_up_failed", "predicted_intent": "top_up_reverted", "a1_count": 4, "a2_count": 0, "a2_minus_a1": -4},
+    {"true_intent": "pending_cash_withdrawal", "predicted_intent": "declined_cash_withdrawal", "a1_count": 3, "a2_count": 1, "a2_minus_a1": -2},
+    {"true_intent": "card_delivery_estimate", "predicted_intent": "transfer_timing", "a1_count": 3, "a2_count": 0, "a2_minus_a1": -3},
+    {"true_intent": "pending_top_up", "predicted_intent": "top_up_failed", "a1_count": 3, "a2_count": 3, "a2_minus_a1": 0},
+    {"true_intent": "card_payment_fee_charged", "predicted_intent": "extra_charge_on_statement", "a1_count": 3, "a2_count": 1, "a2_minus_a1": -2},
+    {"true_intent": "transfer_not_received_by_recipient", "predicted_intent": "transfer_timing", "a1_count": 3, "a2_count": 2, "a2_minus_a1": -1}
+  ],
+  "principal_a2_confusions": [
+    {"true_intent": "declined_transfer", "predicted_intent": "failed_transfer", "count": 6},
+    {"true_intent": "beneficiary_not_allowed", "predicted_intent": "failed_transfer", "count": 6},
+    {"true_intent": "wrong_exchange_rate_for_cash_withdrawal", "predicted_intent": "cash_withdrawal_charge", "count": 5},
+    {"true_intent": "balance_not_updated_after_bank_transfer", "predicted_intent": "transfer_not_received_by_recipient", "count": 5},
+    {"true_intent": "extra_charge_on_statement", "predicted_intent": "card_payment_fee_charged", "count": 4},
+    {"true_intent": "wrong_exchange_rate_for_cash_withdrawal", "predicted_intent": "card_payment_wrong_exchange_rate", "count": 4},
+    {"true_intent": "verify_my_identity", "predicted_intent": "why_verify_identity", "count": 4}
+  ],
+  "timing_observation": {
+    "scope": "GitHub-hosted CPU runners; descriptive only and not a stable latency benchmark",
+    "validation_embedding_ms_per_example_observed_range": [2.8460013836032396, 5.675163236842108],
+    "train_encoding_seconds_observed_range": [21.339259835, 42.336422916],
+    "classifier_fit_seconds_observed_range": [0.7696783149999931, 1.2188655019999999],
+    "interpretation": "Runner-to-runner timing varied materially, so these measurements must not be used as a release latency claim. A standardized A1/A2/A3 latency harness remains required."
+  },
+  "reproducibility": {
+    "workflow_runs": [32169631814, 32169948186],
+    "bitwise_identity_required": false,
+    "bitwise_identity_observed": false,
+    "sample_order_identical": true,
+    "predicted_intents_identical": true,
+    "top3_intents_identical": true,
+    "selective_risk_curve_identical": true,
+    "discrete_metrics_identical": true,
+    "max_abs_confidence_delta": 0.00000067364,
+    "expected_calibration_error_abs_delta": 0.000000008783539451329148,
+    "multiclass_brier_abs_delta": 0.0000000005514286249841405,
+    "mean_max_probability_abs_delta": 0.000000008821659513991165,
+    "first_results_sha256": "31594977ee59a0d0153d8e58187c86bba82a6f6b3d2d2fae6c7b8bf128333410",
+    "second_results_sha256": "9a518142ee223a474c774e26cff250b211b836f51743e0eaa3491f40718c3689",
+    "first_predictions_sha256": "0249b3d613e780581396b9fba6c4848b868c418de4c84749d3c1a672359b3a04",
+    "second_predictions_sha256": "528448c23a6080aba53c5a00f416cb71c4b985d7311725e178f178221dbd5578",
+    "generated_report_sha256": "b34f69fb74a95f5896a63d4b313af11bc2a2581f290b4281d43676b30279b643",
+    "script_lock_sha256": "e46b877897e03fbf67fe35b90e4907fd812c81c092486ddf16c9dc7f1948cd8d",
+    "interpretation": "Across heterogeneous GitHub CPU runners, decisions and registered selective-risk outcomes reproduce exactly while raw floating-point probabilities differ below one part in one million."
+  },
+  "interpretation": {
+    "model_ladder": "A2 materially improves on A1 and survives as the leading development candidate. A1 remains the required simpler reference.",
+    "calibration": "A2 is still under-confident, but raw calibration is materially better than A1. Calibration selection remains downstream of A3.",
+    "selective_routing": "A2 improves selective risk at every registered coverage point in this validation checkpoint.",
+    "complexity": "A2 adds a neural embedding stage. Standardized end-to-end latency and cost comparison remains required before final selection.",
+    "limitations": "No A3, OOS evaluation, cost matrix, calibration selection, operating threshold, or confirmatory test result is included."
+  },
+  "next_locked_action": "Implement the single frozen A3 compact transformer classifier under the same train/validation contract. Do not open the confirmatory test and do not add another classifier family."
+}
