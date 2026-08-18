@@ -8,13 +8,15 @@ on:
       - "benchmarks/routing/evaluate_a2.py"
       - "benchmarks/routing/evaluate_a2.py.lock"
       - "benchmarks/routing/results/a0_a1_validation_v1.json"
+      - "benchmarks/routing/results/a2_validation_v1.json"
+      - "benchmarks/routing/results/a2_validation_v1.md"
       - "configs/data/banking77.json"
       - "configs/models/routing_a2.json"
       - "src/helix_support_intelligence/data/**"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: phase2-routing-a2-${{ github.workflow }}-${{ github.ref }}
@@ -32,8 +34,10 @@ jobs:
       TOKENIZERS_PARALLELISM: "false"
 
     steps:
-      - name: Check out repository
+      - name: Check out head branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -42,9 +46,13 @@ jobs:
           version: "0.11.33"
 
       - name: Resolve script lock when absent
+        id: lock
         run: |
           if [ ! -f benchmarks/routing/evaluate_a2.py.lock ]; then
             uv lock --script benchmarks/routing/evaluate_a2.py
+            echo "generated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "generated=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run frozen A2 validation benchmark
@@ -64,3 +72,12 @@ jobs:
             benchmarks/routing/evaluate_a2.py.lock
           if-no-files-found: error
           retention-days: 14
+
+      - name: Commit generated A2 lock
+        if: steps.lock.outputs.generated == 'true' && github.event_name == 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/routing/evaluate_a2.py.lock
+          git commit -m "Lock A2 benchmark environment"
+          git push origin "HEAD:${{ github.head_ref }}"
