@@ -1,0 +1,93 @@
+{
+  "checkpoint_id": "phase2-a0-a1-validation-v1",
+  "data": {
+    "dataset_contract": "banking77-helix-v1",
+    "derived_train_rows": 7904,
+    "derived_train_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "derived_validation_rows": 1976,
+    "derived_validation_sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455",
+    "quarantine_rows": 123,
+    "source_revision": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+    "source_train_sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b"
+  },
+  "environment": {
+    "numpy": "2.3.5",
+    "omp_num_threads": "1",
+    "openblas_num_threads": "1",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "scikit_learn": "1.8.0",
+    "scipy": "1.17.0"
+  },
+  "interpretation": {
+    "A1_over_A0": "A1 establishes a non-trivial lexical baseline and dominates both dummy references.",
+    "calibration": "A1 is strongly under-confident on validation: mean max probability is about 0.3667 while accuracy is about 0.8563; calibration work is therefore empirically necessary.",
+    "limitations": "No OOS benchmark, calibration comparison, routing cost matrix, A2, A3, or confirmatory test result is included.",
+    "selective_routing": "Raw A1 confidence already orders risk usefully: selective risk is about 2.53% at 50% coverage and 6.07% at 70% coverage."
+  },
+  "models": {
+    "A0-most_frequent": {
+      "balanced_accuracy": 0.012987012987012988,
+      "expected_calibration_error_15bin": 0.9812753036437247,
+      "macro_f1": 0.0004774162747337114,
+      "multiclass_brier_score": 1.9625506072874495,
+      "top3_recall": 0.04908906882591093
+    },
+    "A0-stratified": {
+      "balanced_accuracy": 0.016197123318303253,
+      "expected_calibration_error_15bin": 0.9832995951417004,
+      "macro_f1": 0.016305062315309454,
+      "multiclass_brier_score": 1.9665991902834008,
+      "top3_recall": 0.04706477732793522
+    },
+    "A1": {
+      "mean_max_probability": 0.3667341666505577,
+      "metrics": {
+        "balanced_accuracy": 0.840717510099105,
+        "expected_calibration_error_15bin": 0.4895411369931626,
+        "macro_f1": 0.842193694590008,
+        "multiclass_brier_score": 0.49507311098458373,
+        "risk_coverage": [
+          {"accepted": 198, "confidence_threshold": 0.7208985808936407, "coverage": 0.1, "selective_risk": 0.005050505050505083},
+          {"accepted": 395, "confidence_threshold": 0.5913643874531289, "coverage": 0.2, "selective_risk": 0.0075949367088608},
+          {"accepted": 593, "confidence_threshold": 0.4891772160998827, "coverage": 0.3, "selective_risk": 0.010118043844856706},
+          {"accepted": 790, "confidence_threshold": 0.39373678632249076, "coverage": 0.4, "selective_risk": 0.01898734177215189},
+          {"accepted": 988, "confidence_threshold": 0.3263015787192021, "coverage": 0.5, "selective_risk": 0.0253036437246964},
+          {"accepted": 1186, "confidence_threshold": 0.25370488122189067, "coverage": 0.6, "selective_risk": 0.04384485666104554},
+          {"accepted": 1383, "confidence_threshold": 0.1916337727407339, "coverage": 0.7, "selective_risk": 0.06073752711496749},
+          {"accepted": 1581, "confidence_threshold": 0.14048386644181055, "coverage": 0.8, "selective_risk": 0.08096141682479441},
+          {"accepted": 1778, "confidence_threshold": 0.09512168311688186, "coverage": 0.9, "selective_risk": 0.10011248593925759},
+          {"accepted": 1976, "confidence_threshold": 0.03074636113890415, "coverage": 1.0, "selective_risk": 0.14372469635627527}
+        ],
+        "top3_recall": 0.9534412955465587,
+        "top_confusion_pairs": [
+          {"count": 5, "predicted_intent": "transfer_not_received_by_recipient", "true_intent": "balance_not_updated_after_bank_transfer"},
+          {"count": 4, "predicted_intent": "top_up_by_cash_or_cheque", "true_intent": "topping_up_by_card"},
+          {"count": 4, "predicted_intent": "lost_or_stolen_card", "true_intent": "compromised_card"},
+          {"count": 4, "predicted_intent": "failed_transfer", "true_intent": "declined_transfer"},
+          {"count": 4, "predicted_intent": "top_up_reverted", "true_intent": "top_up_failed"},
+          {"count": 3, "predicted_intent": "declined_cash_withdrawal", "true_intent": "pending_cash_withdrawal"},
+          {"count": 3, "predicted_intent": "transfer_timing", "true_intent": "card_delivery_estimate"},
+          {"count": 3, "predicted_intent": "top_up_failed", "true_intent": "pending_top_up"},
+          {"count": 3, "predicted_intent": "extra_charge_on_statement", "true_intent": "card_payment_fee_charged"},
+          {"count": 3, "predicted_intent": "transfer_timing", "true_intent": "transfer_not_received_by_recipient"}
+        ]
+      },
+      "specification": {
+        "logistic_regression": {"C": 1.0, "iterations": [33], "max_iter": 1000, "solver": "lbfgs", "tol": 0.0001},
+        "tfidf": {"feature_count": 8754, "lowercase": true, "min_df": 2, "ngram_range": [1, 2], "norm": "l2", "sublinear_tf": true}
+      },
+      "validation_accuracy": 0.8562753036437247
+    }
+  },
+  "next_locked_action": "Freeze and run the calibration comparison for A1 on validation, while preparing the bounded A2 dependency path; do not open the confirmatory test.",
+  "reproducibility": {
+    "a1_predictions_sha256": "59bd49532cc904ce89cc66f5caabddb3ddd887111b26bc6012721c6249e6a2b4",
+    "independent_rerun_byte_identical": true,
+    "inner_report_sha256": "84c94d55d50edf6a6e2c3c2f919bac55f9102f937fd837ed89bc5b4fb0119959",
+    "inner_results_sha256": "10f7e922f9e0fa69908d632439dfc8d8383303fef061257a76b0c009f34a2520",
+    "workflow_runs": [32166270114, 32166443316]
+  },
+  "status": "development_validation_only",
+  "test_set_opened": false
+}
