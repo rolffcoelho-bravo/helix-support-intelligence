@@ -53,9 +53,7 @@ RUN_ID = "phase2-development-a3-v1"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_CONFIG_PATH = REPO_ROOT / "configs" / "data" / "banking77.json"
 A3_CONFIG_PATH = REPO_ROOT / "configs" / "models" / "routing_a3.json"
-A2_CHECKPOINT_PATH = (
-    REPO_ROOT / "benchmarks" / "routing" / "results" / "a2_validation_v2.json"
-)
+A2_CHECKPOINT_PATH = REPO_ROOT / "benchmarks" / "routing" / "results" / "a2_validation_v2.json"
 
 
 class MeanPoolClassifier(nn.Module):
@@ -631,8 +629,7 @@ def run(output_dir: Path) -> dict[str, object]:
     comparison = {
         "macro_f1_delta": float(final_metrics["macro_f1"]) - float(a2_metrics["macro_f1"]),
         "balanced_accuracy_delta": (
-            float(final_metrics["balanced_accuracy"])
-            - float(a2_metrics["balanced_accuracy"])
+            float(final_metrics["balanced_accuracy"]) - float(a2_metrics["balanced_accuracy"])
         ),
         "top3_recall_delta": (
             float(final_metrics["top3_recall"]) - float(a2_metrics["top3_recall"])
