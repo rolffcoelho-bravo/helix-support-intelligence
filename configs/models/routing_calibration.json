@@ -18,7 +18,7 @@
     "enabled": true,
     "folds": 5,
     "stratification": "intent",
-    "assignment": "within-intent stable-sample-id ordering with round-robin fold assignment",
+    "assignment": "within-intent salted stable-sample-id ordering with deterministic intent-specific round-robin start offsets",
     "salt": "helix-phase2-calibration-v1-2026-08-18",
     "fit_folds_per_iteration": 4,
     "score_fold_per_iteration": 1,
