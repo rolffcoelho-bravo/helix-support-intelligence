@@ -23,7 +23,6 @@ import csv
 import hashlib
 import importlib
 import json
-import math
 import os
 import platform
 import sys
@@ -31,7 +30,7 @@ import tempfile
 import urllib.request
 from collections import Counter
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import scipy
@@ -443,9 +442,8 @@ def _passes_guardrails(
 ) -> bool:
     macro_drop = float(raw_metrics["macro_f1"]) - float(calibrated_metrics["macro_f1"])
     top3_drop = float(raw_metrics["top3_recall"]) - float(calibrated_metrics["top3_recall"])
-    return (
-        macro_drop <= float(guardrails["max_macro_f1_drop_vs_raw"])
-        and top3_drop <= float(guardrails["max_top3_recall_drop_vs_raw"])
+    return macro_drop <= float(guardrails["max_macro_f1_drop_vs_raw"]) and top3_drop <= float(
+        guardrails["max_top3_recall_drop_vs_raw"]
     )
 
 
@@ -588,7 +586,10 @@ def _markdown_report(result: dict[str, object]) -> str:
     lines = [
         "# Phase 2 Cross-Fitted Calibration Benchmark",
         "",
-        "> Validation-only development evidence. The confirmatory test split was not downloaded or opened.",
+        (
+            "> Validation-only development evidence. The confirmatory test split was not "
+            "downloaded or opened."
+        ),
         "",
     ]
     models = result["models"]
@@ -606,9 +607,7 @@ def _markdown_report(result: dict[str, object]) -> str:
                 "",
                 "| Method | Macro-F1 | Top-3 | ECE | Brier | NLL |",
                 "|---|---:|---:|---:|---:|---:|",
-                (
-                    "| raw | {f1:.4f} | {top3:.4f} | {ece:.4f} | {brier:.4f} | {nll:.4f} |"
-                ).format(
+                ("| raw | {f1:.4f} | {top3:.4f} | {ece:.4f} | {brier:.4f} | {nll:.4f} |").format(
                     f1=float(raw["macro_f1"]),
                     top3=float(raw["top3_recall"]),
                     ece=float(raw["expected_calibration_error_15bin"]),
