@@ -6,9 +6,10 @@ import csv
 import hashlib
 import json
 import unicodedata
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence, cast
+from typing import Any, cast
 
 
 @dataclass(frozen=True, slots=True)
@@ -168,7 +169,7 @@ def sample_id(example: BankingExample, source_revision: str) -> str:
     payload = (
         f"{source_revision}\0{example.source_split}\0{example.source_index}\0"
         f"{example.intent}\0{example.text}"
-    ).encode("utf-8")
+    ).encode()
     return sha256_bytes(payload)[:24]
 
 
@@ -192,7 +193,7 @@ def split_training_examples(
     grouped: dict[str, list[tuple[str, BankingExample]]] = {}
     for item in pool:
         stable_id = sample_id(item, spec.source_revision)
-        key = sha256_bytes(f"{spec.split_salt}\0{stable_id}".encode("utf-8"))
+        key = sha256_bytes(f"{spec.split_salt}\0{stable_id}".encode())
         grouped.setdefault(item.intent, []).append((key, item))
 
     validation_indices: set[int] = set()
@@ -233,7 +234,7 @@ def canonical_jsonl_bytes(
             sort_keys=True,
             separators=(",", ":"),
         )
-        chunks.append((line + "\n").encode("utf-8"))
+        chunks.append((line + "\n").encode())
     return b"".join(chunks)
 
 
