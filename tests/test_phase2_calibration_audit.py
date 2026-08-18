@@ -63,12 +63,8 @@ def test_a2_temperature_improves_calibration_without_classification_drop() -> No
     assert float(temperature["macro_f1"]) == float(raw["macro_f1"])
     assert float(temperature["top3_recall"]) == float(raw["top3_recall"])
     assert float(temperature["expected_calibration_error_15bin"]) < 0.02
-    assert float(temperature["multiclass_brier_score"]) < float(
-        raw["multiclass_brier_score"]
-    )
-    assert float(temperature["negative_log_likelihood"]) < float(
-        raw["negative_log_likelihood"]
-    )
+    assert float(temperature["multiclass_brier_score"]) < float(raw["multiclass_brier_score"])
+    assert float(temperature["negative_log_likelihood"]) < float(raw["negative_log_likelihood"])
 
 
 def test_a2_alternative_calibrators_fail_frozen_guardrails() -> None:
