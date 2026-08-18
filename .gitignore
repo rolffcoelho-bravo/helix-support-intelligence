@@ -34,6 +34,7 @@ notes*.txt
 
 # Local data, artifacts, and model outputs
 data/raw/
+data/generated/
 artifacts/
 models/
 mlruns/

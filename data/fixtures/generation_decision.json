@@ -1,0 +1,15 @@
+{
+  "request_id": "00000000-0000-4000-8000-000000000001",
+  "decision": "ANSWER_WITH_EVIDENCE",
+  "answer": "The current HelixBank policy provides guidance for this request.",
+  "citations": ["POLICY-001"],
+  "intent": "card_arrival",
+  "queue": "cards_and_access",
+  "confidence": 0.91,
+  "unsupported_claims": [],
+  "requires_human_review": false,
+  "escalation_reason": null,
+  "model_version": "fixture-generator-v0",
+  "prompt_version": "fixture-prompt-v0",
+  "corpus_version": "helixbank-policy-v1.0.0"
+}

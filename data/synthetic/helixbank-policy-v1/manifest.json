@@ -1,0 +1,15 @@
+{
+  "corpus_version": "helixbank-policy-v1.0.0",
+  "generator_version": "1.0.0",
+  "counts": {
+    "documents": 154,
+    "queries": 308,
+    "judgments": 616,
+    "intents": 77
+  },
+  "sha256": {
+    "documents": "13572a02eddadbd621a39490238358acccf8c5f01fc7a26dcfe3f4017aad2d8f",
+    "queries": "2c54b5353d71a399cb15303fb6d751dd18c9ba814c992c4f676fb19bd865481c",
+    "judgments": "8d5b4b816a807d5976d0102dcdd3d917a16c9c4a916e4776f5023b47043d5a4d"
+  }
+}
