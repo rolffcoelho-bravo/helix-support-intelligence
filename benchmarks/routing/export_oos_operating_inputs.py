@@ -14,7 +14,7 @@
 # url = "https://download.pytorch.org/whl/cpu"
 # explicit = true
 # ///
-"""Export frozen OOS confidences needed by the private cost-selection analysis."""
+"""Export frozen OOS confidences for private cost-selection analysis."""
 
 from __future__ import annotations
 
@@ -96,6 +96,27 @@ def _temperature_bounds(config: dict[str, object]) -> tuple[float, float]:
     raise ValueError("temperature scaling bounds missing")
 
 
+def _crossfit_oos_confidence(
+    calibration: Any,
+    validation_probabilities: np.ndarray,
+    oos_probabilities: np.ndarray,
+    y_validation: np.ndarray,
+    folds: np.ndarray,
+    bounds: tuple[float, float],
+) -> np.ndarray:
+    fold_confidences: list[np.ndarray] = []
+    for fold in range(5):
+        fit_mask = folds != fold
+        temperature = calibration._temperature_fit(
+            validation_probabilities[fit_mask],
+            y_validation[fit_mask],
+            bounds,
+        )
+        calibrated_oos = calibration._temperature_apply(oos_probabilities, temperature)
+        fold_confidences.append(np.max(calibrated_oos, axis=1))
+    return np.mean(np.stack(fold_confidences, axis=0), axis=0)
+
+
 def run(output_path: Path) -> None:
     calibration = _load_module(CALIBRATION_SCRIPT_PATH, "helix_calibration_export")
     data_api = _data_module()
@@ -119,21 +140,28 @@ def run(output_path: Path) -> None:
     label_to_index = {label: index for index, label in enumerate(labels)}
     x_train = [example.text for example in train]
     x_validation = [example.text for example in validation]
-    y_train = np.asarray([label_to_index[example.intent] for example in train], dtype=np.int64)
+    y_train = np.asarray(
+        [label_to_index[example.intent] for example in train],
+        dtype=np.int64,
+    )
     y_validation = np.asarray(
         [label_to_index[example.intent] for example in validation],
         dtype=np.int64,
     )
     oos_texts = [record["text"] for record in records]
+    x_evaluation = x_validation + oos_texts
 
     torch.manual_seed(20260818)
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
 
-    a1_validation = calibration._fit_a1(x_train, y_train, x_validation)
-    a2_validation = calibration._fit_a2(x_train, y_train, x_validation, a2_config)
-    a1_oos = calibration._fit_a1(x_train, y_train, oos_texts)
-    a2_oos = calibration._fit_a2(x_train, y_train, oos_texts, a2_config)
+    a1_all = calibration._fit_a1(x_train, y_train, x_evaluation)
+    a2_all = calibration._fit_a2(x_train, y_train, x_evaluation, a2_config)
+    split_at = len(validation)
+    probabilities = {
+        "A1": (a1_all[:split_at], a1_all[split_at:]),
+        "A2": (a2_all[:split_at], a2_all[split_at:]),
+    }
 
     cross_fitting = calibration_config["cross_fitting"]
     assert isinstance(cross_fitting, dict)
@@ -145,40 +173,25 @@ def run(output_path: Path) -> None:
         int(cross_fitting["folds"]),
         data_api,
     )
-    if [int(np.sum(folds == index)) for index in range(5)] != [390, 392, 393, 402, 399]:
+    fold_counts = [int(np.sum(folds == index)) for index in range(5)]
+    if fold_counts != [390, 392, 393, 402, 399]:
         raise ValueError("audited calibration fold assignment drifted")
 
     bounds = _temperature_bounds(calibration_config)
-    model_inputs: dict[str, dict[str, np.ndarray]] = {}
-    for model_id, validation_probabilities, oos_probabilities in (
-        ("A1", a1_validation, a1_oos),
-        ("A2", a2_validation, a2_oos),
-    ):
-        cross_fitted_validation = np.zeros_like(validation_probabilities)
-        fold_oos_confidences: list[np.ndarray] = []
-        for fold in range(5):
-            fit_mask = folds != fold
-            score_mask = folds == fold
-            temperature = calibration._temperature_fit(
-                validation_probabilities[fit_mask],
-                y_validation[fit_mask],
+    exports: dict[str, dict[str, np.ndarray]] = {}
+    for model_id in ("A1", "A2"):
+        validation_probabilities, oos_probabilities = probabilities[model_id]
+        exports[model_id] = {
+            "raw_confidence": np.max(oos_probabilities, axis=1),
+            "raw_predicted_index": np.argmax(oos_probabilities, axis=1),
+            "crossfit_confidence": _crossfit_oos_confidence(
+                calibration,
+                validation_probabilities,
+                oos_probabilities,
+                y_validation,
+                folds,
                 bounds,
-            )
-            cross_fitted_validation[score_mask] = calibration._temperature_apply(
-                validation_probabilities[score_mask],
-                temperature,
-            )
-            calibrated_oos = calibration._temperature_apply(oos_probabilities, temperature)
-            fold_oos_confidences.append(np.max(calibrated_oos, axis=1))
-
-        model_inputs[model_id] = {
-            "raw_oos_confidence": np.max(oos_probabilities, axis=1),
-            "crossfit_oos_confidence": np.mean(
-                np.stack(fold_oos_confidences, axis=0),
-                axis=0,
             ),
-            "raw_oos_predicted_index": np.argmax(oos_probabilities, axis=1),
-            "crossfit_validation_confidence": np.max(cross_fitted_validation, axis=1),
         }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -199,21 +212,25 @@ def run(output_path: Path) -> None:
         )
         writer.writeheader()
         for index, record in enumerate(records):
+            a1_raw = float(exports["A1"]["raw_confidence"][index])
+            a1_temp = float(exports["A1"]["crossfit_confidence"][index])
+            a2_raw = float(exports["A2"]["raw_confidence"][index])
+            a2_temp = float(exports["A2"]["crossfit_confidence"][index])
             writer.writerow(
                 {
                     "oos_id": record["oos_id"],
                     "category": record["category"],
                     "tier": record["tier"],
                     "A1_raw_predicted_intent": labels[
-                        int(model_inputs["A1"]["raw_oos_predicted_index"][index])
+                        int(exports["A1"]["raw_predicted_index"][index])
                     ],
-                    "A1_raw_confidence": f"{float(model_inputs['A1']['raw_oos_confidence'][index]):.12f}",
-                    "A1_crossfit_temperature_confidence": f"{float(model_inputs['A1']['crossfit_oos_confidence'][index]):.12f}",
+                    "A1_raw_confidence": f"{a1_raw:.12f}",
+                    "A1_crossfit_temperature_confidence": f"{a1_temp:.12f}",
                     "A2_raw_predicted_intent": labels[
-                        int(model_inputs["A2"]["raw_oos_predicted_index"][index])
+                        int(exports["A2"]["raw_predicted_index"][index])
                     ],
-                    "A2_raw_confidence": f"{float(model_inputs['A2']['raw_oos_confidence'][index]):.12f}",
-                    "A2_crossfit_temperature_confidence": f"{float(model_inputs['A2']['crossfit_oos_confidence'][index]):.12f}",
+                    "A2_raw_confidence": f"{a2_raw:.12f}",
+                    "A2_crossfit_temperature_confidence": f"{a2_temp:.12f}",
                 }
             )
 
@@ -226,7 +243,13 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=REPO_ROOT / "artifacts" / "phase2-routing" / "operating" / "oos_inputs.csv",
+        default=(
+            REPO_ROOT
+            / "artifacts"
+            / "phase2-routing"
+            / "operating"
+            / "oos_inputs.csv"
+        ),
     )
     args = parser.parse_args()
     run(args.output.resolve())
