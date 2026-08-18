@@ -49,7 +49,9 @@ RUN_ID = "phase2-routing-oos-v1"
 
 
 def _load_calibration_module() -> Any:
-    spec = importlib.util.spec_from_file_location("helix_phase2_calibration", CALIBRATION_SCRIPT_PATH)
+    spec = importlib.util.spec_from_file_location(
+        "helix_phase2_calibration", CALIBRATION_SCRIPT_PATH
+    )
     if spec is None or spec.loader is None:
         raise RuntimeError("could not load the frozen calibration benchmark module")
     module = importlib.util.module_from_spec(spec)
@@ -131,7 +133,9 @@ def _binary_oos_metrics(
     }
 
 
-def _weighted_mean(rows: list[dict[str, object]], key: str, weight_key: str = "heldout_rows") -> float:
+def _weighted_mean(
+    rows: list[dict[str, object]], key: str, weight_key: str = "heldout_rows"
+) -> float:
     weights = np.asarray([float(row[weight_key]) for row in rows], dtype=np.float64)
     values = np.asarray([float(row[key]) for row in rows], dtype=np.float64)
     return float(np.average(values, weights=weights))
@@ -171,10 +175,7 @@ def _subgroup_indices(records: list[dict[str, str]], key: str) -> dict[str, np.n
     groups: dict[str, list[int]] = {}
     for index, record in enumerate(records):
         groups.setdefault(record[key], []).append(index)
-    return {
-        group: np.asarray(indices, dtype=np.int64)
-        for group, indices in sorted(groups.items())
-    }
+    return {group: np.asarray(indices, dtype=np.int64) for group, indices in sorted(groups.items())}
 
 
 def _fold_subgroup_metrics(
@@ -325,7 +326,10 @@ def _markdown_report(result: dict[str, object]) -> str:
     lines = [
         "# Phase 2 OOS Development Benchmark",
         "",
-        "> Frozen OOS benchmark and validation-only in-domain reference. The confirmatory BANKING77 test split was not downloaded or opened.",
+        (
+            "> Frozen OOS benchmark and validation-only in-domain reference. "
+            "The confirmatory BANKING77 test split was not downloaded or opened."
+        ),
         "",
         "| Model | Cross-fitted OOS AUROC | ID FPR @ >=95% OOS recall | Fold AUROC range |",
         "|---|---:|---:|---:|",
