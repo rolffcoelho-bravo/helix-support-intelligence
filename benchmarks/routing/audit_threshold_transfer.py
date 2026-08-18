@@ -175,9 +175,8 @@ def run(
         if float(row["A2_temperature_confidence"]) >= source_threshold
     }
     accepted_count = len(source_accepted_ids)
-    expected_accepted = round(
-        float(final["id_automation_coverage"]) * len(validation_inputs)
-    )
+    selected_coverage = float(final["id_automation_coverage"])
+    expected_accepted = round(selected_coverage * len(validation_inputs))
     if accepted_count != expected_accepted:
         raise ValueError("selected development coverage drifted")
 
