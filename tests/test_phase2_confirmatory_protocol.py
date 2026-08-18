@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 from typing import Any, cast
 
-import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -111,8 +110,8 @@ def test_high_risk_error_overrides_queue_similarity() -> None:
 
 def test_fixed_coverage_accepts_exact_registered_fraction() -> None:
     module = _module()
-    errors = np.asarray([False, True, False, True, False, True, False, True], dtype=bool)
-    confidence = np.asarray([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2])
+    errors = module.np.asarray([False, True, False, True, False, True, False, True], dtype=bool)
+    confidence = module.np.asarray([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2])
     sample_ids = [f"id-{index}" for index in range(8)]
     result = module._risk_at_coverage(errors, confidence, sample_ids, 0.75)
     assert result["accepted"] == 6
@@ -122,10 +121,10 @@ def test_fixed_coverage_accepts_exact_registered_fraction() -> None:
 
 def test_bootstrap_is_deterministic_on_synthetic_rows() -> None:
     module = _module()
-    raw_costs = np.asarray([0.0, 6.0, 1.0, 2.5, 0.0, 1.0])
-    calibrated_costs = np.asarray([0.0, 1.0, 1.0, 2.5, 0.0, 1.0])
-    errors = np.asarray([False, True, False, True, False, False], dtype=bool)
-    confidence = np.asarray([0.95, 0.90, 0.85, 0.70, 0.60, 0.40])
+    raw_costs = module.np.asarray([0.0, 6.0, 1.0, 2.5, 0.0, 1.0])
+    calibrated_costs = module.np.asarray([0.0, 1.0, 1.0, 2.5, 0.0, 1.0])
+    errors = module.np.asarray([False, True, False, True, False, False], dtype=bool)
+    confidence = module.np.asarray([0.95, 0.90, 0.85, 0.70, 0.60, 0.40])
     sample_ids = [f"sample-{index}" for index in range(6)]
     first = module._paired_bootstrap(
         raw_costs,
