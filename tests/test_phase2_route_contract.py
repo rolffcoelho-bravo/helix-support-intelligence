@@ -8,6 +8,7 @@ from uuid import UUID
 
 import pytest
 
+from helix_support_intelligence.domain import TerminalDecision
 from helix_support_intelligence.domain.routing import (
     ROUTE_ENDPOINT_METHOD,
     ROUTE_ENDPOINT_PATH,
@@ -16,7 +17,6 @@ from helix_support_intelligence.domain.routing import (
     RouteRequest,
     RoutingContractError,
     RoutingPolicyConfig,
-    TerminalDecision,
     Urgency,
 )
 
