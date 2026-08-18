@@ -94,19 +94,36 @@ The first checkpoint, `phase2-a0-a1-validation-v1`, records:
 - principal confusion pairs;
 - independent rerun hashes.
 
-The second checkpoint, `phase2-a2-validation-v1`, freezes one sentence-embedding representation before evaluation and records:
+The audited second checkpoint, `phase2-a2-validation-v2`, freezes one sentence-embedding representation before evaluation and records:
 
 - `sentence-transformers/all-MiniLM-L6-v2` at revision `c315f904dfc467d8b9c40ab4ed50b3a8d0866c15` as a non-fine-tuned, normalized 384-dimensional feature extractor;
 - the same fixed logistic-regression specification used for the A1 comparison;
+- CPU-only PyTorch resolution through the official PyTorch CPU index;
 - a committed uv script lock for the complete A2 dependency graph;
-- validation classification, calibration, risk-coverage, and confusion evidence;
+- validation classification, calibration, risk-coverage, and full-count confusion evidence;
 - direct deltas against frozen A1;
-- descriptive CPU timing kept separate from deterministic scientific evidence;
-- two independent runs with byte-identical deterministic outputs.
+- descriptive CPU timing kept separate from stable latency claims;
+- exact decision reproducibility plus bounded numerical reproducibility across two independent CPU runs.
+
+The original A2 v1 evidence was removed after a post-execution audit identified a top-20 confusion-count inference bug, a CUDA-enabled lock inconsistent with declared CPU execution, and an overstated byte-identical reproducibility claim. Those corrections did not change A2's aggregate validation metrics or model ranking.
 
 A2 materially improves on A1 in the frozen validation checkpoint and therefore survives as the leading development candidate. This does not select the final router, calibration method, or operating threshold. A1 remains the required simpler reference and A3 remains required by the frozen ladder.
 
 All checkpoint evidence lives under `benchmarks/routing/results/`. Development numbers do not populate the README release benchmark table because the confirmatory test remains unopened.
+
+## Execution audit gate
+
+Every implementation checkpoint must finish with an explicit hostile audit before it is considered complete. The audit must examine at least:
+
+- code-path correctness and hidden assumptions;
+- metric definitions and whether summaries can misrepresent underlying counts;
+- train/validation/test boundary integrity;
+- reproducibility claims at the level actually supported by the evidence;
+- dependency and hardware consistency with the declared execution mode;
+- CI and workflow behavior, including unnecessary or recursive triggers;
+- public wording for claims stronger than the experiment supports.
+
+Any material defect discovered by this audit must be corrected in the same checkpoint. Superseded public evidence must be removed or clearly replaced so that the repository has one authoritative interpretation.
 
 ## Selection rule
 
