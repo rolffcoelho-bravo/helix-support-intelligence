@@ -36,7 +36,7 @@ No performance result is claimed before a frozen, reproducible benchmark produce
 | Baseline | pending | pending | pending | pending | pending |
 | Release candidate | pending | pending | pending | pending | pending |
 
-Phase 2 development evidence is kept separate from release evidence. The completed development checkpoints now cover the A0-A3 model ladder, calibration, frozen OOS evaluation, routing-cost analysis, and a frozen selective-routing development configuration under `benchmarks/routing/results/` and `configs/models/routing_selected_v1.json`. They do not populate this release table because the confirmatory test remains unopened and Phase 2 has not closed.
+Phase 2 development evidence is kept separate from release evidence. The completed development checkpoints now cover the A0-A3 model ladder, calibration, frozen OOS evaluation, routing-cost analysis, the frozen selective-routing configuration, the router model card, and the framework-neutral route contract under `benchmarks/routing/results/`, `docs/routing-model-card.md`, and `configs/models/routing_selected_v1.json`. They do not populate this release table because the confirmatory test remains unopened and Phase 2 has not closed.
 
 ## Product workflow
 
@@ -154,13 +154,13 @@ The repository foundation and Phase 1 data/evaluation contracts are complete. Ph
 
 1. reproducible engineering foundation — **complete**;
 2. public-data and evaluation contracts — **complete**;
-3. ticket-routing baseline — **active; model ladder, calibration, OOS, cost policy, and development routing configuration complete; model card and route API contracts next**;
+3. ticket-routing baseline — **active; development selection, model card, and route implementation contract complete; final pre-confirmatory audit next**;
 4. hybrid retrieval and ranking;
 5. evidence-grounded assistance;
 6. safety, observability, and system validation;
 7. measured public release.
 
-Within Phase 2, `routing-selected-v1` freezes A2 with temperature scaling and a selective-routing threshold for development. H3 is unsupported on the registered development routing-cost endpoint, while H4 is supported by the development selective-routing evidence. These are not release or confirmatory claims. The router model card, `/v1/tickets/route` contract tests, final pre-confirmatory audit, and one registered confirmatory evaluation remain open; the official test split remains sealed until then.
+Within Phase 2, `routing-selected-v1` freezes A2 with temperature scaling and a selective-routing threshold for development. H3 is unsupported on the registered development routing-cost endpoint, while H4 is supported by the development selective-routing evidence. These are not release or confirmatory claims. The router model card and `/v1/tickets/route` contract tests are complete. The final pre-confirmatory hostile audit and one registered confirmatory evaluation remain open; the official test split remains sealed until the audit passes.
 
 The project reaches completion at a documented `v1.0.0` release. Further domains or capabilities will be treated as separate post-v1 work rather than unfinished obligations of the initial repository.
 
