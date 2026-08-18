@@ -115,8 +115,8 @@ jobs:
       - name: Run frozen routing cost policy
         run: >-
           python benchmarks/routing/evaluate_cost_policy.py
-          --validation-inputs artifacts/phase2-routing/operating/validation_operating_inputs.csv
-          --oos-inputs artifacts/phase2-routing/operating/oos_operating_inputs.csv
+          --validation-inputs artifacts/phase2-routing/operating/validation_inputs.csv
+          --oos-inputs artifacts/phase2-routing/operating/oos_inputs.csv
           --output-dir artifacts/phase2-routing/cost-policy
 
       - name: Publish cost-policy summary
