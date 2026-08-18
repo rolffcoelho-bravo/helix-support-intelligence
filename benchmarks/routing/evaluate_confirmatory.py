@@ -77,7 +77,12 @@ def _download(url: str, destination: Path) -> None:
         destination.write_bytes(response.read())
 
 
-def _assert_close(observed: float, expected: float, name: str, tolerance: float = 1e-12) -> None:
+def _assert_close(
+    observed: float,
+    expected: float,
+    name: str,
+    tolerance: float = 1e-12,
+) -> None:
     if abs(observed - expected) > tolerance:
         raise ValueError(f"{name} drifted: {observed} != {expected}")
 
@@ -127,11 +132,13 @@ def preflight() -> dict[str, object]:
 
     source = data["source"]
     expected = data["split"]["expected"]
-    if int(source["examples"]["test"]) != int(confirmatory["data"]["confirmatory_rows"]):
+    expected_test_rows = int(confirmatory["data"]["confirmatory_rows"])
+    if int(source["examples"]["test"]) != expected_test_rows:
         raise ValueError("confirmatory row count contract drifted")
     if source["sha256"]["test"] != confirmatory["data"]["confirmatory_source_sha256"]:
         raise ValueError("confirmatory raw test hash contract drifted")
-    if expected["jsonl_sha256"]["test"] != confirmatory["data"]["confirmatory_derived_sha256"]:
+    expected_derived = confirmatory["data"]["confirmatory_derived_sha256"]
+    if expected["jsonl_sha256"]["test"] != expected_derived:
         raise ValueError("confirmatory derived test hash contract drifted")
 
     return {
@@ -173,9 +180,8 @@ def _policy_row_costs(
 ) -> tuple[np.ndarray, Counter[str]]:
     row_costs = np.zeros(len(true_intents), dtype=np.float64)
     counts: Counter[str] = Counter()
-    for index, (true_intent, predicted_intent) in enumerate(
-        zip(true_intents, predicted_intents, strict=True)
-    ):
+    pairs = zip(true_intents, predicted_intents, strict=True)
+    for index, (true_intent, predicted_intent) in enumerate(pairs):
         if float(confidence[index]) < threshold:
             event = "human_escalation"
         else:
@@ -192,7 +198,10 @@ def _risk_at_coverage(
     coverage: float,
 ) -> dict[str, float | int]:
     accepted = max(1, min(len(errors), round(coverage * len(errors))))
-    order = sorted(range(len(errors)), key=lambda index: (-float(confidence[index]), sample_ids[index]))
+    order = sorted(
+        range(len(errors)),
+        key=lambda index: (-float(confidence[index]), sample_ids[index]),
+    )
     selected = np.asarray(order[:accepted], dtype=np.int64)
     return {
         "coverage": coverage,
@@ -234,14 +243,16 @@ def _paired_bootstrap(
     n_rows = len(errors)
     accepted = round(coverage * n_rows)
     tie_rank = np.empty(n_rows, dtype=np.int64)
-    for rank, index in enumerate(sorted(range(n_rows), key=lambda idx: sample_ids[idx])):
+    sample_order = sorted(range(n_rows), key=lambda index: sample_ids[index])
+    for rank, index in enumerate(sample_order):
         tie_rank[index] = rank
 
     h3 = np.empty(replicates, dtype=np.float64)
     h4 = np.empty(replicates, dtype=np.float64)
     for replicate in range(replicates):
         sampled = rng.integers(0, n_rows, size=n_rows)
-        h3[replicate] = float(np.mean(calibrated_costs[sampled] - raw_costs[sampled]))
+        difference = calibrated_costs[sampled] - raw_costs[sampled]
+        h3[replicate] = float(np.mean(difference))
 
         sampled_errors = errors[sampled]
         sampled_confidence = confidence[sampled]
@@ -252,8 +263,14 @@ def _paired_bootstrap(
         h4[replicate] = selective - full
 
     return {
-        "H3_temperature_minus_raw_cost_CI": _percentile_interval(h3, confidence_level),
-        "H4_selective_minus_full_risk_CI": _percentile_interval(h4, confidence_level),
+        "H3_temperature_minus_raw_cost_CI": _percentile_interval(
+            h3,
+            confidence_level,
+        ),
+        "H4_selective_minus_full_risk_CI": _percentile_interval(
+            h4,
+            confidence_level,
+        ),
         "replicates": replicates,
         "seed": seed,
         "confidence_level": confidence_level,
@@ -283,14 +300,15 @@ def _write_predictions(
             ],
         )
         writer.writeheader()
-        for example, raw_index, calibrated_index, raw_row, calibrated_row in zip(
+        rows = zip(
             examples,
             raw_pred,
             calibrated_pred,
             raw_probabilities,
             calibrated_probabilities,
             strict=True,
-        ):
+        )
+        for example, raw_index, calibrated_index, raw_row, calibrated_row in rows:
             if int(raw_index) != int(calibrated_index):
                 raise RuntimeError("temperature scaling changed the predicted class")
             writer.writerow(
@@ -337,7 +355,8 @@ def _report(result: dict[str, Any]) -> str:
 def run(output_dir: Path, authorization: str) -> dict[str, object]:
     preflight_result = preflight()
     if authorization != AUTHORIZATION_TOKEN:
-        raise PermissionError("confirmatory test access requires the exact frozen authorization token")
+        message = "confirmatory test access requires the exact frozen authorization token"
+        raise PermissionError(message)
 
     confirmatory = _read_json(CONFIRMATORY_CONFIG_PATH)
     selected = _read_json(SELECTED_CONFIG_PATH)
@@ -367,8 +386,15 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
         source_test = data_api.load_csv(test_csv, "test")
 
     train, validation, quarantined = data_api.split_training_examples(source_train, spec)
-    data_api.verify_derived_contract(train, validation, source_test, quarantined, spec)
-    test_hash = data_api.sha256_bytes(data_api.canonical_jsonl_bytes(source_test, spec.source_revision))
+    data_api.verify_derived_contract(
+        train,
+        validation,
+        source_test,
+        quarantined,
+        spec,
+    )
+    test_bytes = data_api.canonical_jsonl_bytes(source_test, spec.source_revision)
+    test_hash = data_api.sha256_bytes(test_bytes)
     if test_hash != confirmatory["data"]["confirmatory_derived_sha256"]:
         raise ValueError("confirmatory derived test hash drifted")
 
@@ -379,16 +405,30 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
         raise ValueError("routing operations and trained label vocabulary drifted")
 
     x_train = [example.text for example in train]
-    y_train = np.asarray([label_to_index[example.intent] for example in train], dtype=np.int64)
+    y_train = np.asarray(
+        [label_to_index[example.intent] for example in train],
+        dtype=np.int64,
+    )
     x_test = [example.text for example in source_test]
-    y_test = np.asarray([label_to_index[example.intent] for example in source_test], dtype=np.int64)
+    y_test = np.asarray(
+        [label_to_index[example.intent] for example in source_test],
+        dtype=np.int64,
+    )
     true_intents = [example.intent for example in source_test]
-    sample_ids = [data_api.sample_id(example, spec.source_revision) for example in source_test]
+    sample_ids = [
+        data_api.sample_id(example, spec.source_revision) for example in source_test
+    ]
 
-    calibration = _load_module(CALIBRATION_SCRIPT_PATH, "helix_confirmatory_calibration")
+    calibration = _load_module(
+        CALIBRATION_SCRIPT_PATH,
+        "helix_confirmatory_calibration",
+    )
     raw_probabilities = calibration._fit_a2(x_train, y_train, x_test, a2_config)
     temperature = float(selected["calibration"]["temperature"])
-    calibrated_probabilities = calibration._temperature_apply(raw_probabilities, temperature)
+    calibrated_probabilities = calibration._temperature_apply(
+        raw_probabilities,
+        temperature,
+    )
     raw_predicted = np.argmax(raw_probabilities, axis=1)
     calibrated_predicted = np.argmax(calibrated_probabilities, axis=1)
     if not np.array_equal(raw_predicted, calibrated_predicted):
@@ -398,10 +438,13 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
     raw_confidence = np.max(raw_probabilities, axis=1)
     calibrated_confidence = np.max(calibrated_probabilities, axis=1)
     predicted_intents = [labels[int(index)] for index in raw_predicted]
-    primary_costs = {key: float(value) for key, value in cost_config["primary_matrix"]["costs"].items()}
+    cost_rows = cost_config["primary_matrix"]["costs"]
+    primary_costs = {key: float(value) for key, value in cost_rows.items()}
 
     raw_threshold = float(confirmatory["frozen_policies"]["A2_raw_threshold"])
-    calibrated_threshold = float(confirmatory["frozen_policies"]["A2_temperature_threshold"])
+    calibrated_threshold = float(
+        confirmatory["frozen_policies"]["A2_temperature_threshold"]
+    )
     raw_costs, raw_events = _policy_row_costs(
         true_intents,
         predicted_intents,
@@ -421,13 +464,18 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
 
     errors = raw_predicted != y_test
     coverage = float(confirmatory["H4_confirmatory"]["primary_coverage"])
-    fixed_coverage = _risk_at_coverage(errors, calibrated_confidence, sample_ids, coverage)
+    fixed_coverage = _risk_at_coverage(
+        errors,
+        calibrated_confidence,
+        sample_ids,
+        coverage,
+    )
     full_risk = float(np.mean(errors))
     threshold_mask = calibrated_confidence >= calibrated_threshold
     threshold_accepted = int(np.sum(threshold_mask))
-    threshold_risk = (
-        None if threshold_accepted == 0 else float(np.mean(errors[threshold_mask]))
-    )
+    threshold_risk = None
+    if threshold_accepted > 0:
+        threshold_risk = float(np.mean(errors[threshold_mask]))
 
     uncertainty = confirmatory["uncertainty"]
     bootstrap = _paired_bootstrap(
@@ -449,7 +497,12 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
     assert isinstance(h4_interval, list)
 
     fixed_coverage_points = {
-        str(value): _risk_at_coverage(errors, calibrated_confidence, sample_ids, value)
+        str(value): _risk_at_coverage(
+            errors,
+            calibrated_confidence,
+            sample_ids,
+            value,
+        )
         for value in (0.50, 0.70, 0.75, 0.90)
     }
 
@@ -490,7 +543,9 @@ def run(output_dir: Path, authorization: str) -> dict[str, object]:
             "verdict": _verdict(h3_interval),
             "raw_event_counts": dict(raw_events),
             "calibrated_event_counts": dict(calibrated_events),
-            "oos_independence_note": confirmatory["H3_confirmatory"]["independence_reason"],
+            "oos_independence_note": confirmatory["H3_confirmatory"][
+                "independence_reason"
+            ],
         },
         "H4_confirmatory": {
             "primary_estimand": confirmatory["H4_confirmatory"]["primary_estimand"],
