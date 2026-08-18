@@ -138,6 +138,24 @@ class RoutingPolicyConfig:
     threshold: float
     queue_by_intent: Mapping[str, str]
 
+    def __post_init__(self) -> None:
+        """Reject invalid direct construction as strictly as file-backed construction."""
+        if not self.model_id:
+            raise RoutingContractError("model_id must be non-empty")
+        if not self.model_version:
+            raise RoutingContractError("model_version must be non-empty")
+        if not math.isfinite(self.temperature) or self.temperature <= 0.0:
+            raise RoutingContractError("temperature must be positive and finite")
+        if not math.isfinite(self.threshold) or not 0.0 <= self.threshold <= 1.0:
+            raise RoutingContractError("threshold must be in [0, 1]")
+        if not self.queue_by_intent:
+            raise RoutingContractError("queue_by_intent must not be empty")
+        for intent, queue in self.queue_by_intent.items():
+            if not isinstance(intent, str) or not intent:
+                raise RoutingContractError("queue_by_intent keys must be non-empty strings")
+            if not isinstance(queue, str) or not queue:
+                raise RoutingContractError("queue_by_intent values must be non-empty strings")
+
 
 class RouteEndpoint:
     """Apply the frozen selective-routing policy to one validated ticket."""
@@ -186,8 +204,6 @@ class RouteEndpoint:
                 raise RoutingContractError(f"operation row for {intent!r} must be an object")
             typed_row = cast(dict[str, object], row)
             queues[intent] = _require_string(typed_row, "queue")
-        if not queues:
-            raise RoutingContractError("routing operations must declare at least one intent")
 
         config = RoutingPolicyConfig(
             model_id=model_id,
@@ -201,7 +217,7 @@ class RouteEndpoint:
     def handle(self, request: RouteRequest) -> RoutingDecision:
         """Return AUTO_ROUTE or an explicit safe escalation for one request."""
         try:
-            raw_probabilities = self._scorer.predict_proba(request.text)
+            raw_probabilities: object = self._scorer.predict_proba(request.text)
         except Exception:
             return self._system_failure(request, "routing_scorer_failure")
 
@@ -261,27 +277,33 @@ class RouteEndpoint:
 
 
 def _calibrated_ranking(
-    raw_probabilities: Mapping[str, float],
+    raw_probabilities: object,
     queue_by_intent: Mapping[str, str],
     temperature: float,
 ) -> list[RouteAlternative]:
-    expected_intents = set(queue_by_intent)
-    supplied_intents = set(raw_probabilities)
-    if supplied_intents != expected_intents:
-        missing = sorted(expected_intents - supplied_intents)
-        extra = sorted(supplied_intents - expected_intents)
-        raise RoutingContractError(
-            f"model output intent set drifted; missing={missing}, extra={extra}"
-        )
+    if not isinstance(raw_probabilities, Mapping):
+        raise RoutingContractError("model output must be an intent-probability mapping")
+    raw_mapping = cast(Mapping[object, object], raw_probabilities)
 
     validated: dict[str, float] = {}
-    for intent, value in raw_probabilities.items():
+    for intent, value in raw_mapping.items():
+        if not isinstance(intent, str):
+            raise RoutingContractError("model output intent keys must be strings")
         if isinstance(value, bool) or not isinstance(value, int | float):
             raise RoutingContractError(f"probability for {intent!r} must be numeric")
         probability = float(value)
         if not math.isfinite(probability) or probability < 0.0 or probability > 1.0:
             raise RoutingContractError(f"probability for {intent!r} is outside [0, 1]")
         validated[intent] = probability
+
+    expected_intents = set(queue_by_intent)
+    supplied_intents = set(validated)
+    if supplied_intents != expected_intents:
+        missing = sorted(expected_intents - supplied_intents)
+        extra = sorted(supplied_intents - expected_intents)
+        raise RoutingContractError(
+            f"model output intent set drifted; missing={missing}, extra={extra}"
+        )
 
     total = sum(validated.values())
     if not math.isfinite(total) or total <= 0.0:
