@@ -45,7 +45,7 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply audited source corrections
+      - name: Apply and verify audited fold correction
         id: source
         run: |
           python - <<'PY'
@@ -53,46 +53,37 @@ jobs:
 
           path = Path("benchmarks/routing/evaluate_calibration.py")
           text = path.read_text(encoding="utf-8")
-          old = '''    assignment = np.full(len(validation), -1, dtype=np.int64)
-          for label in labels:
-              ordered = sorted(label_to_rows[label])
-              for position, (_, row_index) in enumerate(ordered):
-                  assignment[row_index] = position % folds
-          '''
-          new = '''    assignment = np.full(len(validation), -1, dtype=np.int64)
-          for label in labels:
-              ordered = sorted(label_to_rows[label])
-              offset_digest = hashlib.sha256(f"{salt}\\t{label}".encode()).digest()
-              offset = int.from_bytes(offset_digest[:8], "big") % folds
-              for position, (_, row_index) in enumerate(ordered):
-                  assignment[row_index] = (position + offset) % folds
-          '''
-          if old in text:
-              text = text.replace(old, new)
-          path.write_text(text, encoding="utf-8")
+          old_line = "            assignment[row_index] = position % folds"
+          new_block = (
+              "        offset_digest = hashlib.sha256(f\"{salt}\\t{label}\".encode()).digest()\n"
+              "        offset = int.from_bytes(offset_digest[:8], \"big\") % folds\n"
+              "        for position, (_, row_index) in enumerate(ordered):\n"
+              "            assignment[row_index] = (position + offset) % folds"
+          )
+          old_loop = (
+              "        for position, (_, row_index) in enumerate(ordered):\n"
+              + old_line
+          )
+          if "offset_digest = hashlib.sha256" not in text:
+              if old_loop not in text:
+                  raise SystemExit("Expected legacy fold-assignment loop not found")
+              text = text.replace(old_loop, new_block, 1)
+              path.write_text(text, encoding="utf-8")
           PY
-          uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_calibration.py
           uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_calibration.py
           uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_calibration.py
+          grep -q 'offset_digest = hashlib.sha256' benchmarks/routing/evaluate_calibration.py
+          grep -q 'assignment\[row_index\] = (position + offset) % folds' benchmarks/routing/evaluate_calibration.py
+          ! grep -q 'assignment\[row_index\] = position % folds' benchmarks/routing/evaluate_calibration.py
           if git diff --quiet -- benchmarks/routing/evaluate_calibration.py; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Resolve calibration lock when absent or script changed
-        id: lock
+      - name: Verify committed calibration lock
         run: |
-          if [ ! -f benchmarks/routing/evaluate_calibration.py.lock ] || [ "${{ steps.source.outputs.changed }}" = "true" ]; then
-            rm -f benchmarks/routing/evaluate_calibration.py.lock
-            uv lock --script benchmarks/routing/evaluate_calibration.py
-            echo "generated=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "generated=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Audit CPU-only calibration lock
-        run: |
+          test -f benchmarks/routing/evaluate_calibration.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_calibration.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_calibration.py.lock
 
@@ -104,21 +95,19 @@ jobs:
       - name: Publish benchmark summary
         run: cat artifacts/phase2-routing/calibration/report.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload calibration evidence and lock
+      - name: Upload calibration evidence
         uses: actions/upload-artifact@v4
         with:
           name: phase2-routing-calibration-${{ github.sha }}
-          path: |
-            artifacts/phase2-routing/calibration/
-            benchmarks/routing/evaluate_calibration.py.lock
+          path: artifacts/phase2-routing/calibration/
           if-no-files-found: error
           retention-days: 14
 
-      - name: Commit audited source correction and calibration lock
-        if: (steps.source.outputs.changed == 'true' || steps.lock.outputs.generated == 'true') && github.event_name == 'pull_request'
+      - name: Commit audited fold correction
+        if: steps.source.outputs.changed == 'true' && github.event_name == 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/routing/evaluate_calibration.py benchmarks/routing/evaluate_calibration.py.lock
-          git commit -m "Balance and lock Phase 2 calibration folds"
+          git add benchmarks/routing/evaluate_calibration.py
+          git commit -m "Apply audited balanced calibration folds"
           git push origin "HEAD:${{ github.head_ref }}"
