@@ -15,6 +15,7 @@ on:
       - "configs/data/banking77.json"
       - "configs/models/routing_a2.json"
       - "configs/models/routing_calibration.json"
+      - "configs/models/routing_operations.json"
       - "configs/models/routing_oos.json"
       - "data/oos/routing_oos_v1.json"
       - "src/helix_support_intelligence/data/**"
@@ -65,7 +66,7 @@ jobs:
         run: |
           cp benchmarks/routing/evaluate_oos.py.lock benchmarks/routing/export_oos_operating_inputs.py.lock
           uv run --locked benchmarks/routing/export_oos_operating_inputs.py \
-            --output artifacts/phase2-routing/operating/oos_inputs.csv
+            --output-dir artifacts/phase2-routing/operating
           rm benchmarks/routing/export_oos_operating_inputs.py.lock
 
       - name: Publish OOS summary
@@ -77,6 +78,6 @@ jobs:
           name: phase2-routing-oos-${{ github.sha }}
           path: |
             artifacts/phase2-routing/oos/
-            artifacts/phase2-routing/operating/oos_inputs.csv
+            artifacts/phase2-routing/operating/
           if-no-files-found: error
           retention-days: 14
