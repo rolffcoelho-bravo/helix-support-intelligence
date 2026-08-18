@@ -3,7 +3,7 @@
 > Production-oriented search, routing, recommendation, and evidence-grounded assistance for customer-support operations.
 
 [![CI](https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/workflows/ci.yml)
-[![Status](https://img.shields.io/badge/status-Phase%201%20complete-1f6f5b)](#project-status)
+[![Status](https://img.shields.io/badge/status-Phase%202%20active-d97706)](#project-status)
 [![Python](https://img.shields.io/badge/python-3.12%2B-3776ab)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-6b7280)](LICENSE)
 
@@ -36,7 +36,7 @@ No performance result is claimed before a frozen, reproducible benchmark produce
 | Baseline | pending | pending | pending | pending | pending |
 | Release candidate | pending | pending | pending | pending | pending |
 
-Phase 2 development evidence is kept separate from release evidence. The current A0/A1 validation checkpoint is documented under `benchmarks/routing/results/`; it does not populate this release table because the confirmatory test remains unopened.
+Phase 2 development evidence is kept separate from release evidence. The A0/A1 and A2 validation checkpoints are documented under `benchmarks/routing/results/`; they do not populate this release table because the confirmatory test remains unopened and Phase 2 model selection is incomplete.
 
 ## Product workflow
 
@@ -154,11 +154,13 @@ The repository foundation and Phase 1 data/evaluation contracts are complete. Ph
 
 1. reproducible engineering foundation — **complete**;
 2. public-data and evaluation contracts — **complete**;
-3. ticket-routing baseline — **active; A0/A1 checkpoint complete, A2 next**;
+3. ticket-routing baseline — **active; A0/A1/A2 development checkpoints complete, A3 next**;
 4. hybrid retrieval and ranking;
 5. evidence-grounded assistance;
 6. safety, observability, and system validation;
 7. measured public release.
+
+Within Phase 2, A2 is currently the leading validation candidate and A1 remains the required simpler reference. This is a development status, not a release claim: calibration selection, out-of-scope evaluation, routing-cost analysis, A3, the operating threshold, and the registered confirmatory test remain unresolved.
 
 The project reaches completion at a documented `v1.0.0` release. Further domains or capabilities will be treated as separate post-v1 work rather than unfinished obligations of the initial repository.
 
