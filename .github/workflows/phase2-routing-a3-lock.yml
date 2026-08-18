@@ -1,0 +1,60 @@
+name: Phase 2 Routing A3 Lock
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-a3-lock.yml"
+      - "benchmarks/routing/evaluate_a3.py"
+      - "configs/models/routing_a3.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase2-routing-a3-lock-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  freeze-a3-environment:
+    name: Freeze A3 CPU environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Resolve A3 lock
+        id: lock
+        run: |
+          if [ ! -f benchmarks/routing/evaluate_a3.py.lock ]; then
+            uv lock --script benchmarks/routing/evaluate_a3.py
+            echo "generated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "generated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Audit CPU-only dependency graph
+        run: |
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_a3.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_a3.py.lock
+          uv run --locked benchmarks/routing/evaluate_a3.py --help >/dev/null
+
+      - name: Commit frozen A3 lock
+        if: steps.lock.outputs.generated == 'true' && github.event_name == 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/routing/evaluate_a3.py.lock
+          git commit -m "Lock A3 CPU benchmark environment"
+          git push origin "HEAD:${{ github.head_ref }}"
