@@ -102,7 +102,10 @@ def preflight() -> dict[str, object]:
         raise ValueError("confirmatory authorization token drifted")
     if confirmatory["H3_confirmatory"]["scope"] != "independent_in_domain_component_only":
         raise ValueError("H3 confirmatory scope drifted")
-    if confirmatory["H3_confirmatory"]["full_original_mixed_endpoint_confirmed_by_this_test"] is not False:
+    full_mixed_confirmed = confirmatory["H3_confirmatory"][
+        "full_original_mixed_endpoint_confirmed_by_this_test"
+    ]
+    if full_mixed_confirmed is not False:
         raise ValueError("H3 mixed-endpoint interpretation drifted")
     if selected["version"] != "routing-selected-v1" or selected["model"]["id"] != "A2":
         raise ValueError("selected model drifted")
@@ -143,7 +146,7 @@ def preflight() -> dict[str, object]:
         raise ValueError("confirmatory raw test hash contract drifted")
     expected_derived = confirmatory["data"]["confirmatory_derived_sha256"]
     if expected["jsonl_sha256"]["test"] != expected_derived:
-        raise ValueError("confirmatory derived test hash contract drifted")
+        raise ValueError("confirmatory derived test hash drifted")
 
     return {
         "status": "preflight_passed",
