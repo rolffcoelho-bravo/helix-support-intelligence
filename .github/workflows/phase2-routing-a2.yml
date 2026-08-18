@@ -1,0 +1,66 @@
+name: Phase 2 Routing A2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-a2.yml"
+      - "benchmarks/routing/evaluate_a2.py"
+      - "benchmarks/routing/evaluate_a2.py.lock"
+      - "benchmarks/routing/results/a0_a1_validation_v1.json"
+      - "configs/data/banking77.json"
+      - "configs/models/routing_a2.json"
+      - "src/helix_support_intelligence/data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-routing-a2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  a2-validation:
+    name: A2 frozen validation benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Resolve script lock when absent
+        run: |
+          if [ ! -f benchmarks/routing/evaluate_a2.py.lock ]; then
+            uv lock --script benchmarks/routing/evaluate_a2.py
+          fi
+
+      - name: Run frozen A2 validation benchmark
+        run: >-
+          uv run --locked benchmarks/routing/evaluate_a2.py
+          --output-dir artifacts/phase2-routing/a2
+
+      - name: Publish benchmark summary
+        run: cat artifacts/phase2-routing/a2/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload A2 evidence and resolved lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-routing-a2-${{ github.sha }}
+          path: |
+            artifacts/phase2-routing/a2/
+            benchmarks/routing/evaluate_a2.py.lock
+          if-no-files-found: error
+          retention-days: 14
