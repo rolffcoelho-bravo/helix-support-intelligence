@@ -1,0 +1,291 @@
+{
+  "version": "routing-oos-v1",
+  "status": "frozen_before_model_scoring",
+  "domain": "fictional digital-banking support",
+  "expected_scope": "out_of_scope",
+  "query_count": 160,
+  "category_count": 20,
+  "construction_rule": "Hand-authored support-like requests covering banking-adjacent capabilities absent from the frozen BANKING77 77-intent taxonomy. Exact query text is the benchmark source of truth.",
+  "categories": [
+    {
+      "id": "direct_debit_management",
+      "tier": "near",
+      "queries": [
+        "How do I cancel a direct debit that I set up myself?",
+        "I want to stop a known direct debit before the next collection.",
+        "Can I create a new direct debit mandate in the app?",
+        "Where can I see and manage my active direct debit mandates?",
+        "Please pause my gym direct debit for next month.",
+        "Can I change the bank account used for an existing direct debit?",
+        "I recognise this direct debit, but I want to revoke the mandate.",
+        "How far in advance do I need to cancel a scheduled direct debit?"
+      ]
+    },
+    {
+      "id": "standing_orders_scheduled_payments",
+      "tier": "near",
+      "queries": [
+        "How do I set up a standing order for my rent every month?",
+        "Can I edit the amount of a recurring bank payment I scheduled?",
+        "I need to cancel a standing order, not a one-off transfer.",
+        "Where are my scheduled recurring payments shown?",
+        "Can a standing order run on the last working day of each month?",
+        "My recurring payment is due tomorrow; can I skip just this occurrence?",
+        "How do I change the beneficiary on an existing standing order?",
+        "Can I create a weekly scheduled payment from this account?"
+      ]
+    },
+    {
+      "id": "overdrafts_credit_lines",
+      "tier": "near",
+      "queries": [
+        "Can I apply for an overdraft on this account?",
+        "What overdraft limit could I qualify for?",
+        "How much interest do you charge when my balance goes below zero?",
+        "Please increase my arranged overdraft limit.",
+        "Can I disable the overdraft so payments are declined instead?",
+        "Why was I charged overdraft interest this month?",
+        "How do I repay the overdraft balance?",
+        "Does this account offer an emergency credit line?"
+      ]
+    },
+    {
+      "id": "account_statements_bank_references",
+      "tier": "near",
+      "queries": [
+        "I need a stamped bank statement for my visa application.",
+        "Can you issue a bank reference letter showing how long I have been a customer?",
+        "Where can I download a twelve-month account statement as PDF?",
+        "I need a certified statement with my address on it.",
+        "Can the bank send an official balance confirmation letter to my accountant?",
+        "How do I order paper statements by post?",
+        "I need a statement covering a custom date range for an embassy.",
+        "Can I get an official proof-of-account letter with my IBAN and name?"
+      ]
+    },
+    {
+      "id": "joint_accounts_guardians",
+      "tier": "near",
+      "queries": [
+        "Can I add my spouse as a joint account holder?",
+        "How do we open a joint account with two account owners?",
+        "Can a parent manage an account for a child under sixteen?",
+        "I need to remove a joint holder after a separation.",
+        "Do both joint owners have to approve large payments?",
+        "Can my legal guardian be given account access?",
+        "How are cards issued for a joint account?",
+        "Can two people have separate logins for the same joint account?"
+      ]
+    },
+    {
+      "id": "credit_card_rewards_points",
+      "tier": "near",
+      "queries": [
+        "How many reward points do I earn on card purchases?",
+        "Can I redeem my card points for airline miles?",
+        "My cashback rewards did not post this month.",
+        "Which purchases qualify for credit card rewards?",
+        "Do reward points expire if I do not use them?",
+        "Can I transfer my loyalty points to another person?",
+        "Why did this purchase earn fewer reward points than expected?",
+        "Where can I see my current cashback and rewards balance?"
+      ]
+    },
+    {
+      "id": "savings_interest_term_deposits",
+      "tier": "near",
+      "queries": [
+        "What interest rate do you pay on savings accounts?",
+        "Can I open a six-month fixed term deposit?",
+        "When is savings interest credited to the account?",
+        "What happens if I withdraw a term deposit before maturity?",
+        "Do you offer a higher rate if I lock my money for one year?",
+        "How is interest calculated on my savings balance?",
+        "Can I automatically move part of my salary into a savings pot?",
+        "My fixed deposit matures next week; how do I change the renewal instruction?"
+      ]
+    },
+    {
+      "id": "branch_services_safe_deposit",
+      "tier": "near",
+      "queries": [
+        "Can I book an appointment at a physical branch?",
+        "Which branch has a safe deposit box available?",
+        "I need a document notarised by a bank officer at a branch.",
+        "Can I collect certified documents from a branch instead of by post?",
+        "What identification should I bring to a branch appointment?",
+        "Do you provide safe deposit boxes for jewellery and documents?",
+        "Can I arrange a face-to-face meeting with a branch manager?",
+        "Which branch services require an appointment?"
+      ]
+    },
+    {
+      "id": "estate_probate_inheritance",
+      "tier": "near",
+      "queries": [
+        "My father died and I need to notify the bank about his account.",
+        "What documents does an executor need to access a deceased customer's funds?",
+        "Can you release money from an estate account before probate is completed?",
+        "How do I close an account belonging to someone who has died?",
+        "I am the beneficiary of an estate; how can the bank transfer the inheritance?",
+        "Does the bank need an original death certificate or is a copy enough?",
+        "Can funeral expenses be paid directly from a deceased customer's account?",
+        "How do I register probate authority with the bank?"
+      ]
+    },
+    {
+      "id": "regulatory_complaints_ombudsman",
+      "tier": "near",
+      "queries": [
+        "How do I file a formal complaint against the bank?",
+        "I want a final response letter so I can contact the financial ombudsman.",
+        "What is your official complaints escalation process?",
+        "Can I ask for an independent review of how support handled my case?",
+        "Where do I send a regulatory complaint about the service I received?",
+        "How long does the bank have to issue a formal complaint decision?",
+        "I disagree with the complaint outcome; what external appeal route is available?",
+        "Please register this as a formal complaint rather than a normal support ticket."
+      ]
+    },
+    {
+      "id": "mortgage_home_loans",
+      "tier": "medium",
+      "queries": [
+        "Can I apply for a mortgage through this bank?",
+        "What deposit would I need for a first-home mortgage?",
+        "Can I switch my mortgage from another lender to you?",
+        "How do fixed and variable mortgage rates compare?",
+        "I want to make an extra repayment on my home loan.",
+        "Can I get a mortgage agreement in principle before making an offer?",
+        "What happens to my mortgage payment if interest rates rise?",
+        "Do you charge an early repayment fee on home loans?"
+      ]
+    },
+    {
+      "id": "personal_loans",
+      "tier": "medium",
+      "queries": [
+        "Can I apply for a personal loan in the app?",
+        "What interest rate would I get on a ten thousand euro loan?",
+        "Can I repay my personal loan early without a penalty?",
+        "How do I change the monthly repayment date on my loan?",
+        "I need to borrow money for a car; what loan terms do you offer?",
+        "Can I increase an existing personal loan?",
+        "Where can I see the remaining balance on my loan?",
+        "What happens if I miss a personal loan repayment?"
+      ]
+    },
+    {
+      "id": "credit_score_reporting",
+      "tier": "medium",
+      "queries": [
+        "Can I see my credit score inside the banking app?",
+        "Why did my credit score fall after opening this account?",
+        "Do you report account activity to the credit bureaus?",
+        "How can I dispute incorrect information on my credit report?",
+        "Will checking my loan eligibility affect my credit score?",
+        "Can you give me a copy of the credit information you reported about me?",
+        "How long does a missed payment stay on my credit file?",
+        "Which credit bureau does the bank use for lending decisions?"
+      ]
+    },
+    {
+      "id": "investments_brokerage",
+      "tier": "medium",
+      "queries": [
+        "Can I buy shares through this account?",
+        "How do I open an investment or brokerage account?",
+        "What fees do you charge for buying ETFs?",
+        "Can I transfer my stock portfolio from another broker?",
+        "Where can I see dividends paid on my investments?",
+        "Do you offer automatic monthly investing into index funds?",
+        "How do I sell a share position and withdraw the proceeds?",
+        "Can I place a limit order for a stock from the app?"
+      ]
+    },
+    {
+      "id": "insurance_products_claims",
+      "tier": "medium",
+      "queries": [
+        "Does my account include travel insurance?",
+        "How do I submit a claim under the phone insurance policy?",
+        "Can I buy home insurance through the bank?",
+        "What documents are required for a travel insurance claim?",
+        "I want to cancel the insurance policy linked to my account.",
+        "Is rental car damage covered by the insurance benefit?",
+        "Where can I download my insurance certificate?",
+        "My insurance claim was rejected; how do I appeal it?"
+      ]
+    },
+    {
+      "id": "business_merchant_services",
+      "tier": "medium",
+      "queries": [
+        "Can my shop accept card payments using your merchant terminal?",
+        "How do I apply for a point-of-sale card reader for my business?",
+        "What merchant fee do you charge for each customer card payment?",
+        "Can I integrate your payment gateway with my online store?",
+        "My merchant settlement has not reached the business account yet.",
+        "How do I refund a customer through the merchant terminal?",
+        "Do you support contactless payments on business card readers?",
+        "Can I have multiple payment terminals for different shop locations?"
+      ]
+    },
+    {
+      "id": "business_payroll_accounts",
+      "tier": "medium",
+      "queries": [
+        "Can I open a business current account for my company?",
+        "How do I upload a payroll file for all my employees?",
+        "Can two company directors approve payments together?",
+        "I need to add my accountant as a business account user.",
+        "Do you support bulk salary payments from a business account?",
+        "How do I change the authorised signatories on a company account?",
+        "Can I set different payment limits for employees using the business account?",
+        "Where can I download monthly business account statements for bookkeeping?"
+      ]
+    },
+    {
+      "id": "tax_documents_advice",
+      "tier": "medium",
+      "queries": [
+        "Can you provide an annual tax certificate for the interest I earned?",
+        "Which tax form do I need for income received into this account?",
+        "How can I download a year-end statement for my tax return?",
+        "Do you withhold tax automatically from savings interest?",
+        "Can the bank tell me whether this transfer is taxable?",
+        "I moved countries this year; which tax residency form should I submit?",
+        "Where can I find the tax identification details the bank has for me?",
+        "Can you advise how I should declare my account on my tax return?"
+      ]
+    },
+    {
+      "id": "app_accessibility_localization",
+      "tier": "far_support",
+      "queries": [
+        "How do I change the app language to Portuguese?",
+        "Does the mobile app support screen readers?",
+        "Can I increase the text size inside the banking app?",
+        "Where is the dark mode setting?",
+        "The app is not usable with my accessibility keyboard; what can I change?",
+        "Can I switch the date format from month-day-year to day-month-year?",
+        "How do I enable high-contrast mode in the app?",
+        "Is the app available in Spanish?"
+      ]
+    },
+    {
+      "id": "customer_service_complaints",
+      "tier": "far_support",
+      "queries": [
+        "Can I request a transcript of my last support chat?",
+        "How do I reopen a support ticket that was closed too early?",
+        "Can I choose to speak with the same support agent again?",
+        "Where can I rate the help I received from customer support?",
+        "I want support to call me rather than continue by chat.",
+        "How do I change the email address used only for support notifications?",
+        "Can I export my support conversation history?",
+        "What are the customer service opening hours on weekends?"
+      ]
+    }
+  ]
+}
