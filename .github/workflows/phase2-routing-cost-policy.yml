@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: phase2-routing-cost-policy-${{ github.workflow }}-${{ github.ref }}
@@ -35,10 +35,8 @@ jobs:
       TOKENIZERS_PARALLELISM: "false"
 
     steps:
-      - name: Check out head branch
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -46,61 +44,10 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply mechanical source fixes
-        id: source
+      - name: Verify frozen cost source and OOS scientific environment
         run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("benchmarks/routing/evaluate_cost_policy.py")
-          text = path.read_text(encoding="utf-8")
-          replacements = {
-              '            "> Development evidence using synthetic scenario costs. The weights are not real-bank economics, and the confirmatory BANKING77 test split remains unopened.",': (
-                  '            (\n'
-                  '                "> Development evidence using synthetic scenario costs. The weights are not "\n'
-                  '                "real-bank economics, and the confirmatory BANKING77 test split remains "\n'
-                  '                "unopened."\n'
-                  '            ),'
-              ),
-              '            "| Candidate | Threshold | Expected cost | ID coverage | ID selective risk | OOS escalation |",': (
-                  '            (\n'
-                  '                "| Candidate | Threshold | Expected cost | ID coverage | "\n'
-                  '                "ID selective risk | OOS escalation |"\n'
-                  '            ),'
-              ),
-              '                "| {candidate} | {threshold:.6f} | {cost:.4f} | {coverage:.2%} | {risk:.2%} | {oos:.2%} |".format(': (
-                  '                (\n'
-                  '                    "| {candidate} | {threshold:.6f} | {cost:.4f} | {coverage:.2%} | "\n'
-                  '                    "{risk:.2%} | {oos:.2%} |"\n'
-                  '                ).format('
-              ),
-              '            (\n                "H4 development status: **supported**; the cost-selected policy reduces "\n                f"expected cost versus full automation by {float(h4[\'expected_cost_reduction_vs_full_automation\']):.4f}."\n            ),': (
-                  '            (\n'
-                  '                "H4 development status: **supported**; the cost-selected policy reduces "\n'
-                  '                "expected cost versus full automation by {:.4f}.".format(\n'
-                  '                    float(h4["expected_cost_reduction_vs_full_automation"])\n'
-                  '                )\n'
-                  '            ),'
-              ),
-          }
-          changed = False
-          for old, new in replacements.items():
-              if old in text:
-                  text = text.replace(old, new, 1)
-                  changed = True
-          if changed:
-              path.write_text(text, encoding="utf-8")
-          PY
-          uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_cost_policy.py
           uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_cost_policy.py
-          if git diff --quiet -- benchmarks/routing/evaluate_cost_policy.py; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Verify frozen OOS scientific environment
-        run: |
+          uvx --from ruff==0.16.3 ruff format --check benchmarks/routing/evaluate_cost_policy.py
           test -f benchmarks/routing/evaluate_oos.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
@@ -131,12 +78,3 @@ jobs:
             artifacts/phase2-routing/operating/
           if-no-files-found: error
           retention-days: 14
-
-      - name: Commit mechanical source fixes
-        if: steps.source.outputs.changed == 'true' && github.event_name == 'pull_request'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/routing/evaluate_cost_policy.py
-          git commit -m "Fix Phase 2 routing cost benchmark formatting"
-          git push origin "HEAD:${{ github.head_ref }}"
