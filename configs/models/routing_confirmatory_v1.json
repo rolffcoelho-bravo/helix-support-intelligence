@@ -1,0 +1,110 @@
+{
+  "version": "routing-confirmatory-v1",
+  "phase": 2,
+  "status": "frozen_before_confirmatory_test_open",
+  "purpose": "One registered confirmatory evaluation of the already-frozen Phase 2 A2 routing configuration. The test result cannot alter model, calibration, threshold, cost weights, or hypotheses.",
+  "data": {
+    "dataset_contract": "banking77-helix-v1",
+    "fit_partition": "train",
+    "fit_rows": 7904,
+    "fit_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "confirmatory_partition": "test",
+    "confirmatory_rows": 3080,
+    "confirmatory_source_sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+    "confirmatory_derived_sha256": "4c519f47e6d1c640ccb71d322c3cb9b810642bd42ea4d8395293e0044952c468",
+    "validation_may_be_used_for_new_selection": false,
+    "test_may_be_used_for_selection_or_tuning": false
+  },
+  "model": {
+    "id": "A2",
+    "config": "configs/models/routing_a2.json",
+    "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+    "encoder_revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "classifier": "logistic_regression",
+    "classifier_fit_partition": "train_only"
+  },
+  "calibration": {
+    "method": "temperature_scaling",
+    "temperature": 0.457974,
+    "temperature_may_be_refit_on_test": false
+  },
+  "frozen_policies": {
+    "A2_raw_threshold": 0.367217,
+    "A2_temperature_threshold": 0.892704,
+    "automatic_route_rule": "confidence >= threshold",
+    "thresholds_may_move_after_test": false
+  },
+  "cost": {
+    "matrix": "balanced_risk_v1",
+    "config": "configs/models/routing_cost_matrix.json",
+    "event_costs": {
+      "correct_route": 0.0,
+      "wrong_intent_same_queue": 2.5,
+      "wrong_queue": 6.0,
+      "unsafe_high_risk_auto_route": 20.0,
+      "human_escalation": 1.0
+    },
+    "weights_are_synthetic_scenario_assumptions": true,
+    "weights_are_real_bank_economics": false
+  },
+  "H3_confirmatory": {
+    "question": "Does the frozen calibrated A2 decision policy reduce damaging automatic-routing cost relative to the frozen raw-A2 comparator on independent BANKING77 test cases?",
+    "primary_estimand": "mean_test_in_domain_cost_A2_temperature_minus_A2_raw",
+    "independence_reason": "Only the BANKING77 test in-domain component is unseen. The 160-query synthetic OOS benchmark was used during development and therefore cannot supply independent confirmatory evidence.",
+    "raw_policy": "A2 raw confidence with threshold 0.367217",
+    "calibrated_policy": "A2 temperature-scaled confidence with temperature 0.457974 and threshold 0.892704",
+    "support_rule": "supported if the paired-bootstrap 95% confidence interval upper bound for temperature-minus-raw mean in-domain cost is below 0",
+    "unsupported_rule": "unsupported if the paired-bootstrap 95% confidence interval lower bound is at or above 0",
+    "inconclusive_rule": "inconclusive otherwise",
+    "development_oos_mixture_role": "auxiliary_context_only_not_independent_confirmatory_evidence"
+  },
+  "H4_confirmatory": {
+    "question": "Does selective abstention reduce routing error risk on independent BANKING77 test cases?",
+    "primary_coverage": 0.75,
+    "primary_estimand": "selective_risk_at_75pct_confidence_ranked_coverage_minus_full_automation_risk",
+    "coverage_rule": "accept exactly round(0.75 * 3080) highest calibrated-confidence test rows; stable sample-id order breaks exact-confidence ties",
+    "support_rule": "supported if the paired-bootstrap 95% confidence interval upper bound for selective-risk-minus-full-risk is below 0",
+    "unsupported_rule": "unsupported if the paired-bootstrap 95% confidence interval lower bound is at or above 0",
+    "inconclusive_rule": "inconclusive otherwise",
+    "frozen_threshold_secondary": "also report realized coverage, selective risk, event counts, and in-domain cost at threshold 0.892704 without changing that threshold"
+  },
+  "uncertainty": {
+    "method": "paired_nonparametric_percentile_bootstrap",
+    "replicates": 5000,
+    "confidence_level": 0.95,
+    "seed": 20260819,
+    "H3_resampling_unit": "BANKING77 test row; paired raw/calibrated row costs retained together",
+    "H4_resampling_unit": "BANKING77 test row; full automation and 75% selective policy recomputed within each bootstrap sample"
+  },
+  "required_reports": [
+    "accuracy",
+    "macro_f1",
+    "balanced_accuracy",
+    "top3_recall",
+    "expected_calibration_error_15bin",
+    "multiclass_brier_score",
+    "negative_log_likelihood",
+    "risk_at_50pct_coverage",
+    "risk_at_70pct_coverage",
+    "risk_at_75pct_coverage",
+    "risk_at_90pct_coverage",
+    "frozen_threshold_coverage",
+    "frozen_threshold_selective_risk",
+    "frozen_threshold_event_counts",
+    "H3_primary_difference_and_95pct_CI",
+    "H4_primary_difference_and_95pct_CI"
+  ],
+  "governance": {
+    "one_registered_scientific_result": true,
+    "automatic_workflow_trigger_allowed": false,
+    "manual_authorization_token": "OPEN_FROZEN_TEST_ONCE",
+    "rerun_after_scientific_result_for_selection_or_tuning": false,
+    "infrastructure_failure_before_any_test_metric_is_emitted_may_be_retried": true,
+    "test_result_may_change_model": false,
+    "test_result_may_change_calibration": false,
+    "test_result_may_change_threshold": false,
+    "test_result_may_change_cost_matrix": false,
+    "test_result_may_change_hypothesis_definition": false,
+    "phase3_may_start_before_phase2_close": false
+  }
+}
