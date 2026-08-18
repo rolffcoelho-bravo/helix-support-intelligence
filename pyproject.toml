@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "helix-support-intelligence"
+version = "0.1.0"
+description = "Production-oriented support intelligence with bounded, evidence-grounded decisions."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+  { name = "Rodolfo Pereira" },
+]
+keywords = [
+  "customer-support",
+  "information-retrieval",
+  "machine-learning",
+  "ranking",
+  "responsible-ai",
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/rolffcoelho-bravo/helix-support-intelligence"
+Repository = "https://github.com/rolffcoelho-bravo/helix-support-intelligence"
+Issues = "https://github.com/rolffcoelho-bravo/helix-support-intelligence/issues"
+
+[project.scripts]
+helix = "helix_support_intelligence.__main__:main"
+
+[dependency-groups]
+dev = [
+  "mypy>=1.18,<2",
+  "pytest>=8.4,<10",
+  "ruff>=0.14,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/helix_support_intelligence"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -q"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "RUF", "SIM", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests", "scripts"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = true

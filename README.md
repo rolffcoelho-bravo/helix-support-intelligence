@@ -2,9 +2,10 @@
 
 > Production-oriented search, routing, recommendation, and evidence-grounded assistance for customer-support operations.
 
-[![Status](https://img.shields.io/badge/status-foundation-18212f)](#project-status)
+[![CI](https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/workflows/ci.yml)
+[![Status](https://img.shields.io/badge/status-Phase%200%20complete-1f6f5b)](#project-status)
 [![Python](https://img.shields.io/badge/python-3.12%2B-3776ab)](https://www.python.org/)
-[![Domain](https://img.shields.io/badge/domain-applied%20AI-7c3aed)](#what-helix-does)
+[![License](https://img.shields.io/badge/license-Apache--2.0-6b7280)](LICENSE)
 
 Helix Support Intelligence is a public applied-AI engineering project focused on a demanding operational question:
 
@@ -26,6 +27,15 @@ Helix is designed to support a fictional digital-banking service desk. It proces
 
 The repository uses public or fictional data. It does not connect to real bank accounts, initiate transactions, or contain real customer information.
 
+## Current release evidence
+
+No performance result is claimed before a frozen, reproducible benchmark produces it.
+
+| System | Routing macro-F1 | nDCG@10 | Unsupported claims | P95 latency | Cost/request |
+|---|---:|---:|---:|---:|---:|
+| Baseline | pending | pending | pending | pending | pending |
+| Release candidate | pending | pending | pending | pending | pending |
+
 ## Product workflow
 
 ```mermaid
@@ -37,6 +47,8 @@ flowchart LR
     E -->|Supported| F[Response or recommendation]
     E -->|Uncertain| G[Human escalation]
 ```
+
+The public [product contract](docs/product-contract.md) defines the finite v1 scope and every allowed terminal decision. The [architecture record](docs/architecture.md) describes the production boundaries without exposing confidential implementation material.
 
 ## Core capabilities
 
@@ -75,6 +87,30 @@ Helix is being developed as a production-shaped repository rather than a noteboo
 
 Exploratory notebooks may support analysis, but they will not contain the authoritative production implementation.
 
+## Quick start
+
+Prerequisites: Python 3.12+ and [uv](https://docs.astral.sh/uv/).
+
+```bash
+git clone https://github.com/rolffcoelho-bravo/helix-support-intelligence.git
+cd helix-support-intelligence
+make setup
+make quality
+uv run helix
+```
+
+The command returns foundation metadata and the declared terminal-decision vocabulary. It does not simulate a completed ML system.
+
+The stable development commands are:
+
+```bash
+make lint            # static lint and formatting checks
+make typecheck       # strict typing
+make test            # unit tests
+make publication-audit
+make quality         # all release-blocking Phase 0 checks
+```
+
 ## Technology direction
 
 The planned stack is centered on Python, FastAPI, scikit-learn, PyTorch, Transformers, hybrid information retrieval, MLflow, OpenTelemetry, PostgreSQL, Redis, Docker Compose, and GitHub Actions.
@@ -107,14 +143,14 @@ The public implementation will not include:
 - autonomous financial actions;
 - claims of real-world impact unsupported by deployment evidence.
 
-Security concerns should be reported through the repository's responsible-disclosure process once `SECURITY.md` is published.
+Security concerns should be reported through the process in [SECURITY.md](SECURITY.md). Do not open a public issue for a suspected vulnerability.
 
 ## Project status
 
-Helix is currently in its repository-foundation stage. Public development will proceed through a finite sequence:
+The repository foundation is complete. Public development proceeds through a finite sequence:
 
-1. reproducible engineering foundation;
-2. public-data and evaluation contracts;
+1. reproducible engineering foundation — **complete**;
+2. public-data and evaluation contracts — **next**;
 3. ticket-routing baseline;
 4. hybrid retrieval and ranking;
 5. evidence-grounded assistance;
@@ -122,6 +158,8 @@ Helix is currently in its repository-foundation stage. Public development will p
 7. measured public release.
 
 The project reaches completion at a documented `v1.0.0` release. Further domains or capabilities will be treated as separate post-v1 work rather than unfinished obligations of the initial repository.
+
+The [Phase 0 exit report](docs/phase-reports/phase-0.md) records the checks used to close the foundation stage. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md), including the public-material review.
 
 ## Author
 
@@ -132,7 +170,7 @@ ShockBridge Pulse Research Lab
 
 Pereira, Rodolfo. (2026). *Helix Support Intelligence: Production-Oriented Search, Routing, Recommendation, and Evidence-Grounded Support AI*. ShockBridge Pulse Research Lab. Python research software.
 
-Formal citation metadata will be available in `CITATION.cff` as the implementation reaches its first public release.
+Machine-readable metadata is provided in [CITATION.cff](CITATION.cff).
 
 ## License
 
