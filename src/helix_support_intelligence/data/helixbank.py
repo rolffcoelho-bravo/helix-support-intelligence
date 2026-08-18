@@ -215,11 +215,7 @@ def _query(index: int, intent: str, variant: int) -> dict[str, object]:
     else:
         text = f"Can HelixBank complete the {title} action for me right now?"
         case_type = "conflicting_evidence" if faq_conflicting else "missing_evidence"
-        decision = (
-            "ESCALATE_CONFLICTING_EVIDENCE"
-            if faq_conflicting
-            else "ESCALATE_LOW_CONFIDENCE"
-        )
+        decision = "ESCALATE_CONFLICTING_EVIDENCE" if faq_conflicting else "ESCALATE_LOW_CONFIDENCE"
         citations = [policy_id] if faq_conflicting else []
 
     return {
