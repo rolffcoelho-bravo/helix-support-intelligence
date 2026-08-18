@@ -19,5 +19,6 @@ All notable public changes are documented here. The project follows semantic ver
 - Deterministic A0/A1 routing benchmark executed in GitHub Actions with reproducible evidence artifacts.
 - First public Phase 2 development checkpoint for the A1 TF-IDF + logistic-regression baseline, including calibration diagnostics, risk-coverage evidence, and confusion pairs.
 - Frozen A2 sentence-embedding benchmark using a pinned `all-MiniLM-L6-v2` revision plus the same linear classifier specification used for A1 comparison.
-- Committed uv script lock for the A2 scientific environment, preventing silent transitive dependency drift.
-- Reproducible A2 validation checkpoint with byte-identical independent reruns, A1 comparison, calibration diagnostics, risk-coverage evidence, confusion analysis, and descriptive CPU timing.
+- CPU-only PyTorch resolution and committed uv script lock for the A2 scientific environment, preventing silent transitive dependency or hardware-variant drift.
+- Audited A2 validation v2 checkpoint with exact decision reproducibility, bounded numerical reproducibility, A1 comparison, calibrated-risk diagnostics, full-count confusion analysis, and descriptive CPU timing.
+- Mandatory end-of-checkpoint execution-audit gate covering code correctness, metric interpretation, split integrity, reproducibility, dependency/hardware consistency, CI behavior, and public claim wording.
