@@ -7,6 +7,7 @@ on:
       - ".github/workflows/phase2-routing-oos.yml"
       - "benchmarks/routing/evaluate_oos.py"
       - "benchmarks/routing/evaluate_oos.py.lock"
+      - "benchmarks/routing/export_oos_operating_inputs.py"
       - "benchmarks/routing/evaluate_calibration.py"
       - "benchmarks/routing/evaluate_calibration.py.lock"
       - "benchmarks/routing/results/a0_a1_validation_v1.json"
@@ -30,7 +31,7 @@ jobs:
   oos-validation:
     name: Frozen OOS benchmark
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       OMP_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
@@ -49,8 +50,8 @@ jobs:
 
       - name: Verify frozen OOS source and CPU-only lock
         run: |
-          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_oos.py
-          uvx --from ruff==0.16.3 ruff format --check benchmarks/routing/evaluate_oos.py
+          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_oos.py benchmarks/routing/export_oos_operating_inputs.py
+          uvx --from ruff==0.16.3 ruff format --check benchmarks/routing/evaluate_oos.py benchmarks/routing/export_oos_operating_inputs.py
           test -f benchmarks/routing/evaluate_oos.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
@@ -60,13 +61,22 @@ jobs:
           uv run --locked benchmarks/routing/evaluate_oos.py
           --output-dir artifacts/phase2-routing/oos
 
+      - name: Export operating-point inputs without cost weights
+        run: |
+          cp benchmarks/routing/evaluate_oos.py.lock benchmarks/routing/export_oos_operating_inputs.py.lock
+          uv run --locked benchmarks/routing/export_oos_operating_inputs.py \
+            --output artifacts/phase2-routing/operating/oos_inputs.csv
+          rm benchmarks/routing/export_oos_operating_inputs.py.lock
+
       - name: Publish OOS summary
         run: cat artifacts/phase2-routing/oos/report.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload OOS evidence
+      - name: Upload OOS evidence and operating inputs
         uses: actions/upload-artifact@v4
         with:
           name: phase2-routing-oos-${{ github.sha }}
-          path: artifacts/phase2-routing/oos/
+          path: |
+            artifacts/phase2-routing/oos/
+            artifacts/phase2-routing/operating/oos_inputs.csv
           if-no-files-found: error
           retention-days: 14
