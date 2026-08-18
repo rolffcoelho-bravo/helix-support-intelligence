@@ -49,6 +49,18 @@ class FakeScorer(IntentScorer):
         return self._probabilities
 
 
+class ProtocolViolatingScorer(IntentScorer):
+    def __init__(self, output: object) -> None:
+        self._output = output
+
+    @property
+    def model_id(self) -> str:
+        return "A2"
+
+    def predict_proba(self, text: str) -> Mapping[str, float]:
+        return cast(Mapping[str, float], self._output)
+
+
 def _json(path: Path) -> dict[str, object]:
     payload: object = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
@@ -191,6 +203,25 @@ def test_threshold_comparison_is_inclusive_at_frozen_value() -> None:
     assert below_boundary.decision is TerminalDecision.ESCALATE_LOW_CONFIDENCE
 
 
+def test_routing_policy_config_rejects_invalid_direct_construction() -> None:
+    with pytest.raises(RoutingContractError, match="temperature"):
+        RoutingPolicyConfig(
+            model_id="A2",
+            model_version="routing-selected-v1",
+            temperature=0.0,
+            threshold=0.892704,
+            queue_by_intent={"intent": "queue"},
+        )
+    with pytest.raises(RoutingContractError, match="threshold"):
+        RoutingPolicyConfig(
+            model_id="A2",
+            model_version="routing-selected-v1",
+            temperature=0.457974,
+            threshold=1.1,
+            queue_by_intent={"intent": "queue"},
+        )
+
+
 def test_scorer_failure_and_intent_set_drift_fail_closed() -> None:
     valid = _distribution("declined_card_payment", 0.30)
     scorer_failure = RouteEndpoint.from_config_files(
@@ -210,6 +241,20 @@ def test_scorer_failure_and_intent_set_drift_fail_closed() -> None:
     assert invalid_output.reason_code == "routing_invalid_model_output"
     assert invalid_output.intent is None
     assert invalid_output.queue is None
+
+
+def test_protocol_violations_fail_closed_instead_of_raising() -> None:
+    for invalid_output in ([0.5, 0.5], {1: 0.5, "route_me": 0.5}):
+        endpoint = RouteEndpoint.from_config_files(
+            ProtocolViolatingScorer(invalid_output),
+            SELECTED,
+            OPERATIONS,
+        )
+        decision = endpoint.handle(_request())
+        assert decision.decision is TerminalDecision.ESCALATE_SYSTEM_FAILURE
+        assert decision.reason_code == "routing_invalid_model_output"
+        assert decision.intent is None
+        assert decision.queue is None
 
 
 def test_scorer_model_id_must_match_frozen_selected_model() -> None:
