@@ -96,7 +96,7 @@ def _temperature_bounds(config: dict[str, object]) -> tuple[float, float]:
     raise ValueError("temperature scaling bounds missing")
 
 
-def _crossfit_oos_confidence(
+def _fold_specific_oos_confidences(
     calibration: Any,
     validation_probabilities: np.ndarray,
     oos_probabilities: np.ndarray,
@@ -114,7 +114,7 @@ def _crossfit_oos_confidence(
         )
         calibrated_oos = calibration._temperature_apply(oos_probabilities, temperature)
         fold_confidences.append(np.max(calibrated_oos, axis=1))
-    return np.mean(np.stack(fold_confidences, axis=0), axis=0)
+    return np.stack(fold_confidences, axis=0)
 
 
 def run(output_path: Path) -> None:
@@ -184,7 +184,7 @@ def run(output_path: Path) -> None:
         exports[model_id] = {
             "raw_confidence": np.max(oos_probabilities, axis=1),
             "raw_predicted_index": np.argmax(oos_probabilities, axis=1),
-            "crossfit_confidence": _crossfit_oos_confidence(
+            "fold_temperature_confidence": _fold_specific_oos_confidences(
                 calibration,
                 validation_probabilities,
                 oos_probabilities,
@@ -194,6 +194,11 @@ def run(output_path: Path) -> None:
             ),
         }
 
+    fold_fields = [
+        f"{model_id}_temperature_fold_{fold}_confidence"
+        for model_id in ("A1", "A2")
+        for fold in range(5)
+    ]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(
@@ -204,37 +209,36 @@ def run(output_path: Path) -> None:
                 "tier",
                 "A1_raw_predicted_intent",
                 "A1_raw_confidence",
-                "A1_crossfit_temperature_confidence",
                 "A2_raw_predicted_intent",
                 "A2_raw_confidence",
-                "A2_crossfit_temperature_confidence",
+                *fold_fields,
             ],
         )
         writer.writeheader()
         for index, record in enumerate(records):
-            a1_raw = float(exports["A1"]["raw_confidence"][index])
-            a1_temp = float(exports["A1"]["crossfit_confidence"][index])
-            a2_raw = float(exports["A2"]["raw_confidence"][index])
-            a2_temp = float(exports["A2"]["crossfit_confidence"][index])
-            writer.writerow(
-                {
-                    "oos_id": record["oos_id"],
-                    "category": record["category"],
-                    "tier": record["tier"],
-                    "A1_raw_predicted_intent": labels[
-                        int(exports["A1"]["raw_predicted_index"][index])
-                    ],
-                    "A1_raw_confidence": f"{a1_raw:.12f}",
-                    "A1_crossfit_temperature_confidence": f"{a1_temp:.12f}",
-                    "A2_raw_predicted_intent": labels[
-                        int(exports["A2"]["raw_predicted_index"][index])
-                    ],
-                    "A2_raw_confidence": f"{a2_raw:.12f}",
-                    "A2_crossfit_temperature_confidence": f"{a2_temp:.12f}",
-                }
-            )
+            row: dict[str, object] = {
+                "oos_id": record["oos_id"],
+                "category": record["category"],
+                "tier": record["tier"],
+                "A1_raw_predicted_intent": labels[
+                    int(exports["A1"]["raw_predicted_index"][index])
+                ],
+                "A1_raw_confidence": f"{float(exports['A1']['raw_confidence'][index]):.12f}",
+                "A2_raw_predicted_intent": labels[
+                    int(exports["A2"]["raw_predicted_index"][index])
+                ],
+                "A2_raw_confidence": f"{float(exports['A2']['raw_confidence'][index]):.12f}",
+            }
+            for model_id in ("A1", "A2"):
+                fold_values = exports[model_id]["fold_temperature_confidence"]
+                for fold in range(5):
+                    row[f"{model_id}_temperature_fold_{fold}_confidence"] = (
+                        f"{float(fold_values[fold, index]):.12f}"
+                    )
+            writer.writerow(row)
 
     print(f"Exported {len(records)} frozen OOS operating-input rows")
+    print("Preserved five fold-specific temperature confidences per model")
     print("Confirmatory test opened: false")
 
 
