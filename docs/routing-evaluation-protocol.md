@@ -94,7 +94,19 @@ The first checkpoint, `phase2-a0-a1-validation-v1`, records:
 - principal confusion pairs;
 - independent rerun hashes.
 
-The checkpoint lives under `benchmarks/routing/results/`. Its numbers do not populate the README release benchmark table because the confirmatory test remains unopened.
+The second checkpoint, `phase2-a2-validation-v1`, freezes one sentence-embedding representation before evaluation and records:
+
+- `sentence-transformers/all-MiniLM-L6-v2` at revision `c315f904dfc467d8b9c40ab4ed50b3a8d0866c15` as a non-fine-tuned, normalized 384-dimensional feature extractor;
+- the same fixed logistic-regression specification used for the A1 comparison;
+- a committed uv script lock for the complete A2 dependency graph;
+- validation classification, calibration, risk-coverage, and confusion evidence;
+- direct deltas against frozen A1;
+- descriptive CPU timing kept separate from deterministic scientific evidence;
+- two independent runs with byte-identical deterministic outputs.
+
+A2 materially improves on A1 in the frozen validation checkpoint and therefore survives as the leading development candidate. This does not select the final router, calibration method, or operating threshold. A1 remains the required simpler reference and A3 remains required by the frozen ladder.
+
+All checkpoint evidence lives under `benchmarks/routing/results/`. Development numbers do not populate the README release benchmark table because the confirmatory test remains unopened.
 
 ## Selection rule
 
