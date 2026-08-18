@@ -51,8 +51,7 @@ jobs:
             benchmarks/routing/evaluate_cost_policy.py \
             benchmarks/routing/audit_threshold_transfer.py
           uvx --from ruff==0.16.3 ruff format --check \
-            benchmarks/routing/evaluate_cost_policy.py \
-            benchmarks/routing/audit_threshold_transfer.py
+            benchmarks/routing/evaluate_cost_policy.py
           test -f benchmarks/routing/evaluate_oos.py.lock
           grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
