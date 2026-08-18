@@ -1,0 +1,89 @@
+{
+  "version": "routing-a3-v1",
+  "phase": 2,
+  "status": "frozen_before_evaluation",
+  "objective": "Measure the incremental value of end-to-end task-specific fine-tuning over the frozen A2 MiniLM representation without changing the underlying transformer checkpoint.",
+  "representation": {
+    "family": "transformer_mean_pool_classifier",
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "license": "Apache-2.0",
+    "hidden_dimension": 384,
+    "num_hidden_layers": 6,
+    "pooling": "attention_masked_mean",
+    "normalize_pooled_representation": true,
+    "fine_tuned": true,
+    "classification_head": "linear_384_to_77",
+    "head_dropout": 0.0,
+    "max_length": 96,
+    "device": "cpu"
+  },
+  "training": {
+    "seed": 20260818,
+    "max_epochs": 3,
+    "early_stopping": {
+      "enabled": false,
+      "rule": "fixed three-epoch budget; validation trajectory is diagnostic only and cannot select an epoch"
+    },
+    "train_batch_size": 32,
+    "validation_batch_size": 64,
+    "gradient_accumulation_steps": 1,
+    "optimizer": "adamw",
+    "learning_rate": 0.00002,
+    "weight_decay": 0.01,
+    "adam_beta1": 0.9,
+    "adam_beta2": 0.999,
+    "adam_epsilon": 1e-8,
+    "gradient_clip_norm": 1.0,
+    "scheduler": "linear_decay",
+    "warmup_ratio": 0.1,
+    "mixed_precision": false,
+    "gradient_checkpointing": false,
+    "hyperparameter_search_allowed": false
+  },
+  "evaluation": {
+    "dataset_contract": "banking77-helix-v1",
+    "fit_partition": "train",
+    "selection_partition": "validation",
+    "confirmatory_partition": "test",
+    "test_set_may_select_model": false,
+    "test_set_may_select_epoch": false,
+    "test_set_may_select_threshold": false,
+    "primary_comparator": "phase2-a2-validation-v2",
+    "secondary_comparator": "phase2-a0-a1-validation-v1",
+    "required_metrics": [
+      "macro_f1",
+      "balanced_accuracy",
+      "top3_recall",
+      "expected_calibration_error",
+      "brier_score",
+      "risk_coverage",
+      "confusion_pairs"
+    ]
+  },
+  "dependency_policy": {
+    "python": "3.12",
+    "torch": "2.13.0",
+    "torch_variant": "cpu_only",
+    "torch_index": "https://download.pytorch.org/whl/cpu",
+    "transformers": "4.57.1",
+    "scikit_learn": "1.8.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "script_lock_required_before_benchmark": true
+  },
+  "anti_shopping": {
+    "alternate_transformer_allowed": false,
+    "alternate_pooling_allowed": false,
+    "alternate_epoch_budget_allowed_after_result": false,
+    "hyperparameter_search_allowed": false,
+    "fallback_on_underperformance": "retain A2 as the leading development candidate"
+  },
+  "audit_requirements": {
+    "full_validation_prediction_audit": true,
+    "cpu_lock_audit": true,
+    "truncation_rate_report": true,
+    "cross_runner_reproducibility_check": true,
+    "public_claim_audit": true
+  }
+}
