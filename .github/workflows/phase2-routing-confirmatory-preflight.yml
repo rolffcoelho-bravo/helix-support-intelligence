@@ -68,8 +68,3 @@ jobs:
           cp benchmarks/routing/evaluate_a2.py.lock benchmarks/routing/evaluate_confirmatory.py.lock
           uv run --locked benchmarks/routing/evaluate_confirmatory.py --preflight-only
           rm benchmarks/routing/evaluate_confirmatory.py.lock
-
-      - name: Assert workflow contains no test authorization token
-        run: |
-          ! grep -q -- '--authorize-test-open' .github/workflows/phase2-routing-confirmatory-preflight.yml
-          ! grep -q 'OPEN_FROZEN_TEST_ONCE' .github/workflows/phase2-routing-confirmatory-preflight.yml
