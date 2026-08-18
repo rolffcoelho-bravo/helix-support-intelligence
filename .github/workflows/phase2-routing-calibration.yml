@@ -45,22 +45,30 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply mechanical source fixes
-        id: ruff
+      - name: Apply audited source corrections
+        id: source
         run: |
           python - <<'PY'
           from pathlib import Path
 
           path = Path("benchmarks/routing/evaluate_calibration.py")
           text = path.read_text(encoding="utf-8")
-          old = '        "> Validation-only development evidence. The confirmatory test split was not downloaded or opened.",\n'
-          new = (
-              '        (\n'
-              '            "> Validation-only development evidence. The confirmatory test split was not "\n'
-              '            "downloaded or opened."\n'
-              '        ),\n'
-          )
-          text = text.replace(old, new)
+          old = '''    assignment = np.full(len(validation), -1, dtype=np.int64)
+          for label in labels:
+              ordered = sorted(label_to_rows[label])
+              for position, (_, row_index) in enumerate(ordered):
+                  assignment[row_index] = position % folds
+          '''
+          new = '''    assignment = np.full(len(validation), -1, dtype=np.int64)
+          for label in labels:
+              ordered = sorted(label_to_rows[label])
+              offset_digest = hashlib.sha256(f"{salt}\\t{label}".encode()).digest()
+              offset = int.from_bytes(offset_digest[:8], "big") % folds
+              for position, (_, row_index) in enumerate(ordered):
+                  assignment[row_index] = (position + offset) % folds
+          '''
+          if old in text:
+              text = text.replace(old, new)
           path.write_text(text, encoding="utf-8")
           PY
           uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_calibration.py
@@ -75,7 +83,7 @@ jobs:
       - name: Resolve calibration lock when absent or script changed
         id: lock
         run: |
-          if [ ! -f benchmarks/routing/evaluate_calibration.py.lock ] || [ "${{ steps.ruff.outputs.changed }}" = "true" ]; then
+          if [ ! -f benchmarks/routing/evaluate_calibration.py.lock ] || [ "${{ steps.source.outputs.changed }}" = "true" ]; then
             rm -f benchmarks/routing/evaluate_calibration.py.lock
             uv lock --script benchmarks/routing/evaluate_calibration.py
             echo "generated=true" >> "$GITHUB_OUTPUT"
@@ -106,11 +114,11 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Commit mechanical fixes and calibration lock
-        if: (steps.ruff.outputs.changed == 'true' || steps.lock.outputs.generated == 'true') && github.event_name == 'pull_request'
+      - name: Commit audited source correction and calibration lock
+        if: (steps.source.outputs.changed == 'true' || steps.lock.outputs.generated == 'true') && github.event_name == 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add benchmarks/routing/evaluate_calibration.py benchmarks/routing/evaluate_calibration.py.lock
-          git commit -m "Fix and lock Phase 2 calibration benchmark"
+          git commit -m "Balance and lock Phase 2 calibration folds"
           git push origin "HEAD:${{ github.head_ref }}"
