@@ -1,0 +1,57 @@
+{
+  "version": "routing-selected-v1",
+  "phase": 2,
+  "status": "frozen_development_configuration_before_confirmatory_test",
+  "model": {
+    "id": "A2",
+    "config": "configs/models/routing_a2.json",
+    "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+    "encoder_revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "classifier": "logistic_regression"
+  },
+  "calibration": {
+    "method": "temperature_scaling",
+    "temperature": 0.457974,
+    "audited_full_validation_refit_temperature": 0.45797403462200054,
+    "temperature_rounding_decimals": 6
+  },
+  "operating_policy": {
+    "confidence_measure": "maximum_temperature_scaled_class_probability",
+    "auto_route_when": "confidence >= threshold",
+    "otherwise": "ESCALATE_LOW_CONFIDENCE",
+    "threshold": 0.892704,
+    "threshold_rounding_decimals": 6,
+    "threshold_derivation": "The cost-selected cross-fitted policy fixed 75% in-domain development coverage. After model and calibration selection, an audit mapped that already-selected coverage to the single full-validation-refit calibration scale without re-optimizing cost. The frozen threshold is the six-decimal rounding of the midpoint of the audited full-refit decision plateau.",
+    "audited_full_refit_plateau": {
+      "max_rejected_confidence": 0.8924628987697818,
+      "min_accepted_confidence": 0.8929442415025021,
+      "midpoint": 0.8927035701361419
+    }
+  },
+  "development_evidence": {
+    "cross_fitted_cost_selected_expected_cost": 0.42144325657891446,
+    "cross_fitted_id_automation_coverage": 0.75,
+    "cross_fitted_id_selective_risk": 0.012145748987854255,
+    "cross_fitted_oos_escalation_recall": 0.8799879807692308,
+    "full_refit_transfer_id_automation_coverage": 0.75,
+    "full_refit_transfer_id_selective_risk": 0.012820512820512775,
+    "full_refit_transfer_oos_escalation_recall": 0.88125,
+    "full_refit_transfer_changed_acceptance_decisions": 6,
+    "full_refit_transfer_accepted_set_jaccard": 0.9959595959595959,
+    "full_refit_transfer_implied_primary_scenario_cost": 0.42354504048582997
+  },
+  "hypotheses": {
+    "H3_development": "unsupported_for_A2_primary_expected_cost",
+    "H4_development": "supported",
+    "confirmatory_status": "pending"
+  },
+  "governance": {
+    "cost_matrix": "configs/models/routing_cost_matrix.json",
+    "costs_are_synthetic_scenario_assumptions": true,
+    "costs_are_real_bank_economics": false,
+    "confirmatory_test_opened": false,
+    "confirmatory_test_may_change_model": false,
+    "confirmatory_test_may_change_calibration": false,
+    "confirmatory_test_may_change_threshold": false
+  }
+}
