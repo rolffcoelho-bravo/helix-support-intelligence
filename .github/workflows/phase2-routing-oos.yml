@@ -49,9 +49,24 @@ jobs:
           enable-cache: true
           version: "0.11.33"
 
-      - name: Apply mechanical Ruff fixes
+      - name: Apply mechanical source fixes
         id: source
         run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("benchmarks/routing/evaluate_oos.py")
+          text = path.read_text(encoding="utf-8")
+          old = '        "> Frozen OOS benchmark and validation-only in-domain reference. The confirmatory BANKING77 test split was not downloaded or opened.",\n'
+          new = (
+              '        (\n'
+              '            "> Frozen OOS benchmark and validation-only in-domain reference. "\n'
+              '            "The confirmatory BANKING77 test split was not downloaded or opened."\n'
+              '        ),\n'
+          )
+          text = text.replace(old, new)
+          path.write_text(text, encoding="utf-8")
+          PY
           uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_oos.py
           uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_oos.py
           uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_oos.py
