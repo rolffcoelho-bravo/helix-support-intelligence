@@ -35,14 +35,13 @@ jobs:
           version: "0.11.33"
 
       - name: Resolve A3 lock
-        id: lock
         run: |
           if [ ! -f benchmarks/routing/evaluate_a3.py.lock ]; then
             uv lock --script benchmarks/routing/evaluate_a3.py
-            echo "generated=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "generated=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Format A3 benchmark deterministically
+        run: uvx ruff==0.16.3 format benchmarks/routing/evaluate_a3.py
 
       - name: Audit CPU-only dependency graph
         run: |
@@ -50,11 +49,13 @@ jobs:
           ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_a3.py.lock
           uv run --locked benchmarks/routing/evaluate_a3.py --help >/dev/null
 
-      - name: Commit frozen A3 lock
-        if: steps.lock.outputs.generated == 'true' && github.event_name == 'pull_request'
+      - name: Commit frozen A3 environment and formatting
+        if: github.event_name == 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/routing/evaluate_a3.py.lock
-          git commit -m "Lock A3 CPU benchmark environment"
-          git push origin "HEAD:${{ github.head_ref }}"
+          git add benchmarks/routing/evaluate_a3.py benchmarks/routing/evaluate_a3.py.lock
+          if ! git diff --cached --quiet; then
+            git commit -m "Finalize A3 frozen benchmark environment"
+            git push origin "HEAD:${{ github.head_ref }}"
+          fi
