@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Environments and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local/private working material
+.private/
+.internal/
+*.private.*
+*.internal.*
+*_private.*
+*_internal.*
+notes*.txt
+*BLUEPRINT*.md
+
+# Local data, artifacts, and model outputs
+data/raw/
+artifacts/
+models/
+mlruns/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
