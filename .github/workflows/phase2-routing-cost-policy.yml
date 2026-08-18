@@ -1,0 +1,101 @@
+name: Phase 2 Routing Cost Policy
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-cost-policy.yml"
+      - "benchmarks/routing/evaluate_cost_policy.py"
+      - "benchmarks/routing/export_oos_operating_inputs.py"
+      - "benchmarks/routing/evaluate_oos.py.lock"
+      - "configs/models/routing_cost_matrix.json"
+      - "configs/models/routing_oos.json"
+      - "configs/models/routing_calibration.json"
+      - "configs/models/routing_a2.json"
+      - "data/oos/routing_oos_v1.json"
+      - "src/helix_support_intelligence/data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase2-routing-cost-policy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cost-policy-validation:
+    name: Frozen routing cost and operating point
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Apply mechanical Ruff fixes
+        id: source
+        run: |
+          uvx --from ruff==0.16.3 ruff check --fix --exit-zero benchmarks/routing/evaluate_cost_policy.py
+          uvx --from ruff==0.16.3 ruff format benchmarks/routing/evaluate_cost_policy.py
+          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_cost_policy.py
+          if git diff --quiet -- benchmarks/routing/evaluate_cost_policy.py; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify frozen OOS scientific environment
+        run: |
+          test -f benchmarks/routing/evaluate_oos.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
+
+      - name: Export frozen operating inputs
+        run: |
+          cp benchmarks/routing/evaluate_oos.py.lock benchmarks/routing/export_oos_operating_inputs.py.lock
+          uv run --locked benchmarks/routing/export_oos_operating_inputs.py \
+            --output-dir artifacts/phase2-routing/operating
+          rm benchmarks/routing/export_oos_operating_inputs.py.lock
+
+      - name: Run frozen routing cost policy
+        run: >-
+          python benchmarks/routing/evaluate_cost_policy.py
+          --validation-inputs artifacts/phase2-routing/operating/validation_operating_inputs.csv
+          --oos-inputs artifacts/phase2-routing/operating/oos_operating_inputs.csv
+          --output-dir artifacts/phase2-routing/cost-policy
+
+      - name: Publish cost-policy summary
+        run: cat artifacts/phase2-routing/cost-policy/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload cost-policy evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-routing-cost-policy-${{ github.sha }}
+          path: |
+            artifacts/phase2-routing/cost-policy/
+            artifacts/phase2-routing/operating/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Commit mechanical source fixes
+        if: steps.source.outputs.changed == 'true' && github.event_name == 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/routing/evaluate_cost_policy.py
+          git commit -m "Fix Phase 2 routing cost benchmark formatting"
+          git push origin "HEAD:${{ github.head_ref }}"
