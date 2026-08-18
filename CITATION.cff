@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use Helix Support Intelligence, please cite it using this metadata."
+title: "Helix Support Intelligence: Production-Oriented Search, Routing, Recommendation, and Evidence-Grounded Support AI"
+type: software
+version: 0.1.0
+date-released: 2026-08-18
+license: Apache-2.0
+authors:
+  - family-names: Pereira
+    given-names: Rodolfo
+repository-code: "https://github.com/rolffcoelho-bravo/helix-support-intelligence"
+url: "https://github.com/rolffcoelho-bravo/helix-support-intelligence"
+abstract: >-
+  A production-oriented applied-AI system for bounded ticket routing, hybrid
+  retrieval, recommendation, evidence-grounded assistance, and human escalation.
+keywords:
+  - applied AI
+  - customer support
+  - information retrieval
+  - machine learning
+  - responsible AI
