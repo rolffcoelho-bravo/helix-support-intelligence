@@ -20,7 +20,7 @@
 - [x] Routing evaluation protocol.
 - [ ] Reproducible A0-A3 implementations and evaluation artifacts.
   - [x] A0/A1 development benchmark and evidence checkpoint.
-  - [x] A2 sentence-embedding + linear-classifier benchmark and evidence checkpoint.
+  - [x] A2 sentence-embedding + linear-classifier benchmark and audited evidence checkpoint.
   - [ ] A3 compact transformer classifier.
 - [ ] Calibration comparison.
 - [ ] Frozen out-of-scope benchmark and evaluation.
@@ -52,7 +52,7 @@ Permanent development evidence is recorded in:
 
 A2 was frozen before evaluation as `sentence-transformers/all-MiniLM-L6-v2` at revision `c315f904dfc467d8b9c40ab4ed50b3a8d0866c15`, used only as a 384-dimensional normalized sentence-embedding feature extractor. The linear classifier retained the fixed A1 logistic-regression specification. No alternate encoder or hyperparameter search was allowed.
 
-Two independent GitHub Actions executions produced byte-identical deterministic result JSON, report, and all 1,976 validation predictions. The complete A2 script dependency graph is now committed in `benchmarks/routing/evaluate_a2.py.lock`.
+The audited A2 environment explicitly resolves `torch 2.13.0+cpu` from the PyTorch CPU index, reports `torch_cuda_available=false`, and contains no CUDA, NVIDIA, or Triton packages in the committed lock.
 
 | Model | Macro-F1 | Balanced accuracy | Top-3 recall | ECE | Brier |
 |---|---:|---:|---:|---:|---:|
@@ -60,15 +60,29 @@ Two independent GitHub Actions executions produced byte-identical deterministic 
 | **A2 frozen embeddings + logistic regression** | **0.8986** | **0.8963** | **0.9732** | **0.2910** | **0.2501** |
 | **A2 − A1** | **+0.0564** | **+0.0556** | **+0.0197** | **−0.1986** | **−0.2450** |
 
-A2 also improves selective risk at every registered coverage point. At 50% coverage, risk falls from approximately 2.53% for A1 to 0.40% for A2; at 70%, from approximately 6.07% to 1.59%. These are development observations only and do not select an operating threshold.
+A2 improves selective risk at every registered coverage point. At 50% coverage, risk falls from approximately 2.53% for A1 to 0.40% for A2; at 70%, from approximately 6.07% to 1.59%. These are development observations only and do not select an operating threshold.
 
-A2 adds a neural embedding stage. On two GitHub-hosted CPU runs, validation embedding required approximately 5.57–5.71 ms per example, but a standardized A1 end-to-end latency comparator has not yet been run. Final complexity and cost selection therefore remains open.
+Two independent post-audit GitHub Actions runs reproduced all 1,976 predicted intents, all top-3 intent sets, all discrete classification metrics, and every registered selective-risk value exactly. Raw probabilities were not bitwise identical across heterogeneous CPU runners: the maximum absolute confidence difference was approximately `6.74e-7`, ECE differed by approximately `8.78e-9`, and Brier by approximately `5.51e-10`. The checkpoint therefore claims exact decision reproducibility plus bounded numerical reproducibility, not byte-identical ML output.
+
+A2 adds a neural embedding stage. On the two audited GitHub CPU runners, validation embedding ranged from approximately 2.85 to 5.68 ms per example. That spread is too large to use as a stable latency claim, so a standardized A1/A2/A3 latency and cost harness remains required.
 
 Permanent A2 evidence is recorded in:
 
-- `benchmarks/routing/results/a2_validation_v1.json`
-- `benchmarks/routing/results/a2_validation_v1.md`
+- `benchmarks/routing/results/a2_validation_v2.json`
+- `benchmarks/routing/results/a2_validation_v2.md`
 - `benchmarks/routing/evaluate_a2.py.lock`
+
+## Post-execution audit
+
+The A2 checkpoint was not accepted immediately after the first green benchmark. A hostile audit identified and corrected three issues before closure:
+
+1. **Confusion-count bug:** the first comparison treated absence from A2's top-20 confusion list as zero occurrences. The audited implementation now counts A2 occurrences across the full validation prediction set for every leading A1 confusion pair.
+2. **Environment mismatch:** the first lock used a CUDA-enabled PyTorch distribution even though inference executed on CPU. The script and config now pin the CPU-only PyTorch index, and the lock was regenerated and verified.
+3. **Overstated reproducibility:** the first report used the phrase "byte-identical" for ML outputs. The audited reruns showed exact decisions but sub-micro probability differences across heterogeneous CPU runners, so the public claim was narrowed to exact decision reproducibility plus bounded numerical reproducibility.
+
+The superseded A2 v1 evidence files were removed. The aggregate A2 metrics, model ranking, and risk-coverage conclusions were unchanged by these corrections.
+
+This audit pattern is now a standing execution rule: each implementation checkpoint must end with code, metric, reproducibility, CI, and public-wording review before it is declared complete.
 
 ## Test-set status
 
