@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/phase2-routing-baselines.yml"
-      - "benchmarks/routing/**"
+      - "benchmarks/routing/evaluate_a0_a1.py"
       - "configs/data/banking77.json"
       - "configs/models/routing_ladder.json"
       - "src/helix_support_intelligence/data/**"
