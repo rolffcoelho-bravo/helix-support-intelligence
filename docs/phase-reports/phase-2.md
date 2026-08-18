@@ -1,7 +1,7 @@
 # Phase 2 Exit Report
 
 - Phase: Routing baseline and selective decision policy
-- Status: Active — A0/A1/A2 checkpoints passed; A3 next
+- Status: Active — A0/A1/A2/A3 ladder complete; calibration next
 - Date opened: 2026-08-18
 - Public version: 0.1.0
 
@@ -18,10 +18,10 @@
 
 - [x] Public A0-A3 model-ladder contract.
 - [x] Routing evaluation protocol.
-- [ ] Reproducible A0-A3 implementations and evaluation artifacts.
+- [x] Reproducible A0-A3 implementations and evaluation artifacts.
   - [x] A0/A1 development benchmark and evidence checkpoint.
   - [x] A2 sentence-embedding + linear-classifier benchmark and audited evidence checkpoint.
-  - [ ] A3 compact transformer classifier.
+  - [x] A3 compact-transformer benchmark and audited negative-result checkpoint.
 - [ ] Calibration comparison.
 - [ ] Frozen out-of-scope benchmark and evaluation.
 - [ ] Declared routing cost matrix.
@@ -64,25 +64,39 @@ A2 improves selective risk at every registered coverage point. At 50% coverage, 
 
 Two independent post-audit GitHub Actions runs reproduced all 1,976 predicted intents, all top-3 intent sets, all discrete classification metrics, and every registered selective-risk value exactly. Raw probabilities were not bitwise identical across heterogeneous CPU runners: the maximum absolute confidence difference was approximately `6.74e-7`, ECE differed by approximately `8.78e-9`, and Brier by approximately `5.51e-10`. The checkpoint therefore claims exact decision reproducibility plus bounded numerical reproducibility, not byte-identical ML output.
 
-A2 adds a neural embedding stage. On the two audited GitHub CPU runners, validation embedding ranged from approximately 2.85 to 5.68 ms per example. That spread is too large to use as a stable latency claim, so a standardized A1/A2/A3 latency and cost harness remains required.
-
 Permanent A2 evidence is recorded in:
 
 - `benchmarks/routing/results/a2_validation_v2.json`
 - `benchmarks/routing/results/a2_validation_v2.md`
 - `benchmarks/routing/evaluate_a2.py.lock`
 
-## Post-execution audit
+## A3 checkpoint
 
-The A2 checkpoint was not accepted immediately after the first green benchmark. A hostile audit identified and corrected three issues before closure:
+A3 tested end-to-end task-specific fine-tuning of the same MiniLM transformer used by A2. Its fixed contract used attention-masked mean pooling, a new 384-to-77 linear head, full encoder fine-tuning, AdamW at `2e-5`, and a fixed three-epoch budget with no best-epoch selection and no post-result rescue configuration.
 
-1. **Confusion-count bug:** the first comparison treated absence from A2's top-20 confusion list as zero occurrences. The audited implementation now counts A2 occurrences across the full validation prediction set for every leading A1 confusion pair.
-2. **Environment mismatch:** the first lock used a CUDA-enabled PyTorch distribution even though inference executed on CPU. The script and config now pin the CPU-only PyTorch index, and the lock was regenerated and verified.
-3. **Overstated reproducibility:** the first report used the phrase "byte-identical" for ML outputs. The audited reruns showed exact decisions but sub-micro probability differences across heterogeneous CPU runners, so the public claim was narrowed to exact decision reproducibility plus bounded numerical reproducibility.
+| Model | Macro-F1 | Balanced accuracy | Top-3 recall | ECE | Brier |
+|---|---:|---:|---:|---:|---:|
+| **A2** | **0.8986** | **0.8963** | **0.9732** | **0.2910** | **0.2501** |
+| A3 | 0.6898 | 0.7105 | 0.9226 | 0.7221 | 0.9771 |
+| **A3 − A2** | **−0.2088** | **−0.1858** | **−0.0506** | **+0.4311** | **+0.7270** |
 
-The superseded A2 v1 evidence files were removed. The aggregate A2 metrics, model ranking, and risk-coverage conclusions were unchanged by these corrections.
+A3 is also worse than A2 at every registered risk-coverage point. Its mean maximum probability is only 0.0183, close to a uniform 77-class distribution. Training macro-F1 rose monotonically from 0.5117 to 0.6624 to 0.6898 across the three fixed epochs, while mean training loss declined from 4.2488 to 4.0448.
 
-This audit pattern is now a standing execution rule: each implementation checkpoint must end with code, metric, reproducibility, CI, and public-wording review before it is declared complete.
+The hostile audit found no code, split, truncation, dependency, or reproducibility defect that invalidates the result. Two independent GitHub CPU replicas produced exactly the same predictions, top-3 sets, selective-risk curve, ECE, Brier, and confidence values. Only one training example exceeded the 96-token limit and no validation example did.
+
+The correct interpretation is deliberately narrow: **A3 as registered underfits and does not justify its additional complexity.** The result does not establish that task-specific transformer fine-tuning is intrinsically inferior. Changing the learning rate, head-specific optimization, epoch budget, pooling, or backbone after observing this result would violate the frozen anti-shopping rule.
+
+Permanent A3 evidence is recorded in:
+
+- `benchmarks/routing/results/a3_validation_v1.json`
+- `benchmarks/routing/results/a3_validation_v1.md`
+- `benchmarks/routing/evaluate_a3.py.lock`
+
+**Decision:** A3 is rejected. A2 remains the leading development candidate. A1 remains the required simpler reference. A4 remains disabled.
+
+## Post-execution audit rule
+
+Every checkpoint must close with a hostile audit covering code correctness, metric interpretation, split integrity, reproducibility, dependency/hardware consistency, CI behavior, and public wording. Findings must be corrected before the checkpoint is declared complete.
 
 ## Test-set status
 
@@ -90,6 +104,6 @@ The official BANKING77 test split remains confirmatory and has not been download
 
 ## Current decision
 
-**A2 survives and is the leading Phase 2 development candidate.** A1 remains the required simpler classical reference. A2's gain is large enough that A3 must now justify its additional training and inference complexity against A2 rather than merely outperforming A1.
+The required A0-A3 model ladder is now complete. **A2 is the surviving leading candidate, A1 is the simpler reference, and A3 is rejected as registered.**
 
-Phase 2 remains open. The next locked implementation action is **A3 — one frozen compact transformer classifier** under the identical train/validation contract. Its base checkpoint, tokenizer, training budget, seed, optimization specification, and early-stopping rule must be frozen before the first A3 result. Do not open the confirmatory test and do not introduce a classifier family outside the frozen ladder.
+Phase 2 remains open. The next locked action is the **calibration comparison**. Calibration-method evaluation must avoid fitting and scoring a calibrator on the same validation observations; the comparison will therefore use deterministic cross-fitted calibration on the frozen validation partition, followed by a single full-validation fit only after the method is selected. Rejected A3 is not eligible for calibration-based resurrection. The confirmatory test remains sealed.
