@@ -175,7 +175,10 @@ def run(
         if float(row["A2_temperature_confidence"]) >= source_threshold
     }
     accepted_count = len(source_accepted_ids)
-    if accepted_count != int(round(float(final["id_automation_coverage"]) * len(validation_inputs))):
+    expected_accepted = round(
+        float(final["id_automation_coverage"]) * len(validation_inputs)
+    )
+    if accepted_count != expected_accepted:
         raise ValueError("selected development coverage drifted")
 
     plateau = _coverage_transfer_threshold(validation_confidence, accepted_count)
@@ -187,10 +190,7 @@ def run(
     }
     intersection = len(source_accepted_ids & transfer_accepted_ids)
     union = len(source_accepted_ids | transfer_accepted_ids)
-    source_events = {
-        row["sample_id"]: row["A2_event"]
-        for row in validation_inputs
-    }
+    source_events = {row["sample_id"]: row["A2_event"] for row in validation_inputs}
 
     transfer_event_counts = {
         "correct_route": 0,
@@ -231,7 +231,10 @@ def run(
         ),
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    output_path.write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     print(json.dumps(result, indent=2, sort_keys=True))
     print("Confirmatory test opened: false")
     return result
