@@ -23,7 +23,6 @@ import platform
 import re
 import sys
 import time
-from collections import defaultdict
 from pathlib import Path
 from typing import Any, cast
 
@@ -37,19 +36,19 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
+from runtime_a41 import (  # noqa: E402
+    build_openai_payload,
+    estimate_generator_cost_usd,
+    evaluation_verifier_binding,
+    load_binding,
+    runtime_verifier_binding,
+)
+
 from helix_support_intelligence.data.helixbank import (  # noqa: E402
     INTENTS,
     CorpusBundle,
     generate_bundle,
     manifest,
-)
-from runtime_a41 import (  # noqa: E402
-    build_openai_payload,
-    canonical_evidence_json,
-    estimate_generator_cost_usd,
-    evaluation_verifier_binding,
-    load_binding,
-    runtime_verifier_binding,
 )
 
 PROTOCOL_PATH = ROOT / "configs" / "models" / "assistance_protocol_v1.json"
@@ -98,18 +97,14 @@ def canonical_json(value: Any) -> str:
 
 def partition(bundle: CorpusBundle) -> tuple[set[str], set[str]]:
     conflicts = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflicts = set(INTENTS) - conflicts
 
     def ordered(values: set[str]) -> list[str]:
         return sorted(
             values,
-            key=lambda intent: hashlib.sha256(
-                f"20260819:{intent}".encode()
-            ).hexdigest(),
+            key=lambda intent: hashlib.sha256(f"20260819:{intent}".encode()).hexdigest(),
         )
 
     development = set(ordered(conflicts)[:5]) | set(ordered(non_conflicts)[:55])
@@ -297,7 +292,7 @@ def generate(
             "failure": None,
             "runtime_gate": None,
         }
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return system_failure(started, f"{type(exc).__name__}: {exc}")
 
 
@@ -344,11 +339,7 @@ class NliEngine:
             padding=True,
             return_tensors="np",
         )
-        feed = {
-            key: np.asarray(value)
-            for key, value in encoded.items()
-            if key in self.input_names
-        }
+        feed = {key: np.asarray(value) for key, value in encoded.items() if key in self.input_names}
         logits = np.asarray(self.session.run(None, feed)[0])[0].astype(float)
         logits -= np.max(logits)
         probabilities = np.exp(logits) / np.sum(np.exp(logits))
@@ -395,16 +386,11 @@ def support(
             if not cited or len(usable) != len(cited):
                 verdict = "UNSUPPORTED"
             else:
-                premise = "\n".join(
-                    f"{row['title']}\n{row['body']}"
-                    for row in usable
-                )
+                premise = "\n".join(f"{row['title']}\n{row['body']}" for row in usable)
                 hypothesis = CITATION_RE.sub("", sentence).strip()
                 probability = engine.probability(premise, hypothesis)
                 verdict = (
-                    "SUPPORTED"
-                    if probability >= float(engine.binding.threshold)
-                    else "UNSUPPORTED"
+                    "SUPPORTED" if probability >= float(engine.binding.threshold) else "UNSUPPORTED"
                 )
         rows.append(
             {
@@ -453,7 +439,7 @@ def runtime_gate(
                 "citation_contract_valid": contract_ok,
             },
         }
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         failed = system_failure(
             started,
             f"runtime_verifier:{type(exc).__name__}: {exc}",
@@ -529,10 +515,7 @@ def score(
     output = cast(dict[str, Any], run["output"])
     support_rows = support(output, documents, evaluator) if run["schema_valid"] else []
     factual_count = sum(bool(row["factual"]) for row in support_rows)
-    unsupported_count = sum(
-        row["support_verdict"] == "UNSUPPORTED"
-        for row in support_rows
-    )
+    unsupported_count = sum(row["support_verdict"] == "UNSUPPORTED" for row in support_rows)
     expected = str(query["expected_decision"])
     metrics = citation_metrics(
         output,
@@ -605,8 +588,7 @@ def attacks(
                         "attack_id": f"{attack_type}:{query['query_id']}",
                         "attack_type": attack_type,
                         "query": query,
-                        "query_text": str(query["text"])
-                        + str(suite[attack_type]["query_suffix"]),
+                        "query_text": str(query["text"]) + str(suite[attack_type]["query_suffix"]),
                         "overlays": [],
                     }
                 )
@@ -705,10 +687,7 @@ def compatibility(
     }
     run = generate(client, "What queue handles this request?", [sample])
     if run["failure"] is not None or not run["schema_valid"]:
-        raise RuntimeError(
-            "OpenAI compatibility failed before scoring: "
-            f"{run['failure']}"
-        )
+        raise RuntimeError(f"OpenAI compatibility failed before scoring: {run['failure']}")
     runtime_probability = runtime_engine.probability(
         "A request is handled by the support queue.",
         "A request is handled by the support queue.",
@@ -717,10 +696,7 @@ def compatibility(
         "A request is handled by the support queue.",
         "A request is handled by the support queue.",
     )
-    if not (
-        math.isfinite(runtime_probability)
-        and math.isfinite(evaluator_probability)
-    ):
+    if not (math.isfinite(runtime_probability) and math.isfinite(evaluator_probability)):
         raise RuntimeError("NLI compatibility produced non-finite output.")
     return {
         "provider_call_succeeded": True,
@@ -763,9 +739,7 @@ def environment() -> dict[str, Any]:
 def execute(output_dir: Path) -> None:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise RuntimeError(
-            "OPENAI_API_KEY is required for the registered A4.2 execution."
-        )
+        raise RuntimeError("OPENAI_API_KEY is required for the registered A4.2 execution.")
     execution = load_json(EXECUTION_PATH)
     protocol = load_json(PROTOCOL_PATH)
     binding = load_binding()
@@ -773,14 +747,10 @@ def execute(output_dir: Path) -> None:
     development, confirmatory = partition(bundle)
     queries, _ = maps(bundle)
     development_ids = sorted(
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in development
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in development
     )
     confirmatory_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in confirmatory
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in confirmatory
     }
     if len(development_ids) != 240 or len(confirmatory_ids) != 68:
         raise RuntimeError("A4.2 partition does not reconstruct.")

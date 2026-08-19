@@ -15,6 +15,5 @@ from __future__ import annotations
 
 import verify_a42
 
-
 if __name__ == "__main__":
     verify_a42.main()

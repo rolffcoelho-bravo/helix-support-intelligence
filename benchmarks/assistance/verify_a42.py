@@ -55,18 +55,14 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
 def partition() -> tuple[set[str], set[str]]:
     bundle = generate_bundle()
     conflicts = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflicts = set(INTENTS) - conflicts
 
     def ordered(values: set[str]) -> list[str]:
         return sorted(
             values,
-            key=lambda intent: hashlib.sha256(
-                f"20260819:{intent}".encode()
-            ).hexdigest(),
+            key=lambda intent: hashlib.sha256(f"20260819:{intent}".encode()).hexdigest(),
         )
 
     development = set(ordered(conflicts)[:5]) | set(ordered(non_conflicts)[:55])
@@ -78,19 +74,12 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, float]:
     factual = sum(int(row["factual_sentence_count"]) for row in rows)
     unsupported = sum(int(row["unsupported_sentence_count"]) for row in rows)
     cited = sum(len(row["citations"]) for row in rows)
-    valid = sum(
-        len(row["citations"]) * float(row["citation_precision"])
-        for row in rows
-    )
-    stale = sum(
-        len(row["citations"]) * float(row["stale_citation_rate"])
-        for row in rows
-    )
+    valid = sum(len(row["citations"]) * float(row["citation_precision"]) for row in rows)
+    stale = sum(len(row["citations"]) * float(row["stale_citation_rate"]) for row in rows)
     applicable = [row for row in rows if row["citation_completeness"] is not None]
     gold = sum(len(row["gold_citations"]) for row in applicable)
     recovered = sum(
-        len(row["gold_citations"]) * float(row["citation_completeness"])
-        for row in applicable
+        len(row["gold_citations"]) * float(row["citation_completeness"]) for row in applicable
     )
     precision = valid / cited if cited else 1.0
     completeness = recovered / gold if gold else 1.0
@@ -99,29 +88,15 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, float]:
         if precision + completeness
         else 0.0
     )
-    nonanswerable = [
-        row
-        for row in rows
-        if row["expected_decision"] != "ANSWER_WITH_EVIDENCE"
-    ]
-    answerable = [
-        row
-        for row in rows
-        if row["expected_decision"] == "ANSWER_WITH_EVIDENCE"
-    ]
+    nonanswerable = [row for row in rows if row["expected_decision"] != "ANSWER_WITH_EVIDENCE"]
+    answerable = [row for row in rows if row["expected_decision"] == "ANSWER_WITH_EVIDENCE"]
     costs = [
-        float(row["estimated_cost_usd"])
-        for row in rows
-        if row["estimated_cost_usd"] is not None
+        float(row["estimated_cost_usd"]) for row in rows if row["estimated_cost_usd"] is not None
     ]
     return {
-        "strict_grounded_success_rate": sum(
-            bool(row["strict_grounded_success"]) for row in rows
-        )
+        "strict_grounded_success_rate": sum(bool(row["strict_grounded_success"]) for row in rows)
         / total,
-        "decision_exact_match": sum(
-            row["decision"] == row["expected_decision"] for row in rows
-        )
+        "decision_exact_match": sum(row["decision"] == row["expected_decision"] for row in rows)
         / total,
         "unsupported_sentence_rate": unsupported / factual if factual else 0.0,
         "answer_level_unsupported_rate": sum(
@@ -155,15 +130,11 @@ def strict_bootstrap(
     replicates: int,
 ) -> dict[str, Any]:
     candidate = {
-        (str(row["intent"]), str(row["query_id"])): float(
-            row["strict_grounded_success"]
-        )
+        (str(row["intent"]), str(row["query_id"])): float(row["strict_grounded_success"])
         for row in candidate_rows
     }
     comparator = {
-        (str(row["intent"]), str(row["query_id"])): float(
-            row["strict_grounded_success"]
-        )
+        (str(row["intent"]), str(row["query_id"])): float(row["strict_grounded_success"])
         for row in comparator_rows
     }
     intents = sorted({key[0] for key in candidate})
@@ -179,10 +150,7 @@ def strict_bootstrap(
     rng = np.random.default_rng(seed)
     draws = np.empty(replicates, dtype=float)
     for index in range(replicates):
-        sampled = [
-            str(item)
-            for item in rng.choice(intents, size=len(intents), replace=True)
-        ]
+        sampled = [str(item) for item in rng.choice(intents, size=len(intents), replace=True)]
         draws[index] = sample_mean(candidate, sampled) - sample_mean(
             comparator,
             sampled,
@@ -222,10 +190,7 @@ def unsupported_bootstrap(
     rng = np.random.default_rng(seed)
     draws = np.empty(replicates, dtype=float)
     for index in range(replicates):
-        sampled = [
-            str(item)
-            for item in rng.choice(intents, size=len(intents), replace=True)
-        ]
+        sampled = [str(item) for item in rng.choice(intents, size=len(intents), replace=True)]
         draws[index] = rate(candidate, sampled) - rate(comparator, sampled)
     lower, upper = np.quantile(draws, [0.025, 0.975])
     return {"point": point, "ci95": [float(lower), float(upper)]}
@@ -255,11 +220,7 @@ def adversarial_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         result[candidate] = {}
         candidate_rows = [row for row in rows if row["candidate_id"] == candidate]
         for attack_type in ATTACK_TYPES:
-            selected = [
-                row
-                for row in candidate_rows
-                if row["attack_type"] == attack_type
-            ]
+            selected = [row for row in candidate_rows if row["attack_type"] == attack_type]
             failures = sum(bool(row["attack_failure"]) for row in selected)
             result[candidate][attack_type] = {
                 "cases": len(selected),
@@ -279,9 +240,7 @@ def repeatability_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         grouped: dict[str, list[str]] = defaultdict(list)
         for row in rows:
             if row["candidate_id"] == candidate:
-                grouped[str(row["query_id"])].append(
-                    str(row["canonical_output"])
-                )
+                grouped[str(row["query_id"])].append(str(row["canonical_output"]))
         stable = sum(len(set(values)) == 1 for values in grouped.values())
         result[candidate] = {
             "cases": len(grouped),
@@ -300,9 +259,7 @@ def diagnostics(rows: list[dict[str, Any]]) -> dict[str, Any]:
         for family in ("case_type", "intent"):
             groups = sorted({str(row[family]) for row in candidate_rows})
             result[family][candidate] = {
-                group: aggregate(
-                    [row for row in candidate_rows if str(row[family]) == group]
-                )
+                group: aggregate([row for row in candidate_rows if str(row[family]) == group])
                 for group in groups
             }
         kind_groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -316,8 +273,7 @@ def diagnostics(rows: list[dict[str, Any]]) -> dict[str, Any]:
             label = "+".join(kinds) if kinds else "none"
             kind_groups[label].append(row)
         result["document_kind"][candidate] = {
-            group: aggregate(values)
-            for group, values in sorted(kind_groups.items())
+            group: aggregate(values) for group, values in sorted(kind_groups.items())
         }
     return result
 
@@ -355,10 +311,7 @@ def adoption(
             metrics[candidate]["unsafe_answer_rate_on_nonanswerable"]
             - metrics[comparator]["unsafe_answer_rate_on_nonanswerable"]
         )
-        delta_f1 = (
-            metrics[candidate]["citation_f1"]
-            - metrics[comparator]["citation_f1"]
-        )
+        delta_f1 = metrics[candidate]["citation_f1"] - metrics[comparator]["citation_f1"]
         checks = {
             "delta_strict_at_least_0_01": delta_strict
             >= float(rule["minimum_delta_strict_grounded_success_rate"]),
@@ -371,12 +324,8 @@ def adoption(
             >= -float(rule["maximum_citation_f1_decrease"]),
             "p95_within_budget": latency[candidate]["p95_ms"]
             <= float(binding["budgets"]["p95_latency_ms"][candidate]),
-            "max_quality_cost_within_budget": metrics[candidate][
-                "max_estimated_cost_usd"
-            ]
-            <= float(
-                budgets["maximum_estimated_cost_usd_per_request"][candidate]
-            ),
+            "max_quality_cost_within_budget": metrics[candidate]["max_estimated_cost_usd"]
+            <= float(budgets["maximum_estimated_cost_usd_per_request"][candidate]),
         }
         qualifies = all(checks.values())
         decisions.append(
@@ -389,9 +338,7 @@ def adoption(
                 "delta_unsafe_answer_rate": delta_unsafe,
                 "delta_citation_f1": delta_f1,
                 "candidate_p95_ms": latency[candidate]["p95_ms"],
-                "candidate_max_quality_cost_usd": metrics[candidate][
-                    "max_estimated_cost_usd"
-                ],
+                "candidate_max_quality_cost_usd": metrics[candidate]["max_estimated_cost_usd"],
                 "checks": checks,
                 "qualifies": qualifies,
             }
@@ -410,14 +357,10 @@ def verify_counts(
     development, confirmatory = partition()
     bundle = generate_bundle()
     development_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in development
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in development
     }
     confirmatory_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in confirmatory
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in confirmatory
     }
     checks: dict[str, bool] = {
         "quality_records_720": len(quality_rows) == 720,
@@ -433,9 +376,7 @@ def verify_counts(
         str(row["query_id"]) in development_ids for row in all_rows
     )
     for candidate in CANDIDATES:
-        candidate_quality = [
-            row for row in quality_rows if row["candidate_id"] == candidate
-        ]
+        candidate_quality = [row for row in quality_rows if row["candidate_id"] == candidate]
         checks[f"{candidate}_quality_240"] = len(candidate_quality) == 240
         checks[f"{candidate}_quality_unique_queries"] = (
             len({str(row["query_id"]) for row in candidate_quality}) == 240
@@ -454,7 +395,11 @@ def write_report(results: dict[str, Any], path: Path) -> None:
         "",
         f"**Registered development winner: {results['complexity_adoption']['registered_winner']}**",
         "",
-        "| Candidate | Strict grounded success | Decision EM | Unsupported sentence rate | Citation F1 | P95 ms | Max quality cost USD |",
+        (
+            "| Candidate | Strict grounded success | Decision EM | "
+            "Unsupported sentence rate | Citation F1 | P95 ms | "
+            "Max quality cost USD |"
+        ),
         "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for candidate in CANDIDATES:
@@ -557,12 +502,7 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    all_cost_rows = (
-        quality_rows
-        + adversarial_rows
-        + repeatability_rows
-        + latency_rows
-    )
+    all_cost_rows = quality_rows + adversarial_rows + repeatability_rows + latency_rows
     total_cost = sum(
         float(row["estimated_cost_usd"] or 0.0)
         for row in all_cost_rows
@@ -583,8 +523,14 @@ def main() -> None:
         "complexity_adoption": adoption_result,
         "total_estimated_provider_cost_usd_all_a42_calls": total_cost,
         "limitations": [
-            "Development evidence comes from the deterministic fictional HelixBank benchmark, not a real-bank deployment.",
-            "A4.2 scores adversarial variants only for development intents; the full 77-intent registered adversarial surface remains deferred.",
+            (
+                "Development evidence comes from the deterministic fictional "
+                "HelixBank benchmark, not a real-bank deployment."
+            ),
+            (
+                "A4.2 scores adversarial variants only for development intents; "
+                "the full 77-intent registered adversarial surface remains deferred."
+            ),
             "The 68-query confirmatory assistance partition remains unopened.",
         ],
     }
@@ -598,12 +544,8 @@ def main() -> None:
     repeatability_expected = 30 * 3
     audit_checks: dict[str, bool] = {
         **raw_checks,
-        "compatibility_provider_succeeded": bool(
-            compatibility["provider_call_succeeded"]
-        ),
-        "compatibility_runtime_nli_finite": bool(
-            compatibility["runtime_nli_probability_finite"]
-        ),
+        "compatibility_provider_succeeded": bool(compatibility["provider_call_succeeded"]),
+        "compatibility_runtime_nli_finite": bool(compatibility["runtime_nli_probability_finite"]),
         "compatibility_evaluator_nli_finite": bool(
             compatibility["evaluation_nli_probability_finite"]
         ),
@@ -614,40 +556,21 @@ def main() -> None:
             for candidate in CANDIDATES
         ),
         "repeatability_per_candidate_90": all(
-            len(
-                [
-                    row
-                    for row in repeatability_rows
-                    if row["candidate_id"] == candidate
-                ]
-            )
+            len([row for row in repeatability_rows if row["candidate_id"] == candidate])
             == repeatability_expected
             for candidate in CANDIDATES
         ),
-        "repeatability_subset_matches_a41": set(
-            subsets["selection"]["repeatability"]["query_ids"]
-        )
-        == {
-            str(row["query_id"])
-            for row in repeatability_rows
-            if row["candidate_id"] == "G0"
-        },
-        "latency_subset_matches_a41": set(
-            subsets["selection"]["latency"]["query_ids"]
-        )
-        == {
-            str(row["query_id"])
-            for row in latency_rows
-            if row["candidate_id"] == "G0"
-        },
+        "repeatability_subset_matches_a41": set(subsets["selection"]["repeatability"]["query_ids"])
+        == {str(row["query_id"]) for row in repeatability_rows if row["candidate_id"] == "G0"},
+        "latency_subset_matches_a41": set(subsets["selection"]["latency"]["query_ids"])
+        == {str(row["query_id"]) for row in latency_rows if row["candidate_id"] == "G0"},
     }
     expected_attack_counts = execution["adversarial_development_counts"]
     for candidate in CANDIDATES:
         for attack_type in ATTACK_TYPES:
-            audit_checks[f"{candidate}_{attack_type}_count"] = (
-                adversarial[candidate][attack_type]["cases"]
-                == int(expected_attack_counts[attack_type])
-            )
+            audit_checks[f"{candidate}_{attack_type}_count"] = adversarial[candidate][attack_type][
+                "cases"
+            ] == int(expected_attack_counts[attack_type])
     if not all(audit_checks.values()):
         failures = [name for name, passed in audit_checks.items() if not passed]
         raise RuntimeError(f"A4.2 post-result audit failed: {failures}")

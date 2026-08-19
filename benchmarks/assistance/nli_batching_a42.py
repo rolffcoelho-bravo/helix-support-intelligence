@@ -20,14 +20,9 @@ def batched_support(
     pending: list[tuple[int, str, str]] = []
     decision = str(output.get("decision", ""))
 
-    for index, sentence in enumerate(
-        runtime.sentences(str(output.get("answer", "")))
-    ):
+    for index, sentence in enumerate(runtime.sentences(str(output.get("answer", "")))):
         cited = list(
-            dict.fromkeys(
-                match.group(1)
-                for match in runtime.CITATION_RE.finditer(sentence)
-            )
+            dict.fromkeys(match.group(1) for match in runtime.CITATION_RE.finditer(sentence))
         )
         is_factual = runtime.factual(sentence, decision)
         row = {
@@ -49,10 +44,7 @@ def batched_support(
         if not cited or len(usable) != len(cited):
             row["support_verdict"] = "UNSUPPORTED"
             continue
-        premise = "\n".join(
-            f"{document['title']}\n{document['body']}"
-            for document in usable
-        )
+        premise = "\n".join(f"{document['title']}\n{document['body']}" for document in usable)
         hypothesis = runtime.CITATION_RE.sub("", sentence).strip()
         pending.append((index, premise, hypothesis))
 
@@ -72,9 +64,7 @@ def batched_support(
             return_tensors="np",
         )
         feed = {
-            key: np.asarray(value)
-            for key, value in encoded.items()
-            if key in engine.input_names
+            key: np.asarray(value) for key, value in encoded.items() if key in engine.input_names
         }
         logits = np.asarray(engine.session.run(None, feed)[0]).astype(float)
         logits -= np.max(logits, axis=1, keepdims=True)
@@ -92,8 +82,6 @@ def batched_support(
             probability = float(probability_row[label])
             rows[sentence_index]["entailment_probability"] = probability
             rows[sentence_index]["support_verdict"] = (
-                "SUPPORTED"
-                if probability >= float(engine.binding.threshold)
-                else "UNSUPPORTED"
+                "SUPPORTED" if probability >= float(engine.binding.threshold) else "UNSUPPORTED"
             )
     return rows

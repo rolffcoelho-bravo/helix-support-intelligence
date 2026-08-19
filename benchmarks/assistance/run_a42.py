@@ -18,7 +18,6 @@ from typing import Any
 import evaluate_a42
 from nli_batching_a42 import batched_support
 
-
 _original_g0 = evaluate_a42.g0
 
 

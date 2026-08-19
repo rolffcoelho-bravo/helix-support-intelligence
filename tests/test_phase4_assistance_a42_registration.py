@@ -87,7 +87,7 @@ def test_a42_runner_applies_batched_support_and_inline_g0_citations() -> None:
 def test_a42_workflow_is_one_shot_and_uses_frozen_a41_lock() -> None:
     workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
 
-    assert 'branches: [main]' in workflow
+    assert "branches: [main]" in workflow
     assert '".github/workflows/phase4-assistance-a42.yml"' in workflow
     assert "OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}" in workflow
     assert "runtime_a41.py.lock benchmarks/assistance/run_a42.py.lock" in workflow

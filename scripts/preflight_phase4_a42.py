@@ -26,18 +26,14 @@ def _load(path: Path) -> dict[str, Any]:
 def _partition() -> tuple[set[str], set[str]]:
     bundle = generate_bundle()
     conflicts = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflicts = set(INTENTS) - conflicts
 
     def ordered(values: set[str]) -> list[str]:
         return sorted(
             values,
-            key=lambda intent: hashlib.sha256(
-                f"20260819:{intent}".encode()
-            ).hexdigest(),
+            key=lambda intent: hashlib.sha256(f"20260819:{intent}".encode()).hexdigest(),
         )
 
     development = set(ordered(conflicts)[:5]) | set(ordered(non_conflicts)[:55])
@@ -68,9 +64,7 @@ def _adversarial_counts(development: set[str]) -> Counter[str]:
         if query["case_type"] == "outdated_evidence":
             number = int(str(query["query_id"]).split("-")[1])
             faq_id = f"FAQ-{number:03d}"
-            faq = next(
-                row for row in bundle.documents if row["document_id"] == faq_id
-            )
+            faq = next(row for row in bundle.documents if row["document_id"] == faq_id)
             if faq["status"] == "archived":
                 counts["archived_distractor"] += 1
     for document in bundle.documents:
@@ -90,14 +84,10 @@ def main() -> None:
     development, confirmatory = _partition()
     bundle = generate_bundle()
     development_query_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in development
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in development
     }
     confirmatory_query_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in confirmatory
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in confirmatory
     }
 
     if execution["execution_id"] != "phase4-assistance-a4.2-development-v1":
