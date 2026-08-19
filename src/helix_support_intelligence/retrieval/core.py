@@ -159,7 +159,12 @@ def filter_eligible_documents(
     documents: Sequence[Document], policy: EligibilityPolicy
 ) -> tuple[Document, ...]:
     """Return eligible documents in deterministic document-id order."""
-    return tuple(sorted((doc for doc in documents if is_eligible(doc, policy)), key=lambda d: d.document_id))
+    return tuple(
+        sorted(
+            (doc for doc in documents if is_eligible(doc, policy)),
+            key=lambda d: d.document_id,
+        )
+    )
 
 
 def tokenize(text: str) -> tuple[str, ...]:
