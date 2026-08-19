@@ -1,0 +1,105 @@
+{
+  "execution_id": "phase3-retrieval-r3.2-v1",
+  "protocol_id": "phase3-retrieval-r3.0-v1",
+  "implementation_id": "phase3-retrieval-r3.1-v1",
+  "status": "registered_pre_execution",
+  "registered_on": "2026-08-19",
+  "base_main_sha": "c2d884410fb5f703699dbf07dbde5968bdc71d37",
+  "results_opened": false,
+  "execution_partition": {
+    "corpus": "helixbank-policy-v1.0.0",
+    "queries": 308,
+    "eligible_documents_expected": 147,
+    "query_order": "query_id ascending",
+    "candidate_order": ["B0", "B1", "B2", "B3"]
+  },
+  "runtime": {
+    "device": "cpu",
+    "torch_num_threads": 1,
+    "torch_num_interop_threads": 1,
+    "environment_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "TOKENIZERS_PARALLELISM": "false"
+    },
+    "top_level_packages": {
+      "numpy": "2.3.5",
+      "sentence-transformers": "5.5.1",
+      "torch": "2.13.0"
+    },
+    "resolved_environment_recorded_in_artifact": true
+  },
+  "models": {
+    "B1": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+      "max_sequence_length": 256,
+      "batch_size": 32,
+      "normalize_embeddings_in_adapter": false,
+      "normalization_in_retrieval_core": true
+    },
+    "B3": {
+      "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "revision": "c5f2b386de279a97c53a702dd5189d1c407160dc",
+      "max_sequence_length": 512,
+      "batch_size": 32
+    }
+  },
+  "quality_execution": {
+    "one_ranking_pass_per_query": true,
+    "retrieve_k": 50,
+    "store_top_k": 50,
+    "metrics": ["nDCG@10", "MRR@10", "Recall@20", "Recall@50"],
+    "paired_bootstrap_replicates": 5000,
+    "paired_bootstrap_seed": 20260819
+  },
+  "latency_execution": {
+    "warmup_queries_per_candidate": 30,
+    "timed_passes": 5,
+    "timer": "time.perf_counter_ns",
+    "query_order_each_pass": "query_id ascending",
+    "model_loading_excluded": true,
+    "index_construction_excluded": true,
+    "document_embedding_construction_excluded": true,
+    "budgets_ms": {"B0": 100, "B1": 250, "B2": 250, "B3": 500}
+  },
+  "hypothesis_verdicts": {
+    "supported": "point estimate > 0 and lower 95% percentile bound > 0",
+    "inconclusive": "95% percentile interval includes 0",
+    "adverse": "point estimate < 0 and upper 95% percentile bound < 0"
+  },
+  "complexity_selection_operationalization": {
+    "starting_winner": "B0",
+    "evaluation_order": ["B1", "B2", "B3"],
+    "comparison_basis": "candidate versus current winner at that step",
+    "minimum_delta_ndcg_at_10": 0.01,
+    "require_ndcg_95_ci_lower_bound_above_zero": true,
+    "minimum_delta_mrr_at_10": -0.005,
+    "require_candidate_p95_within_budget": true,
+    "accepted_candidate_tracking": true,
+    "final_tie_rule": "Among candidates that earned adoption, if aggregate nDCG@10 values are within 0.005 of the best accepted value, select the lower-p95 candidate; if still tied, select the lower-numbered candidate. If none earns adoption, retain B0."
+  },
+  "evidence": {
+    "output_files": [
+      "results.json",
+      "report.md",
+      "rankings.jsonl",
+      "query_metrics.jsonl",
+      "latency_samples.jsonl",
+      "environment.json",
+      "execution_manifest.json",
+      "checksums.sha256",
+      "post_audit.json",
+      "post_audit.md"
+    ],
+    "independent_post_execution_reconstruction_required": true,
+    "run_is_provisional_until_post_audit_passes": true
+  },
+  "immutability": {
+    "workflow_trigger": "one automatic push-to-main execution when the R3.2 workflow file is first merged",
+    "no_result_motivated_changes": true,
+    "failed_infrastructure_run_may_be_retried_without_changing_scientific_configuration": true,
+    "any_scientific_change_after_first_ranking_requires_new_execution_id": true
+  }
+}
