@@ -12,6 +12,9 @@ SELF = Path(__file__).resolve()
 
 PROHIBITED_PATH_PATTERNS = (
     "*blueprint*",
+    "citations.md",
+    "findings.md",
+    "docs/phase-reports/*",
     "notes*.txt",
     "*.private.*",
     "*.internal.*",
@@ -19,6 +22,7 @@ PROHIBITED_PATH_PATTERNS = (
     "*_internal.*",
     ".private/*",
     ".internal/*",
+    "internal/*",
 )
 
 SECRET_PATTERNS = {
@@ -27,6 +31,16 @@ SECRET_PATTERNS = {
     "OpenAI-style key": re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
     "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     "Windows workstation path": re.compile(r"\b[A-Za-z]:\\+(?:Users|Claude AI)\\+"),
+}
+
+PRIVATE_PROCESS_PATTERNS = {
+    "private blueprint reference": re.compile(r"\b(?:next |internal )?blueprint(?: action| objective)?\b", re.I),
+    "approval-gate language": re.compile(r"\b(?:approval gate|explicit authorization|authorized next phase)\b", re.I),
+    "internal phase-lock language": re.compile(r"\b(?:phase lock|next locked action)\b", re.I),
+    "internal audit phrasing": re.compile(r"\bhostile audit\b", re.I),
+    "private research repository": re.compile(r"\bhelix-support-intelligence-core\b", re.I),
+    "private workspace": re.compile(r"\bproject_helix_support_intelligence_private\b", re.I),
+    "private findings register": re.compile(r"\bFINDINGS\.md\b"),
 }
 
 
@@ -49,13 +63,10 @@ def tracked_files() -> list[Path]:
         ".uv-cache",
         ".venv",
     }
-    local_reference_files = {"HELIX_INTERNAL_BLUEPRINT.md"}
     return [
         path
         for path in ROOT.rglob("*")
-        if path.is_file()
-        and path.name not in local_reference_files
-        and not excluded & set(path.parts)
+        if path.is_file() and not excluded & set(path.parts)
     ]
 
 
@@ -75,6 +86,9 @@ def audit() -> list[str]:
         except (UnicodeDecodeError, OSError):
             continue
         for label, pattern in SECRET_PATTERNS.items():
+            if pattern.search(text):
+                violations.append(f"possible {label} in {relative}")
+        for label, pattern in PRIVATE_PROCESS_PATTERNS.items():
             if pattern.search(text):
                 violations.append(f"possible {label} in {relative}")
     return violations
