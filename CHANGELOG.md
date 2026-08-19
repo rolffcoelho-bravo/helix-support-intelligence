@@ -47,6 +47,8 @@ All notable public changes are documented here. The project follows semantic ver
 - Frozen `retrieval-selected-v1` configuration selecting deterministic B0 BM25 after no more-complex candidate satisfied the predeclared adoption rule.
 - FastAPI `POST /v1/search` integration bound to `retrieval-selected-v1`, with strict input validation, pre-ranking evidence eligibility, deterministic response serialization, bounded top-50 retrieval, and a stable non-leaking backend-failure response.
 - R3.3 integration tests covering selected-configuration alignment, archived-document exclusion, zero-score tie breaking, deterministic HTTP output, invalid input, OpenAPI surface, and search-backend failure behavior.
+- Frozen Phase 4 A4.0 evidence-grounded assistance protocol with intent-clustered development/confirmatory partitions, explicit evidence-sufficiency decisions, sentence-level grounding and citation metrics, a bounded G0-G2 candidate ladder, independent verifier requirements, adversarial prompt-injection/citation-spoof/staleness tests, cluster-bootstrap inference, latency/cost accounting, and no post-result rescue rule.
+- Phase 4 assistance evaluation-record schema and protocol guard tests that prevent generation scoring before the separate A4.1 model/prompt/verifier/budget binding checkpoint is merged.
 
 ### Changed
 

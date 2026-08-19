@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shockbridge-pulse.example/helix/contracts/phase4/assistance_evaluation_record.schema.json",
+  "title": "Phase 4 Assistance Evaluation Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "query_id",
+    "candidate_id",
+    "partition",
+    "decision",
+    "answer",
+    "citations",
+    "sentence_support",
+    "schema_valid",
+    "latency_ms",
+    "model_version",
+    "prompt_version",
+    "corpus_version"
+  ],
+  "properties": {
+    "query_id": {
+      "type": "string",
+      "pattern": "^Q-[0-9]{3}-[1-4]$"
+    },
+    "candidate_id": {
+      "enum": ["G0", "G1", "G2"]
+    },
+    "partition": {
+      "enum": ["development", "confirmatory", "adversarial"]
+    },
+    "decision": {
+      "enum": [
+        "ANSWER_WITH_EVIDENCE",
+        "AUTO_ROUTE",
+        "RECOMMEND_TO_AGENT",
+        "ASK_FOR_CLARIFICATION",
+        "ESCALATE_LOW_CONFIDENCE",
+        "ESCALATE_OUT_OF_SCOPE",
+        "ESCALATE_CONFLICTING_EVIDENCE",
+        "ESCALATE_SAFETY_RISK",
+        "ESCALATE_SYSTEM_FAILURE"
+      ]
+    },
+    "answer": {
+      "type": "string",
+      "maxLength": 8000
+    },
+    "citations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(POLICY|FAQ)-[0-9]{3}$"
+      }
+    },
+    "sentence_support": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sentence_index", "text", "citations", "factual", "support_verdict"],
+        "properties": {
+          "sentence_index": {"type": "integer", "minimum": 0},
+          "text": {"type": "string", "minLength": 1},
+          "citations": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^(POLICY|FAQ)-[0-9]{3}$"}
+          },
+          "factual": {"type": "boolean"},
+          "support_verdict": {"enum": ["SUPPORTED", "UNSUPPORTED", "NOT_APPLICABLE"]}
+        }
+      }
+    },
+    "schema_valid": {"type": "boolean"},
+    "latency_ms": {"type": "number", "minimum": 0},
+    "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "estimated_cost_usd": {"type": ["number", "null"], "minimum": 0},
+    "model_version": {"type": "string", "minLength": 1},
+    "prompt_version": {"type": "string", "minLength": 1},
+    "runtime_verifier_version": {"type": ["string", "null"]},
+    "evaluation_verifier_version": {"type": "string", "minLength": 1},
+    "corpus_version": {"const": "helixbank-policy-v1.0.0"}
+  }
+}

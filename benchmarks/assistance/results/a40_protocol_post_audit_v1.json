@@ -1,0 +1,124 @@
+{
+  "audit_id": "phase4-assistance-a4.0-protocol-post-audit-v1",
+  "protocol_id": "phase4-assistance-a4.0-v1",
+  "status": "PASSED",
+  "tested_head_sha": "61b098530fb72554949f4df56ddea88698aa25f9",
+  "github": {
+    "pull_request": 14,
+    "ci_run_id": 32308703333,
+    "ci_job_id": 96246985132,
+    "ci_conclusion": "success"
+  },
+  "quality_gate": {
+    "ruff_check": "PASSED",
+    "ruff_format_check": "PASSED",
+    "mypy": "PASSED",
+    "pytest": {
+      "status": "PASSED",
+      "passed": 118,
+      "failed": 0
+    },
+    "phase1_data_contracts": "PASSED",
+    "phase3_retrieval_preflight": {
+      "status": "PASSED",
+      "eligible_documents": 147,
+      "current_conflict_fixtures_retained": 7,
+      "current_untrusted_content_fixtures_retained": 5,
+      "frozen_query_scores_computed_by_preflight": 0,
+      "retrieval_results_generated_by_preflight": false
+    },
+    "publication_audit": "PASSED"
+  },
+  "protocol_reconstruction": {
+    "corpus_version": "helixbank-policy-v1.0.0",
+    "documents": 154,
+    "queries": 308,
+    "judgments": 616,
+    "intents": 77,
+    "case_counts": {
+      "answerable": 77,
+      "ambiguous": 77,
+      "outdated_evidence": 77,
+      "missing_evidence": 70,
+      "conflicting_evidence": 7
+    },
+    "partition_unit": "intent",
+    "development_intents": 60,
+    "development_queries": 240,
+    "confirmatory_intents": 17,
+    "confirmatory_queries": 68,
+    "development_conflicting_evidence_queries": 5,
+    "confirmatory_conflicting_evidence_queries": 2,
+    "candidate_ladder": ["G0", "G1", "G2"],
+    "primary_metric": "strict_grounded_success_rate",
+    "inference": "paired nonparametric cluster bootstrap by intent",
+    "bootstrap_replicates": 5000,
+    "bootstrap_seed": 20260819,
+    "adversarial_case_counts": {
+      "direct_injection": 77,
+      "citation_spoof": 77,
+      "indirect_injection": 20,
+      "archived_distractor": 7
+    }
+  },
+  "manual_scope_audit": {
+    "generation_candidate_implementation_present": false,
+    "generation_candidate_scoring_present": false,
+    "generation_results_opened": false,
+    "exact_generator_identity_bound": false,
+    "exact_prompt_bytes_bound": false,
+    "runtime_verifier_identity_bound": false,
+    "evaluation_verifier_identity_bound": false,
+    "latency_budget_bound": false,
+    "cost_budget_bound": false,
+    "phase2_scientific_files_modified": false,
+    "phase3_scientific_files_modified": false,
+    "r32_evidence_modified": false,
+    "retrieval_selected_v1_modified": false,
+    "helixbank_records_modified": false,
+    "post_result_methodological_tuning": false,
+    "verdict": "PASSED"
+  },
+  "registered_methodological_checks": {
+    "gold_and_benchmark_labels_hidden_from_candidates": true,
+    "generation_isolation_primary_surface": true,
+    "retrieval_plus_assistance_deferred": true,
+    "evidence_sufficiency_predeclared": true,
+    "citation_semantics_predeclared": true,
+    "unsupported_claim_metric_independent_of_candidate_self_report": true,
+    "runtime_and_evaluation_verifier_family_independence_required": true,
+    "clustered_inference_predeclared": true,
+    "adversarial_transformations_predeclared": true,
+    "confirmatory_opening_guard_present": true,
+    "complexity_adoption_rule_predeclared": true,
+    "post_score_prompt_tuning_prohibited": true,
+    "post_score_model_substitution_prohibited": true,
+    "post_score_verifier_threshold_tuning_prohibited": true
+  },
+  "defects_caught_and_repaired_before_closure": [
+    {
+      "category": "lint formatting",
+      "description": "The initial Phase 4 guard test contained three lines longer than the repository Ruff limit.",
+      "repair": "Wrapped the affected test expressions without changing any protocol assertion.",
+      "methodology_changed": false
+    },
+    {
+      "category": "formatter layout",
+      "description": "The hand-wrapped guard test did not exactly match the repository Ruff formatter output.",
+      "repair": "Applied the formatter-prescribed layout without changing partition, metrics, hypotheses, adversarial cases, or execution guards.",
+      "methodology_changed": false
+    }
+  ],
+  "non_blocking_warnings": [
+    "The existing FastAPI/Starlette TestClient stack emits the previously recorded deprecation warning related to its current httpx-backed test client.",
+    "GitHub Actions reports upstream Node compatibility deprecation warnings; these do not affect A4.0 protocol semantics."
+  ],
+  "boundaries": [
+    "A4.0 is a protocol freeze, not generation evidence.",
+    "No claim is made that G1 or G2 improves over G0 because no assistance candidate has been implemented or scored.",
+    "A4.1 must bind exact model, prompt, runtime verifier, independent evaluation verifier, latency budget, cost budget, and deterministic diagnostic subsets before scoring is permitted.",
+    "The confirmatory assistance partition remains unopened for candidate scoring."
+  ],
+  "a40_rework_required": false,
+  "checkpoint_verdict": "A4.0_READY_TO_CLOSE_AFTER_FINAL_ARTIFACT_CI"
+}
