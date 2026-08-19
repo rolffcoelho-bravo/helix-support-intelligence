@@ -1,0 +1,110 @@
+{
+  "checks": {
+    "aggregate_metric_reconstruction": true,
+    "bootstrap_reconstruction": true,
+    "complexity_selection": true,
+    "corpus_manifest": true,
+    "eligibility": true,
+    "execution_input_hashes": true,
+    "hypothesis_verdicts": true,
+    "latency_reconstruction": true,
+    "model_revision_pins": true,
+    "per_query_metric_reconstruction": true,
+    "provisional_status_before_audit": true,
+    "ranking_evidence_shape": true
+  },
+  "execution_id": "phase3-retrieval-r3.2-v1",
+  "failures": [],
+  "implementation_id": "phase3-retrieval-r3.1-v1",
+  "protocol_id": "phase3-retrieval-r3.0-v1",
+  "reconstructed": {
+    "H1": {
+      "lower_95": -0.019143134208121304,
+      "point_estimate": -0.013092665462505561,
+      "replicates": 5000,
+      "seed": 20260819,
+      "upper_95": -0.007367937168091304
+    },
+    "H1_verdict": "ADVERSE",
+    "H2": {
+      "lower_95": 0.0,
+      "point_estimate": 0.0016233766233766235,
+      "replicates": 5000,
+      "seed": 20260819,
+      "upper_95": 0.00487012987012987
+    },
+    "H2_verdict": "INCONCLUSIVE",
+    "accepted_candidates": [],
+    "final_winner": "B0",
+    "latency": {
+      "B0": {
+        "mean_ms": 0.34724237467532465,
+        "p50_ms": 0.377455,
+        "p95_ms": 0.4870045,
+        "p99_ms": 0.5378468199999998,
+        "queries_per_second": 2879.8328571937996
+      },
+      "B1": {
+        "mean_ms": 16.062136904545454,
+        "p50_ms": 15.9569585,
+        "p95_ms": 17.65864115,
+        "p99_ms": 18.045028779999996,
+        "queries_per_second": 62.25821669575037
+      },
+      "B2": {
+        "mean_ms": 16.764529390259742,
+        "p50_ms": 16.732258,
+        "p95_ms": 18.439015700000002,
+        "p99_ms": 18.81941804,
+        "queries_per_second": 59.64975077564682
+      },
+      "B3": {
+        "mean_ms": 735.0358004376624,
+        "p50_ms": 744.2838294999999,
+        "p95_ms": 838.7849377,
+        "p99_ms": 854.41699298,
+        "queries_per_second": 1.3604779514202845
+      }
+    },
+    "metrics": {
+      "B0": {
+        "mrr_at_10": 0.7727272727272727,
+        "ndcg_at_10": 0.9009179145489322,
+        "query_count": 308,
+        "recall_at_20": 1.0,
+        "recall_at_20_queries": 238,
+        "recall_at_50": 1.0,
+        "recall_at_50_queries": 238
+      },
+      "B1": {
+        "mrr_at_10": 0.7667748917748918,
+        "ndcg_at_10": 0.8866534827989215,
+        "query_count": 308,
+        "recall_at_20": 1.0,
+        "recall_at_20_queries": 238,
+        "recall_at_50": 1.0,
+        "recall_at_50_queries": 238
+      },
+      "B2": {
+        "mrr_at_10": 0.7711038961038961,
+        "ndcg_at_10": 0.8878252490864266,
+        "query_count": 308,
+        "recall_at_20": 1.0,
+        "recall_at_20_queries": 238,
+        "recall_at_50": 1.0,
+        "recall_at_50_queries": 238
+      },
+      "B3": {
+        "mrr_at_10": 0.7727272727272727,
+        "ndcg_at_10": 0.9324829046724504,
+        "query_count": 308,
+        "recall_at_20": 1.0,
+        "recall_at_20_queries": 238,
+        "recall_at_50": 1.0,
+        "recall_at_50_queries": 238
+      }
+    },
+    "sequential_winner": "B0"
+  },
+  "verdict": "PASSED"
+}
