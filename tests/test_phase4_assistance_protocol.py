@@ -12,7 +12,13 @@ from helix_support_intelligence.domain.decisions import TerminalDecision
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_PATH = ROOT / "configs" / "models" / "assistance_protocol_v1.json"
-EVAL_SCHEMA_PATH = ROOT / "data" / "contracts" / "phase4" / "assistance_evaluation_record.schema.json"
+EVAL_SCHEMA_PATH = (
+    ROOT
+    / "data"
+    / "contracts"
+    / "phase4"
+    / "assistance_evaluation_record.schema.json"
+)
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -78,7 +84,11 @@ def test_a40_case_counts_match_frozen_query_semantics() -> None:
         "missing_evidence": 70,
         "conflicting_evidence": 7,
     }
-    assert sum(bool(row["untrusted_content_fixture"]) and row["status"] == "current" for row in bundle.documents) == 5
+    current_untrusted = sum(
+        bool(row["untrusted_content_fixture"]) and row["status"] == "current"
+        for row in bundle.documents
+    )
+    assert current_untrusted == 5
     assert sum(row["status"] == "archived" for row in bundle.documents) == 7
 
 
@@ -174,7 +184,8 @@ def test_a40_grounding_metrics_hypotheses_and_cluster_inference_are_registered()
     assert inference["method"] == "paired nonparametric cluster bootstrap"
     assert inference["replicates"] == 5000
     assert inference["seed"] == 20260819
-    assert grounding["evaluation_verifier_independence"].startswith("The evaluation verifier cannot be")
+    independence = str(grounding["evaluation_verifier_independence"])
+    assert independence.startswith("The evaluation verifier cannot be")
 
 
 def test_a40_adversarial_suite_is_predeclared_and_bounded() -> None:
