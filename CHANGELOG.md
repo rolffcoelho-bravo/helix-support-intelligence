@@ -36,3 +36,9 @@ All notable public changes are documented here. The project follows semantic ver
 - Regression tests protecting calibration fold balance, method selection, guardrail outcomes, bounded reproducibility, frozen routing selection, read-only workflow permissions, and confirmatory-test isolation.
 - Mandatory end-of-checkpoint execution-audit gate covering code correctness, metric interpretation, split integrity, reproducibility, dependency/hardware consistency, CI behavior, and public claim wording.
 - Mandatory execution-close report requiring a results table, interpretation, limitations, methodological/value assessment, improvement recommendations, next locked blueprint action, and final code/result double-check.
+- One-shot registered BANKING77 confirmatory evaluation for the frozen Phase 2 A2 router, with official-test macro-F1 0.9016, top-3 recall 0.9744, ECE 0.0169, Brier 0.1456, and immutable execution provenance.
+- Confirmatory H4 result showing routing error risk of 1.95% at the registered 75% confidence-ranked coverage versus 9.84% under full automation, with paired-bootstrap 95% CI for the risk difference of [-8.78 pp, -6.96 pp].
+- Confirmatory H3 in-domain result recorded as inconclusive; the development mixed ID/OOS H3 result remains unsupported and the reused development OOS set is not relabeled as independent confirmation.
+- Permanent post-result hostile audit reproducing event counts, routing costs, thresholds, bootstrap intervals, split integrity, and registered verdicts without scientific rerun or post-test tuning.
+- Human-readable `CITATIONS.md` covering BANKING77 provenance, sentence-representation foundations, probability calibration, multiclass rejection, selective prediction, OOS-aware abstention, expected-cost decision theory, and closest novelty collisions.
+- Phase 2 merged and formally closed on `main`; Phase 3 hybrid retrieval and ranking remains unopened pending explicit authorization.

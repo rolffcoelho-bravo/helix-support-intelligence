@@ -78,7 +78,7 @@ Phase 2 freezes the selected routing configuration as A2: `sentence-transformers
 
 The retrieval layer will combine lexical and semantic search with reranking. Search quality is evaluated independently from generated answers so retrieval failures remain visible rather than hidden behind fluent text.
 
-Retrieval implementation belongs to Phase 3 and has **not started** in the Phase 2 branch.
+Retrieval implementation belongs to Phase 3 and has **not started**.
 
 ### Evidence-grounded assistance
 
@@ -213,7 +213,7 @@ The repository foundation, Phase 1 data/evaluation contracts, and Phase 2 routin
 
 1. reproducible engineering foundation — **complete**;
 2. public-data and evaluation contracts — **complete**;
-3. ticket-routing baseline and selective decision policy — **complete; confirmatory result audited**;
+3. ticket-routing baseline and selective decision policy — **complete; confirmatory result audited and merged**;
 4. hybrid retrieval and ranking — **not started**;
 5. evidence-grounded assistance;
 6. safety, observability, and system validation;
@@ -227,7 +227,7 @@ Phase 2 closes with a deliberately differentiated conclusion:
 - the independent BANKING77 in-domain H3 component is **inconclusive**;
 - H4 selective abstention is **confirmatorily supported** at the registered 75% confidence-ranked coverage level.
 
-The next blueprint action is the Phase 2 merge decision. Phase 3 retrieval remains unopened until Phase 2 is merged and the next phase is explicitly authorized.
+Phase 2 is merged and closed on `main`. The next blueprint action is an explicit Phase 3 authorization; hybrid retrieval and ranking remain unopened until that gate is approved.
 
 The project reaches completion at a documented `v1.0.0` release. Further domains or capabilities will be treated as separate post-v1 work rather than unfinished obligations of the initial repository.
 
@@ -242,7 +242,7 @@ ShockBridge Pulse Research Lab
 
 Pereira, Rodolfo. (2026). *Helix Support Intelligence: Production-Oriented Search, Routing, Recommendation, and Evidence-Grounded Support AI*. ShockBridge Pulse Research Lab. Python research software.
 
-Machine-readable metadata is provided in [CITATION.cff](CITATION.cff).
+Machine-readable metadata is provided in [CITATION.cff](CITATION.cff). The scientific foundations and related-work bibliography are maintained in [CITATIONS.md](CITATIONS.md).
 
 ## License
 

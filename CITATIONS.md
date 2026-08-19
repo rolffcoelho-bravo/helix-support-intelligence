@@ -55,31 +55,43 @@ Pereira, Rodolfo. (2026). *Helix Support Intelligence: Production-Oriented Searc
 13. Franc, Vojtěch, and Daniel Průša. 2019. “On Discriminative Learning of Prediction Uncertainty.” *Proceedings of the 36th International Conference on Machine Learning*, PMLR 97:1963–1971.
     - Connects reject costs, bounded selective risk, maximal coverage, and uncertainty-score ordering.
 
-14. Charoenphakdee, Nontawat, Zhenghang Cui, Yivan Zhang, and Masashi Sugiyama. 2021. “Classification with Rejection Based on Cost-sensitive Classification.” *Proceedings of the 38th International Conference on Machine Learning*, PMLR 139:1507–1517.
+14. Ni, Chenri, Nontawat Charoenphakdee, Junya Honda, and Masashi Sugiyama. 2019. “On the Calibration of Multiclass Classification with Rejection.” *Advances in Neural Information Processing Systems 32*.
+    - Closest theoretical collision for confidence calibration in multiclass classification with a reject option; derives calibration conditions and rejection criteria.
+
+15. Charoenphakdee, Nontawat, Zhenghang Cui, Yivan Zhang, and Masashi Sugiyama. 2021. “Classification with Rejection Based on Cost-sensitive Classification.” *Proceedings of the 38th International Conference on Machine Learning*, PMLR 139:1507–1517.
     - Cost-sensitive theoretical treatment of multiclass classification with rejection.
 
-15. Pugnana, Andrea, and Salvatore Ruggieri. 2023. “AUC-based Selective Classification.” *Proceedings of AISTATS 2023*, PMLR 206:2494–2514.
+16. Pugnana, Andrea, and Salvatore Ruggieri. 2023. “AUC-based Selective Classification.” *Proceedings of AISTATS 2023*, PMLR 206:2494–2514.
     - Demonstrates that the objective used to rank/accept predictions matters: selective mechanisms can be optimized for a downstream metric rather than accuracy alone.
 
-16. Ferrer, Luciana. 2025. “No Need for Ad-hoc Substitutes: The Expected Cost Is a Principled All-purpose Classification Metric.” *Transactions on Machine Learning Research*.
+17. Mao, Anqi, Mehryar Mohri, and Yutao Zhong. 2024. “Predictor-Rejector Multi-Class Abstention: Theoretical Analysis and Algorithms.” *Proceedings of the 35th International Conference on Algorithmic Learning Theory*, PMLR 237:822–867.
+    - Recent multiclass abstention theory with consistency guarantees for predictor-rejector and two-stage settings.
+
+18. Narasimhan, Harikrishna, Aditya Krishna Menon, Wittawat Jitkrittum, and Sanjiv Kumar. 2024. “Plugin Estimators for Selective Classification with Out-of-Distribution Detection.” *International Conference on Learning Representations 2024*.
+    - Closely related to joint selective classification and OOD detection, directly relevant to Helix’s in-domain/OOS decision boundary.
+
+19. Ferrer, Luciana. 2025. “No Need for Ad-hoc Substitutes: The Expected Cost Is a Principled All-purpose Classification Metric.” *Transactions on Machine Learning Research*.
     - Supports the use of explicit expected cost when error types and operating priors have different consequences.
 
-17. Lopez, L. Julian Lechuga, Farah E. Shamout, and Tim G. J. Rudner. 2026. “An Empirical Analysis of Calibration and Selective Prediction in Multimodal Clinical Condition Classification.” *Proceedings of the Conference on Health, Inference, and Learning 2026*, PMLR 333:794–833.
+20. Rabanser, Stephan, and Nicolas Papernot. 2025. “What Does It Take to Build a Performant Selective Classifier?” *Advances in Neural Information Processing Systems 38*.
+    - Decomposes the selective-classification gap and shows why monotone post-hoc calibration has limited ability to improve selective ranking when it does not reorder predictions.
+
+21. Lopez, L. Julian Lechuga, Farah E. Shamout, and Tim G. J. Rudner. 2026. “An Empirical Analysis of Calibration and Selective Prediction in Multimodal Clinical Condition Classification.” *Proceedings of the Conference on Health, Inference, and Learning 2026*, PMLR 333:794–833.
     - Recent empirical evidence that strong aggregate model metrics and calibration summaries do not automatically imply reliable selective behavior.
 
 ## Decision-theoretic uncertainty and risk-sensitive prediction
 
-18. Kiyani, Shayan, George J. Pappas, Aaron Roth, and Hamed Hassani. 2025. “Decision Theoretic Foundations for Conformal Prediction: Optimal Uncertainty Quantification for Risk-Averse Agents.” *Proceedings of ICML 2025*, PMLR 267:30943–30965.
+22. Kiyani, Shayan, George J. Pappas, Aaron Roth, and Hamed Hassani. 2025. “Decision Theoretic Foundations for Conformal Prediction: Optimal Uncertainty Quantification for Risk-Averse Agents.” *Proceedings of ICML 2025*, PMLR 267:30943–30965.
     - Related decision-theoretic work connecting uncertainty quantification, risk constraints, and downstream utility.
 
-19. Gibbs, Isaac, and Ryan J. Tibshirani. 2026. “Sample-Efficient Omniprediction for Proper Losses.” *Proceedings of COLT 2026*, PMLR 336:2679–2719.
+23. Gibbs, Isaac, and Ryan J. Tibshirani. 2026. “Sample-Efficient Omniprediction for Proper Losses.” *Proceedings of COLT 2026*, PMLR 336:2679–2719.
     - Recent theory on probabilistic predictions designed to support effective decisions under multiple downstream proper losses.
 
 ## Interpretation boundary for Phase 2
 
 The Phase 2 Helix evidence should not be described as proving that probability calibration, expected routing cost, and selective risk are equivalent objectives. The registered results show the opposite pattern in this application: temperature scaling substantially improved standard probability-calibration metrics, while the development expected-cost endpoint did not improve and its independent BANKING77 in-domain component was inconclusive; selective abstention, by contrast, was independently supported at the registered coverage level.
 
-That empirical separation is scientifically interesting, but **the separation itself is not claimed here as a novel theorem or a new ML method**. The literature above already contains substantial work on decision-aware calibration, reject-option classification, expected cost, and selective prediction. Any publication claim of methodological novelty must therefore introduce and validate a genuinely new formulation or algorithm rather than repackage the Phase 2 observation.
+That empirical separation is scientifically interesting, but **the separation itself is not claimed here as a novel theorem or a new ML method**. The literature above already contains substantial work on decision-aware calibration, multiclass rejection, expected cost, selective prediction, OOD-aware abstention, and selective-ranking failure modes. Any publication claim of methodological novelty must therefore introduce and validate a genuinely new formulation or algorithm rather than repackage the Phase 2 observation.
 
 ## Maintenance rule
 
