@@ -43,8 +43,8 @@ def test_phase3_benchmark_selection_is_deterministic_and_disjoint() -> None:
 
     assert first_dev == second_dev
     assert first_confirm == second_confirm
-    assert len(first_dev) == 1540
-    assert len(first_confirm) == 770
+    assert len(first_dev) == 1386
+    assert len(first_confirm) == 616
     assert {item.query_id for item in first_dev}.isdisjoint(
         {item.query_id for item in first_confirm}
     )
@@ -77,13 +77,13 @@ def test_phase3_qrels_and_manifest_match_frozen_semantics() -> None:
         spec,
     )
 
-    assert len(development_qrels) == 2940
-    assert len(confirmatory_qrels) == 1470
+    assert len(development_qrels) == 2646
+    assert len(confirmatory_qrels) == 1176
     assert manifest["candidate_documents"] == 147
-    assert manifest["development_queries"] == 1540
-    assert manifest["confirmatory_queries"] == 770
-    assert manifest["development_qrels"] == 2940
-    assert manifest["confirmatory_qrels"] == 1470
+    assert manifest["development_queries"] == 1386
+    assert manifest["confirmatory_queries"] == 616
+    assert manifest["development_qrels"] == 2646
+    assert manifest["confirmatory_qrels"] == 1176
     assert manifest["confirmatory_content_logged"] is False
 
 
