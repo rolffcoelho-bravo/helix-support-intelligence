@@ -42,6 +42,7 @@
     "citation_eligible_recall_at_20": 0.27056277056277056
   },
   "deterministic_evidence": {
+    "ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
     "accepted_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
     "accepted_run": 32257841759,
     "replication_run": 32256394681,
