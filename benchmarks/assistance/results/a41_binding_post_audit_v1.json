@@ -1,0 +1,162 @@
+{
+  "audit_id": "phase4-assistance-a4.1-binding-post-audit-v1",
+  "binding_id": "phase4-assistance-a4.1-v1",
+  "protocol_id": "phase4-assistance-a4.0-v1",
+  "status": "PASSED_NO_RESULTS",
+  "tested_head_sha": "a5da94ccd76c7c79f710ddd0ae66c51cea70525c",
+  "github": {
+    "pull_request": 15,
+    "ci_run_id": 32311693388,
+    "ci_job_id": 96255805179,
+    "ci_conclusion": "success"
+  },
+  "quality_gate": {
+    "ruff_check": "PASSED",
+    "ruff_format_check": {
+      "status": "PASSED",
+      "files_formatted": 99
+    },
+    "mypy": {
+      "status": "PASSED",
+      "source_files": 45
+    },
+    "pytest": {
+      "status": "PASSED",
+      "passed": 125,
+      "failed": 0,
+      "warnings": 1
+    },
+    "phase1_data_contracts": "PASSED",
+    "phase3_retrieval_preflight": {
+      "status": "PASSED",
+      "eligible_documents": 147,
+      "current_conflict_fixtures_retained": 7,
+      "current_untrusted_content_fixtures_retained": 5,
+      "frozen_query_scores_computed_by_preflight": 0,
+      "retrieval_results_generated_by_preflight": false
+    },
+    "phase4_assistance_preflight": {
+      "status": "PASSED",
+      "development_intents": 60,
+      "development_queries": 240,
+      "confirmatory_intents": 17,
+      "confirmatory_queries": 68,
+      "repeatability_cases": 30,
+      "latency_cases": 60,
+      "generator_calls_made": 0,
+      "nli_calls_made": 0,
+      "assistance_scores_computed": 0
+    },
+    "runtime_preflight": {
+      "status": "PASSED",
+      "generator_calls_made": 0,
+      "nli_calls_made": 0,
+      "performance_scores_computed": 0
+    },
+    "publication_audit": "PASSED"
+  },
+  "frozen_binding": {
+    "generator": {
+      "model": "gpt-5.4-mini-2026-03-17",
+      "reasoning_effort": "none",
+      "temperature": 0.0,
+      "max_output_tokens": 512,
+      "tools_enabled": false,
+      "store": false
+    },
+    "system_prompt_sha256": "ab0a472476fbf023a154f1f1c6fa29c3c06da8590ac05b248aba209cadca878b",
+    "request_template_sha256": "433fdd0b2374b55cdea1bbda6e22fa93628648bb07a7468ab0a520b4fc00fd15",
+    "candidate_output_schema_sha256": "3c0ec9a6864b0ac316197be48e399264ce841ac0ac48399bd975d858f36a963f",
+    "runtime_verifier": {
+      "model": "cross-encoder/nli-deberta-v3-small",
+      "revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+      "architecture_family": "deberta-v3",
+      "entailment_label": 1,
+      "entailment_threshold": 0.8
+    },
+    "evaluation_verifier": {
+      "model": "cross-encoder/nli-MiniLM2-L6-H768",
+      "revision": "b95119ce93d3e065de6214e38cd4a97b0f2f2c6d",
+      "architecture_family": "minilm2-roberta",
+      "entailment_label": 1,
+      "entailment_threshold": 0.8
+    },
+    "diagnostic_subsets_sha256": "60f8a4ec2be040410d355a06dfc7d36608d3fa990962179c9d99da29193f2c1e",
+    "benchmark_runtime_sha256": "fae0a81512f99219f243a29284db2cc1d28118a9a87247d16785616f131817d8",
+    "benchmark_dependency_lock_sha256": "f094583ce93b48eeac5ed70fba71390c163779a73e782e797742b5501b8ea796",
+    "latency_budgets_p95_ms": {
+      "G0": 100,
+      "G1": 6000,
+      "G2": 8000
+    },
+    "maximum_estimated_provider_cost_usd_per_request": {
+      "G0": 0.0,
+      "G1": 0.005,
+      "G2": 0.005
+    }
+  },
+  "manual_code_and_scope_audit": {
+    "expected_changed_files_only": true,
+    "changed_file_count_before_audit_artifacts": 12,
+    "normal_package_dependency_file_modified": false,
+    "heavy_model_dependencies_benchmark_scoped": true,
+    "temporary_lock_workflow_present": false,
+    "phase2_scientific_files_modified": false,
+    "phase3_scientific_files_modified": false,
+    "r32_evidence_modified": false,
+    "retrieval_selected_v1_modified": false,
+    "helixbank_records_modified": false,
+    "generation_candidate_outputs_present": false,
+    "development_performance_results_present": false,
+    "confirmatory_performance_results_present": false,
+    "candidate_visible_gold_or_benchmark_label_fields": false,
+    "runtime_verifier_family_differs_from_evaluation_verifier_family": true,
+    "verdict": "PASSED"
+  },
+  "external_identity_checks": {
+    "generator_snapshot_and_pricing_documented_by_provider": true,
+    "generator_structured_outputs_documented_by_provider": true,
+    "runtime_verifier_revision_resolves": true,
+    "runtime_verifier_entailment_label_is_1": true,
+    "evaluation_verifier_revision_resolves": true,
+    "evaluation_verifier_entailment_label_is_1": true,
+    "provider_runtime_call_executed": false,
+    "nli_runtime_inference_executed": false
+  },
+  "defects_caught_and_repaired_before_closure": [
+    {
+      "category": "canonical formatting",
+      "description": "The first full repository gate required Ruff canonical formatting in the new A4.1 preflight and guard tests.",
+      "repair": "Applied only the formatter-prescribed layout.",
+      "scientific_behavior_changed": false
+    },
+    {
+      "category": "dependency-lock workflow staging",
+      "description": "The temporary lock workflow initially could not stage the explicitly bound configs/models file because the repository ignore rule also matches directories named models.",
+      "repair": "Force-added only the explicit A4.1 binding path after the dependency lock and zero-call preflight had already succeeded.",
+      "scientific_behavior_changed": false
+    },
+    {
+      "category": "dependency-lock workflow concurrency",
+      "description": "A concurrent lock workflow attempt lost its push race because another run had already committed the same generated lock to the feature branch.",
+      "repair": "Kept the first committed deterministic lock and removed the temporary workflow before merge.",
+      "scientific_behavior_changed": false
+    }
+  ],
+  "non_blocking_warnings": [
+    "The existing FastAPI/Starlette TestClient stack emits one httpx-related deprecation warning; all tests pass and this is not an A4.1 assistance failure.",
+    "GitHub Actions reports upstream Node compatibility/deprecation warnings; they do not affect the binding result."
+  ],
+  "limitations": [
+    "A4.1 statically validates the provider request payload, exact model snapshot, prompts, schemas, hashes, pricing, verifier identities, and dependency lock, but intentionally does not call the OpenAI API. Actual provider request compatibility is first empirically tested at the controlled development execution.",
+    "A4.1 intentionally does not download or run the NLI models. Exact-revision resolution and label mappings are provenance checks; inference behavior is first empirically tested at the controlled development execution.",
+    "A4.1 contains no model-performance evidence and cannot support any claim that G1 or G2 improves on G0.",
+    "The 68-query confirmatory partition remains unopened for assistance scoring."
+  ],
+  "generator_calls_made": 0,
+  "nli_calls_made": 0,
+  "assistance_performance_scores_computed": 0,
+  "development_execution_required": true,
+  "confirmatory_execution_allowed_at_a41": false,
+  "checkpoint_verdict": "A4.1_READY_TO_CLOSE_AFTER_FINAL_ARTIFACT_CI"
+}
