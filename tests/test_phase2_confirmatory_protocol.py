@@ -9,6 +9,7 @@ SCRIPT = ROOT / "benchmarks" / "routing" / "evaluate_confirmatory.py"
 CONFIG = ROOT / "configs" / "models" / "routing_confirmatory_v1.json"
 SELECTED = ROOT / "configs" / "models" / "routing_selected_v1.json"
 WORKFLOW = ROOT / ".github" / "workflows" / "phase2-routing-confirmatory.yml"
+BRIDGE = ROOT / ".github" / "workflows" / "phase2-routing-confirmatory-approval-bridge.yml"
 
 
 def _json(path: Path) -> dict[str, object]:
@@ -38,6 +39,9 @@ def test_confirmatory_protocol_matches_frozen_selected_router() -> None:
     assert policies["A2_temperature_threshold"] == selected["operating_policy"]["threshold"]  # type: ignore[index]
     assert policies["A2_raw_threshold"] == 0.367217
     assert governance["one_registered_scientific_result"] is True
+    assert governance["unconditional_automatic_test_trigger_allowed"] is False
+    assert governance["approval_bridge_requires_exact_comment"] == "OPEN_FROZEN_TEST_ONCE"
+    assert governance["approval_bridge_scientific_logic_changed"] is False
     assert governance["test_result_may_change_model"] is False
     assert governance["test_result_may_change_calibration"] is False
     assert governance["test_result_may_change_threshold"] is False
@@ -76,4 +80,24 @@ def test_confirmatory_workflow_is_manual_and_read_only() -> None:
     freeze = workflow.index("Verify pre-confirmatory artifact freeze")
     preflight = workflow.index("Run no-test preflight")
     test_open = workflow.index("Open frozen test and run registered confirmatory evaluation")
+    assert freeze < preflight < test_open
+
+
+def test_explicit_approval_bridge_preserves_frozen_scientific_path() -> None:
+    bridge = BRIDGE.read_text(encoding="utf-8")
+    assert "issue_comment:" in bridge
+    assert "types: [created]" in bridge
+    assert "github.event.issue.number == 6" in bridge
+    assert "github.event.comment.body == 'OPEN_FROZEN_TEST_ONCE'" in bridge
+    assert "ref: phase-2-routing-baseline-selective-policy" in bridge
+    assert "contents: read" in bridge
+    assert "contents: write" not in bridge
+    assert "push:" not in bridge
+    assert "pull_request:" not in bridge
+    assert "python benchmarks/routing/verify_preconfirmatory_freeze.py" in bridge
+    assert "--preflight-only" in bridge
+    assert "--authorize-test-open \"${{ github.event.comment.body }}\"" in bridge
+    freeze = bridge.index("Verify pre-confirmatory artifact freeze")
+    preflight = bridge.index("Run no-test preflight")
+    test_open = bridge.index("Open frozen test and run registered confirmatory evaluation")
     assert freeze < preflight < test_open
