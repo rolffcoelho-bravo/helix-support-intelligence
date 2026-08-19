@@ -71,9 +71,9 @@ Two independent GitHub Actions runs from the committed CPU-only environment repr
 
 Floating threshold/score values differ only at normal CPU numerical scale; the largest observed numeric delta across float fields was approximately **5.33×10⁻⁷**. Bitwise floating-point identity is not claimed.
 
-## Hostile audit
+## Integrity review
 
-The checkpoint passed the standing execution audit:
+The checkpoint passed its execution-integrity review:
 
 - the 160-query benchmark was committed before the first OOS score;
 - the scorer downloads only the frozen BANKING77 source-training CSV and never the official test CSV;
@@ -81,7 +81,7 @@ The checkpoint passed the standing execution audit:
 - the in-domain side of the primary OOS estimate uses calibration-held-out folds, avoiding full-validation calibrator reuse on its fitting rows;
 - the audited balanced calibration folds remain 390 / 392 / 393 / 402 / 399;
 - CPU-only lock is committed and contains no CUDA/NVIDIA/Triton packages;
-- workflow permissions were restored to read-only;
+- workflow permissions are read-only;
 - repository-wide CI passes after formatting corrections;
 - the public conclusion is narrowed to a synthetic development benchmark and does not claim production OOS performance.
 
@@ -91,6 +91,6 @@ The checkpoint passed the standing execution audit:
 
 No final operating threshold is selected. H3 and H4 remain open. The README release benchmark remains `pending`.
 
-## Next locked action
+## Next evaluation step
 
-Freeze the **routing cost matrix before using any cost result**, then evaluate expected routing cost and the final risk-coverage operating point for A1 and calibrated A2. Do not open the confirmatory BANKING77 test split.
+Freeze the **routing cost matrix before using any cost result**, then evaluate expected routing cost and the final risk-coverage operating point for A1 and calibrated A2. The confirmatory BANKING77 test split remains separate.
