@@ -9,7 +9,7 @@ from helix_support_intelligence.retrieval.metrics import evaluate_query, mean_me
 
 
 def test_b0_tokenizer_matches_frozen_nfkc_casefold_contract() -> None:
-    assert tokenize("Café_CARD １２3") == ("café", "card", "123")
+    assert tokenize("Café_CARD \uff11\uff123") == ("café", "card", "123")
 
 
 def test_b0_bm25_uses_positive_rsj_idf_and_stable_document_ties() -> None:
