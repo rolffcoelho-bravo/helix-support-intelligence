@@ -1,0 +1,26 @@
+{
+  "audit_id": "phase3-retrieval-r3.3-integration-audit-plan-v1",
+  "integration_id": "phase3-retrieval-r3.3-v1",
+  "status": "PENDING_PR_QUALITY_GATE",
+  "scope": [
+    "POST /v1/search contract",
+    "retrieval-selected-v1 binding",
+    "pre-ranking eligibility enforcement",
+    "exact frozen R3.2 B0 ranking reproduction",
+    "deterministic serialization",
+    "request validation",
+    "known backend failure behavior",
+    "dependency lock consistency",
+    "publication boundary",
+    "absence of Phase 2 or R3.2 scientific changes"
+  ],
+  "close_only_if": [
+    "full repository make quality gate passes on exact merge candidate",
+    "focused R3.3 tests pass",
+    "frozen B0 Q-001-1 top-50 ranking is reproduced exactly through HTTP",
+    "manual diff audit finds no retrieval retuning or benchmark-label leakage",
+    "public documentation matches validated R3.2 evidence and R3.3 runtime behavior"
+  ],
+  "rerun_scientific_r32_required": false,
+  "scientific_retuning_permitted": false
+}
