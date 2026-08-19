@@ -42,6 +42,25 @@ jobs:
           assert p['execution_id']=='phase3-retrieval-r3.2-v1';
           assert p['results_opened'] is False"
 
+      - name: Freeze scientific input hashes before first ranking
+        run: |
+          mkdir -p artifacts/phase3-retrieval/r32
+          sha256sum \
+            configs/data/helixbank_policy_v1.json \
+            configs/models/retrieval_ladder_v1.json \
+            configs/models/retrieval_implementation_v1.json \
+            configs/models/retrieval_execution_r32_v1.json \
+            src/helix_support_intelligence/data/helixbank.py \
+            src/helix_support_intelligence/retrieval/core.py \
+            src/helix_support_intelligence/retrieval/evaluation.py \
+            src/helix_support_intelligence/retrieval/ladder.py \
+            benchmarks/retrieval/evaluate_r32.py \
+            benchmarks/retrieval/diagnostics_r32.py \
+            benchmarks/retrieval/verify_diagnostics_r32.py \
+            benchmarks/retrieval/verify_r32.py \
+            .github/workflows/phase3-retrieval-r32.yml \
+            > artifacts/phase3-retrieval/r32/registered_inputs.sha256
+
       - name: Execute registered B0-B3 benchmark
         run: >-
           uv run benchmarks/retrieval/evaluate_r32.py
@@ -56,6 +75,9 @@ jobs:
         run: >-
           python3 benchmarks/retrieval/verify_diagnostics_r32.py
           --output-dir artifacts/phase3-retrieval/r32
+
+      - name: Reverify frozen scientific inputs after execution
+        run: sha256sum -c artifacts/phase3-retrieval/r32/registered_inputs.sha256
 
       - name: Independently reconstruct and audit execution evidence
         run: >-
