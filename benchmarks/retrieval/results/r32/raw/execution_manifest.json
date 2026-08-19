@@ -1,0 +1,41 @@
+{
+  "corpus_manifest": {
+    "corpus_version": "helixbank-policy-v1.0.0",
+    "counts": {
+      "documents": 154,
+      "intents": 77,
+      "judgments": 616,
+      "queries": 308
+    },
+    "generator_version": "1.0.0",
+    "sha256": {
+      "documents": "13572a02eddadbd621a39490238358acccf8c5f01fc7a26dcfe3f4017aad2d8f",
+      "judgments": "8d5b4b816a807d5976d0102dcdd3d917a16c9c4a916e4776f5023b47043d5a4d",
+      "queries": "2c54b5353d71a399cb15303fb6d751dd18c9ba814c992c4f676fb19bd865481c"
+    }
+  },
+  "execution_id": "phase3-retrieval-r3.2-v1",
+  "github_run_attempt": "1",
+  "github_run_id": "32302009548",
+  "github_sha": "d13bc04383c8cc59b2cc418fe48c9ef0756b2a6a",
+  "input_sha256": {
+    "benchmarks/retrieval/evaluate_r32.py": "2f904ffdc401ab06de248a29fc006a202921c60148d27666cb15b31cf6478a7b",
+    "benchmarks/retrieval/verify_r32.py": "bbba1df549c8623c4967b0d2b9065379eda6a5fcdb79eb8d53164ea78ca8b68c",
+    "configs/models/retrieval_execution_r32_v1.json": "9a6413d7acd39d117b40a732ba41d661775c7350a3797be0faf034d610b560da",
+    "configs/models/retrieval_implementation_v1.json": "09a4197c3e84ed8db042fc5503b921f30daed9ca7c0ae260238fed30ae591933",
+    "configs/models/retrieval_ladder_v1.json": "fd2bd71c5e0cbcab2219f23a767e44e3ee2caaf3cd26ecbf8257e4e48efc597f"
+  },
+  "resolved_model_revisions": {
+    "B1": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "B3": "c5f2b386de279a97c53a702dd5189d1c407160dc"
+  },
+  "result_files_before_post_audit": [
+    "results.json",
+    "report.md",
+    "rankings.jsonl",
+    "query_metrics.jsonl",
+    "latency_samples.jsonl",
+    "environment.json"
+  ],
+  "started_from_registered_results_opened_false": true
+}

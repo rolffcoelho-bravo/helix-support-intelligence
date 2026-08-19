@@ -1,0 +1,153 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 96226418119,
+      "run_id": 32302009548,
+      "workflow_name": "Phase 3 Retrieval R3.2",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/rolffcoelho-bravo/helix-support-intelligence/actions/runs/32302009548",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOT8k_DM8AAAAWZ4qdxw",
+      "head_sha": "d13bc04383c8cc59b2cc418fe48c9ef0756b2a6a",
+      "url": "https://api.github.com/repos/rolffcoelho-bravo/helix-support-intelligence/actions/jobs/96226418119",
+      "html_url": "https://github.com/rolffcoelho-bravo/helix-support-intelligence/actions/runs/32302009548/job/96226418119",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-08-19T21:04:49Z",
+      "started_at": "2026-08-19T21:04:53Z",
+      "completed_at": "2026-08-19T21:29:34Z",
+      "name": "Registered B0-B3 retrieval execution and audit",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-08-19T21:04:54Z",
+          "completed_at": "2026-08-19T21:04:56Z"
+        },
+        {
+          "name": "Check out immutable execution commit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-08-19T21:04:56Z",
+          "completed_at": "2026-08-19T21:04:57Z"
+        },
+        {
+          "name": "Install uv",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-08-19T21:04:57Z",
+          "completed_at": "2026-08-19T21:04:58Z"
+        },
+        {
+          "name": "Verify registered pre-execution state",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-08-19T21:04:58Z",
+          "completed_at": "2026-08-19T21:04:58Z"
+        },
+        {
+          "name": "Freeze scientific input hashes before first ranking",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-08-19T21:04:58Z",
+          "completed_at": "2026-08-19T21:04:58Z"
+        },
+        {
+          "name": "Execute registered B0-B3 benchmark",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-08-19T21:04:58Z",
+          "completed_at": "2026-08-19T21:29:24Z"
+        },
+        {
+          "name": "Generate registered diagnostic slices",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-08-19T21:29:24Z",
+          "completed_at": "2026-08-19T21:29:25Z"
+        },
+        {
+          "name": "Independently verify diagnostic slices",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-08-19T21:29:25Z",
+          "completed_at": "2026-08-19T21:29:25Z"
+        },
+        {
+          "name": "Reverify frozen scientific inputs after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-08-19T21:29:25Z",
+          "completed_at": "2026-08-19T21:29:25Z"
+        },
+        {
+          "name": "Independently reconstruct and audit execution evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-08-19T21:29:25Z",
+          "completed_at": "2026-08-19T21:29:28Z"
+        },
+        {
+          "name": "Publish execution summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-08-19T21:29:28Z",
+          "completed_at": "2026-08-19T21:29:28Z"
+        },
+        {
+          "name": "Upload immutable R3.2 evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-08-19T21:29:28Z",
+          "completed_at": "2026-08-19T21:29:29Z"
+        },
+        {
+          "name": "Post Install uv",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-08-19T21:29:29Z",
+          "completed_at": "2026-08-19T21:29:31Z"
+        },
+        {
+          "name": "Post Check out immutable execution commit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-08-19T21:29:31Z",
+          "completed_at": "2026-08-19T21:29:31Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-08-19T21:29:31Z",
+          "completed_at": "2026-08-19T21:29:31Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/rolffcoelho-bravo/helix-support-intelligence/check-runs/96226418119",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000006609,
+      "runner_name": "GitHub Actions 1000006609",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}
