@@ -96,7 +96,7 @@ def test_explicit_approval_bridge_preserves_frozen_scientific_path() -> None:
     assert "pull_request:" not in bridge
     assert "python benchmarks/routing/verify_preconfirmatory_freeze.py" in bridge
     assert "--preflight-only" in bridge
-    assert "--authorize-test-open \"${{ github.event.comment.body }}\"" in bridge
+    assert '--authorize-test-open "${{ github.event.comment.body }}"' in bridge
     freeze = bridge.index("Verify pre-confirmatory artifact freeze")
     preflight = bridge.index("Run no-test preflight")
     test_open = bridge.index("Open frozen test and run registered confirmatory evaluation")
