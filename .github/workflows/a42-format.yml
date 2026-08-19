@@ -21,24 +21,43 @@ jobs:
         with:
           version: "0.11.33"
       - run: uv sync --locked --group dev
+      - name: Repair long literals before canonical formatting
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("benchmarks/assistance/verify_a42.py")
+          text = path.read_text(encoding="utf-8")
+          text = text.replace(
+              '        "| Candidate | Strict grounded success | Decision EM | Unsupported sentence rate | Citation F1 | P95 ms | Max quality cost USD |",',
+              '        (\n'
+              '            "| Candidate | Strict grounded success | Decision EM | "\n'
+              '            "Unsupported sentence rate | Citation F1 | P95 ms | "\n'
+              '            "Max quality cost USD |"\n'
+              '        ),',
+          )
+          text = text.replace(
+              '            "Development evidence comes from the deterministic fictional HelixBank benchmark, not a real-bank deployment.",',
+              '            (\n'
+              '                "Development evidence comes from the deterministic fictional "\n'
+              '                "HelixBank benchmark, not a real-bank deployment."\n'
+              '            ),',
+          )
+          text = text.replace(
+              '            "A4.2 scores adversarial variants only for development intents; the full 77-intent registered adversarial surface remains deferred.",',
+              '            (\n'
+              '                "A4.2 scores adversarial variants only for development intents; "\n'
+              '                "the full 77-intent registered adversarial surface remains deferred."\n'
+              '            ),',
+          )
+          path.write_text(text, encoding="utf-8")
+          PY
       - name: Apply repository formatter to A4.2 Python files
         run: |
-          uv run ruff check --fix \
-            benchmarks/assistance/evaluate_a42.py \
-            benchmarks/assistance/nli_batching_a42.py \
-            benchmarks/assistance/run_a42.py \
-            benchmarks/assistance/run_verify_a42.py \
-            benchmarks/assistance/verify_a42.py \
-            scripts/preflight_phase4_a42.py \
-            tests/test_phase4_assistance_a42_registration.py
-          uv run ruff format \
-            benchmarks/assistance/evaluate_a42.py \
-            benchmarks/assistance/nli_batching_a42.py \
-            benchmarks/assistance/run_a42.py \
-            benchmarks/assistance/run_verify_a42.py \
-            benchmarks/assistance/verify_a42.py \
-            scripts/preflight_phase4_a42.py \
-            tests/test_phase4_assistance_a42_registration.py
+          files="benchmarks/assistance/evaluate_a42.py benchmarks/assistance/nli_batching_a42.py benchmarks/assistance/run_a42.py benchmarks/assistance/run_verify_a42.py benchmarks/assistance/verify_a42.py scripts/preflight_phase4_a42.py tests/test_phase4_assistance_a42_registration.py"
+          uv run ruff check --fix --exit-zero $files
+          uv run ruff format $files
+          uv run ruff check $files
       - name: Commit formatting-only repair
         run: |
           git config user.name "github-actions[bot]"
