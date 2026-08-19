@@ -1,0 +1,96 @@
+{
+  "result_id": "phase3-retrieval-r3.2-validated-v1",
+  "execution_id": "phase3-retrieval-r3.2-v1",
+  "protocol_id": "phase3-retrieval-r3.0-v1",
+  "implementation_id": "phase3-retrieval-r3.1-v1",
+  "status": "VALIDATED_POST_AUDIT",
+  "execution": {
+    "github_run_id": 32302009548,
+    "github_job_id": 96226418119,
+    "execution_sha": "d13bc04383c8cc59b2cc418fe48c9ef0756b2a6a",
+    "artifact_id": 9384078230,
+    "artifact_zip_sha256": "7e0b8106b4e44ffcf6046996a06cef6360013f0d2ac424830bf6a2784d88c6c3"
+  },
+  "evidence": {
+    "queries": 308,
+    "eligible_documents": 147,
+    "relevance_judgments": 616,
+    "intents": 77,
+    "post_execution_audit": "PASSED",
+    "diagnostic_audit": "PASSED",
+    "manual_code_result_audit": "PASSED_WITH_INTERPRETATION_LIMITATIONS"
+  },
+  "metrics": {
+    "B0": {
+      "ndcg_at_10": 0.9009179145489322,
+      "mrr_at_10": 0.7727272727272727,
+      "recall_at_20": 1.0,
+      "recall_at_20_applicable_queries": 238,
+      "recall_at_50": 1.0,
+      "recall_at_50_applicable_queries": 238,
+      "p95_latency_ms": 0.4870045
+    },
+    "B1": {
+      "ndcg_at_10": 0.8866534827989215,
+      "mrr_at_10": 0.7667748917748918,
+      "recall_at_20": 1.0,
+      "recall_at_20_applicable_queries": 238,
+      "recall_at_50": 1.0,
+      "recall_at_50_applicable_queries": 238,
+      "p95_latency_ms": 17.658641,
+      "latency_budget_ms": 250
+    },
+    "B2": {
+      "ndcg_at_10": 0.8878252490864266,
+      "mrr_at_10": 0.7711038961038961,
+      "recall_at_20": 1.0,
+      "recall_at_20_applicable_queries": 238,
+      "recall_at_50": 1.0,
+      "recall_at_50_applicable_queries": 238,
+      "p95_latency_ms": 18.439016,
+      "latency_budget_ms": 250
+    },
+    "B3": {
+      "ndcg_at_10": 0.9324829046724504,
+      "mrr_at_10": 0.7727272727272727,
+      "recall_at_20": 1.0,
+      "recall_at_20_applicable_queries": 238,
+      "recall_at_50": 1.0,
+      "recall_at_50_applicable_queries": 238,
+      "p95_latency_ms": 838.7849377,
+      "latency_budget_ms": 500
+    }
+  },
+  "registered_hypotheses": {
+    "H1": {
+      "comparison": "B2 - B0",
+      "endpoint": "nDCG@10",
+      "difference": -0.013092665462505561,
+      "ci_95": [-0.019143134208121304, -0.007367937168091304],
+      "verdict": "ADVERSE"
+    },
+    "H2": {
+      "comparison": "B3 - B2",
+      "endpoint": "MRR@10",
+      "difference": 0.0016233766233766235,
+      "ci_95": [0.0, 0.00487012987012987],
+      "verdict": "INCONCLUSIVE"
+    }
+  },
+  "selection": {
+    "registered_winner": "B0",
+    "accepted_complexity_candidates": [],
+    "B3_minus_B0_ndcg_at_10": 0.03156499012351846,
+    "B3_minus_B0_ndcg_at_10_ci_95": [0.0220443171, 0.0413229204],
+    "B3_p95_over_budget_ms": 338.7849377,
+    "B3_p95_percent_over_budget": 67.75698754,
+    "interpretation": "B3 improves graded ranking relevance over B0 but fails the frozen latency budget, so it is not adopted."
+  },
+  "limitations": [
+    "The corpus is fictional and controlled, not a real-bank knowledge base or customer workload.",
+    "Recall@20 and Recall@50 are saturated at 1.0 on the 238 queries that have at least one eligible document with relevance >= 2, so these recall endpoints do not discriminate among B0-B3 on this benchmark.",
+    "Seventy missing-evidence queries have no eligible relevance >= 2 item. They contribute MRR@10 = 0 and are excluded from recall macro-averages, while grade-1 partial evidence can still contribute to nDCG@10.",
+    "The registered bootstrap resamples individual queries even though the 308 queries comprise four variants for each of 77 intents. A post-hoc cluster-by-intent sensitivity check did not change the qualitative H1 or H2 conclusions, but the registered query-level intervals remain the official inference.",
+    "Latency is single-thread CPU evidence from one GitHub-hosted runner environment and is not a production latency guarantee."
+  ]
+}
