@@ -1,0 +1,78 @@
+name: Phase 2 Routing Confirmatory Approval Bridge
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-routing-confirmatory
+  cancel-in-progress: false
+
+jobs:
+  confirmatory:
+    name: One-shot frozen Phase 2 confirmatory evaluation
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.issue.number == 6 &&
+      github.event.comment.body == 'OPEN_FROZEN_TEST_ONCE'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out frozen Phase 2 branch
+        uses: actions/checkout@v4
+        with:
+          ref: phase-2-routing-baseline-selective-policy
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Verify confirmatory evaluator and frozen CPU environment
+        run: |
+          uvx --from ruff==0.16.3 ruff check benchmarks/routing/evaluate_confirmatory.py
+          uvx --from ruff==0.16.3 ruff format --check benchmarks/routing/evaluate_confirmatory.py
+          test -f benchmarks/routing/evaluate_a2.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_a2.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_a2.py.lock
+
+      - name: Verify pre-confirmatory artifact freeze
+        run: python benchmarks/routing/verify_preconfirmatory_freeze.py
+
+      - name: Run no-test preflight
+        run: |
+          cp benchmarks/routing/evaluate_a2.py.lock benchmarks/routing/evaluate_confirmatory.py.lock
+          uv run --locked benchmarks/routing/evaluate_confirmatory.py --preflight-only
+
+      - name: Open frozen test and run registered confirmatory evaluation
+        run: >-
+          uv run --locked benchmarks/routing/evaluate_confirmatory.py
+          --authorize-test-open "${{ github.event.comment.body }}"
+          --output-dir artifacts/phase2-routing/confirmatory
+
+      - name: Remove transient script lock copy
+        if: always()
+        run: rm -f benchmarks/routing/evaluate_confirmatory.py.lock
+
+      - name: Publish confirmatory summary
+        if: success()
+        run: cat artifacts/phase2-routing/confirmatory/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload confirmatory evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-routing-confirmatory-${{ github.sha }}
+          path: artifacts/phase2-routing/confirmatory/
+          if-no-files-found: error
+          retention-days: 90
