@@ -1,0 +1,121 @@
+{
+  "version": "retrieval-b1-development-v1",
+  "phase": 3,
+  "status": "audited_development_only",
+  "date": "2026-08-19",
+  "model": {
+    "id": "B1",
+    "configuration": "retrieval-b1-dense-v1",
+    "family": "dense_bi_encoder",
+    "model_id": "BAAI/bge-small-en-v1.5",
+    "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "license": "MIT",
+    "model_safetensors_sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+    "embedding_dimension": 384,
+    "max_sequence_length": 512,
+    "normalized_embeddings": true,
+    "device": "cpu",
+    "fine_tuning": false
+  },
+  "benchmark": {
+    "version": "retrieval-benchmark-v1",
+    "candidate_documents": 147,
+    "development_queries": 1386,
+    "development_qrels": 2646,
+    "confirmatory_partition_opened": false,
+    "official_banking77_test_accessed": false
+  },
+  "metrics": {
+    "ndcg_at_10": 0.6536804220344481,
+    "mrr_at_10": 0.700542270780366,
+    "recall_at_20": 0.9325396825396826,
+    "recall_at_50": 0.9880952380952381,
+    "success_at_1": 0.6248196248196248,
+    "citation_eligible_recall_at_20": 0.9227994227994228
+  },
+  "comparison_to_b0": {
+    "ndcg_at_10": 0.27047678472644865,
+    "mrr_at_10": 0.2797209624590577,
+    "recall_at_20": 0.20995670995671,
+    "recall_at_50": 0.11940836940836941,
+    "success_at_1": 0.28643578643578643,
+    "citation_eligible_recall_at_20": 0.27056277056277056
+  },
+  "deterministic_evidence": {
+    "ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "successful_independent_runs": 2,
+    "ranking_hash_reproduced_exactly": true,
+    "aggregate_metrics_reproduced_exactly": true,
+    "per_intent_metrics_reproduced_exactly": true,
+    "similarity_diagnostics_reproduced_exactly": true,
+    "timing_expected_to_vary_across_ci_runs": true
+  },
+  "accepted_run": {
+    "workflow_run": 32257841759,
+    "evaluated_merge_sha": "0ee2486dfb02df1e73e5f4cd67b85fde5d836eac",
+    "artifact_id": 9367047605,
+    "artifact_zip_sha256": "9f66f6e366151e0f39e559e8ec16bb77f1a2f9e8bd6aa143d832800ef82675e0",
+    "results_json_sha256": "611f091095dd50d716c2cbc8f391a49c3dbc59fb83b93df29f144fc284e57e0e",
+    "report_md_sha256": "9b1453f4c2ae3fbec9182001fac648b1bc0fe7cbad92b761746054f2e0dfaed5",
+    "timing_seconds": {
+      "model_load": 1.6358797930000009,
+      "document_encoding": 8.659601244999998,
+      "query_encoding": 20.94828054,
+      "similarity_and_ranking": 0.12413023300000248
+    }
+  },
+  "replication_run": {
+    "workflow_run": 32256394681,
+    "evaluated_merge_sha": "7d2b842d268b4d18492b2359b318fb84f0daf1ce",
+    "artifact_id": 9366499179,
+    "artifact_zip_sha256": "1083c4b9e2a5e2560216040f0f0bd6ef897711bbe07aa4bcabcb14656435f9f5",
+    "results_json_sha256": "71a4e0839650937773d3fc85c7aa8a7ef5faa4eebc414482fea5027eb854a472",
+    "report_md_sha256": "9b1453f4c2ae3fbec9182001fac648b1bc0fe7cbad92b761746054f2e0dfaed5",
+    "timing_seconds": {
+      "model_load": 0.8302130340000033,
+      "document_encoding": 10.299932698000006,
+      "query_encoding": 24.838334054,
+      "similarity_and_ranking": 0.11627115899999296
+    }
+  },
+  "per_intent_comparison_counts": {
+    "ndcg_at_10": {"wins": 74, "ties": 0, "losses": 3},
+    "mrr_at_10": {"wins": 73, "ties": 0, "losses": 4},
+    "recall_at_20": {"wins": 68, "ties": 7, "losses": 2},
+    "recall_at_50": {"wins": 58, "ties": 16, "losses": 3},
+    "success_at_1": {"wins": 68, "ties": 5, "losses": 4},
+    "citation_eligible_recall_at_20": {"wins": 70, "ties": 6, "losses": 1}
+  },
+  "weakest_intents_by_ndcg_at_10": [
+    ["get_physical_card", 0.11297397173754892],
+    ["supported_cards_and_currencies", 0.19420646917467224],
+    ["card_linking", 0.27799707746604957],
+    ["card_arrival", 0.2920809383481717],
+    ["card_delivery_estimate", 0.3230090631365401],
+    ["order_physical_card", 0.34568289555470544],
+    ["card_acceptance", 0.3667159770417898],
+    ["transfer_timing", 0.37643550154398725],
+    ["card_swallowed", 0.3887321379524092],
+    ["getting_spare_card", 0.4026462801649403]
+  ],
+  "b1_ndcg_regressions_vs_b0": [
+    ["supported_cards_and_currencies", 0.3333333333333333, 0.19420646917467224],
+    ["apple_pay_or_google_pay", 0.6156789119836097, 0.5309547270002379],
+    ["exchange_rate", 0.8383441409408898, 0.8106748531933311]
+  ],
+  "citation_eligible_recall_regression_vs_b0": [
+    ["declined_transfer", 0.9444444444444444, 0.8888888888888888]
+  ],
+  "taxonomy_fidelity": {
+    "source_labels_preserved": true,
+    "note": "BANKING77 source labels are preserved exactly, including source casing and punctuation such as Refund_not_showing_up and reverted_card_payment?."
+  },
+  "limitations": [
+    "This is development evidence; the sealed retrieval confirmatory partition remains unopened.",
+    "The benchmark maps BANKING77 intent labels deterministically to a fictional policy corpus and does not estimate production search traffic.",
+    "GitHub-hosted CPU timing is descriptive only and varies materially across runners.",
+    "Dense retrieval remains weak on several closely related card-lifecycle intents, especially physical-card ordering, arrival, linking, and acceptance.",
+    "B1 is not uniformly superior to BM25 at the intent level, leaving a measurable complementarity target for hybrid fusion."
+  ],
+  "decision": "B1 is accepted as the frozen dense development reference. It materially exceeds B0 on every aggregate relevance metric while preserving exact ranking and metric reproducibility across two independent CPU runs. The next evaluation step is the registered B2 reciprocal-rank fusion of B0 and B1 on the same frozen development benchmark."
+}
