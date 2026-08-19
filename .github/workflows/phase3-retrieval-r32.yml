@@ -47,7 +47,17 @@ jobs:
           uv run benchmarks/retrieval/evaluate_r32.py
           --output-dir artifacts/phase3-retrieval/r32
 
-      - name: Independently reconstruct and audit evidence
+      - name: Generate registered diagnostic slices
+        run: >-
+          python3 benchmarks/retrieval/diagnostics_r32.py
+          --output-dir artifacts/phase3-retrieval/r32
+
+      - name: Independently verify diagnostic slices
+        run: >-
+          python3 benchmarks/retrieval/verify_diagnostics_r32.py
+          --output-dir artifacts/phase3-retrieval/r32
+
+      - name: Independently reconstruct and audit execution evidence
         run: >-
           python3 benchmarks/retrieval/verify_r32.py
           --output-dir artifacts/phase3-retrieval/r32
