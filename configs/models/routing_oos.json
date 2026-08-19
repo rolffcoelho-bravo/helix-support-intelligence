@@ -1,0 +1,80 @@
+{
+  "version": "routing-oos-evaluation-v1",
+  "phase": 2,
+  "status": "frozen_before_model_scoring",
+  "benchmark": {
+    "path": "data/oos/routing_oos_v1.json",
+    "version": "routing-oos-v1",
+    "expected_oos_queries": 160,
+    "expected_categories": 20,
+    "tiers": ["near", "medium", "far_support"],
+    "taxonomy_overlap_policy": "Categories must represent capabilities absent from the frozen 77-intent BANKING77 taxonomy. Exact text overlap with train or validation is forbidden."
+  },
+  "in_domain_reference": {
+    "partition": "validation",
+    "rows": 1976,
+    "sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455"
+  },
+  "eligible_models": [
+    {
+      "id": "A1_temperature",
+      "base_model": "A1",
+      "calibration": "temperature_scaling",
+      "full_validation_temperature": 0.3464179550044782
+    },
+    {
+      "id": "A2_temperature",
+      "base_model": "A2",
+      "calibration": "temperature_scaling",
+      "full_validation_temperature": 0.45797404927014607
+    }
+  ],
+  "calibration_evaluation": {
+    "primary_protocol": "five_fold_cross_fitted_temperature",
+    "folds": 5,
+    "fold_assignment_source": "routing-calibration-v1 audited balanced folds",
+    "salt": "helix-phase2-calibration-v1-2026-08-18",
+    "per_fold_rule": "Fit temperature on four validation folds. Score the held-out in-domain fold and the entire frozen OOS set using that same fitted temperature.",
+    "aggregate_rule": "Report validation-row-count weighted mean of fold AUROC and fold in-domain FPR at declared OOS recall, plus fold range.",
+    "full_validation_temperature_role": "production-configuration diagnostic only; not the primary OOS performance estimate"
+  },
+  "diagnostics": {
+    "report_raw_variants": true,
+    "raw_variants_may_win_selection": false,
+    "report_full_validation_temperature_variant": true,
+    "full_validation_temperature_variant_may_win_primary_selection": false
+  },
+  "score": {
+    "definition": "1 - maximum calibrated in-domain class probability",
+    "higher_means": "more_out_of_scope"
+  },
+  "metrics": {
+    "primary": "cross_fitted_oos_auroc",
+    "required": [
+      "cross_fitted_oos_auroc",
+      "cross_fitted_in_domain_fpr_at_oos_recall",
+      "fold_range",
+      "score_quantiles",
+      "tier_diagnostics",
+      "category_diagnostics"
+    ],
+    "declared_oos_recall": 0.95,
+    "fpr_threshold_rule": "Within each fold, use the empirical OOS-score 0.05 quantile with lower order statistic; classify OOS when score >= threshold. This metric-specific threshold is diagnostic and is not the final operating threshold."
+  },
+  "selection": {
+    "purpose": "Compare OOS separation of the surviving calibrated A1 reference and calibrated A2 candidate without using the full-validation calibrator on its own fitting rows for the primary estimate.",
+    "final_operating_threshold_selected_here": false,
+    "routing_cost_used_here": false,
+    "test_set_may_be_opened": false,
+    "A3_reentry_allowed": false,
+    "additional_OOS_detector_family_allowed": false
+  },
+  "audit": {
+    "benchmark_must_be_frozen_before_scores": true,
+    "exact_normalized_overlap_check_against_train_validation": true,
+    "all_categories_reported": true,
+    "near_tier_reported_separately": true,
+    "cross_runner_reproducibility_required": true,
+    "public_claim_audit_required": true
+  }
+}

@@ -1,0 +1,69 @@
+name: Phase 2 Routing Calibration
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-calibration.yml"
+      - "benchmarks/routing/evaluate_calibration.py"
+      - "benchmarks/routing/evaluate_calibration.py.lock"
+      - "benchmarks/routing/results/a0_a1_validation_v1.json"
+      - "benchmarks/routing/results/a2_validation_v2.json"
+      - "configs/data/banking77.json"
+      - "configs/models/routing_a2.json"
+      - "configs/models/routing_calibration.json"
+      - "src/helix_support_intelligence/data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-routing-calibration-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calibration-validation:
+    name: Cross-fitted A1/A2 calibration benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Verify audited calibration source and lock
+        run: |
+          grep -q 'offset_digest = hashlib.sha256' benchmarks/routing/evaluate_calibration.py
+          grep -q 'assignment\[row_index\] = (position + offset) % folds' benchmarks/routing/evaluate_calibration.py
+          ! grep -q 'assignment\[row_index\] = position % folds' benchmarks/routing/evaluate_calibration.py
+          test -f benchmarks/routing/evaluate_calibration.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_calibration.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_calibration.py.lock
+
+      - name: Run cross-fitted calibration benchmark
+        run: >-
+          uv run --locked benchmarks/routing/evaluate_calibration.py
+          --output-dir artifacts/phase2-routing/calibration
+
+      - name: Publish benchmark summary
+        run: cat artifacts/phase2-routing/calibration/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload calibration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-routing-calibration-${{ github.sha }}
+          path: artifacts/phase2-routing/calibration/
+          if-no-files-found: error
+          retention-days: 14

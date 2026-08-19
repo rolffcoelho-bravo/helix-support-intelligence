@@ -1,0 +1,94 @@
+name: Phase 2 Routing Cost Policy
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-cost-policy.yml"
+      - "benchmarks/routing/evaluate_cost_policy.py"
+      - "benchmarks/routing/export_oos_operating_inputs.py"
+      - "benchmarks/routing/audit_threshold_transfer.py"
+      - "benchmarks/routing/evaluate_oos.py.lock"
+      - "configs/models/routing_cost_matrix.json"
+      - "configs/models/routing_oos.json"
+      - "configs/models/routing_calibration.json"
+      - "configs/models/routing_a2.json"
+      - "data/oos/routing_oos_v1.json"
+      - "src/helix_support_intelligence/data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-routing-cost-policy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cost-policy-validation:
+    name: Frozen routing cost and operating point
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Verify frozen cost source and OOS scientific environment
+        run: |
+          uvx --from ruff==0.16.3 ruff check \
+            benchmarks/routing/evaluate_cost_policy.py \
+            benchmarks/routing/audit_threshold_transfer.py
+          uvx --from ruff==0.16.3 ruff format --check \
+            benchmarks/routing/evaluate_cost_policy.py
+          test -f benchmarks/routing/evaluate_oos.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_oos.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_oos.py.lock
+
+      - name: Export frozen operating inputs
+        run: |
+          cp benchmarks/routing/evaluate_oos.py.lock benchmarks/routing/export_oos_operating_inputs.py.lock
+          uv run --locked benchmarks/routing/export_oos_operating_inputs.py \
+            --output-dir artifacts/phase2-routing/operating
+          rm benchmarks/routing/export_oos_operating_inputs.py.lock
+
+      - name: Run frozen routing cost policy
+        run: >-
+          python benchmarks/routing/evaluate_cost_policy.py
+          --validation-inputs artifacts/phase2-routing/operating/validation_inputs.csv
+          --oos-inputs artifacts/phase2-routing/operating/oos_inputs.csv
+          --output-dir artifacts/phase2-routing/cost-policy
+
+      - name: Audit transfer to final calibration scale
+        run: |
+          cp benchmarks/routing/evaluate_oos.py.lock benchmarks/routing/audit_threshold_transfer.py.lock
+          uv run --locked benchmarks/routing/audit_threshold_transfer.py \
+            --validation-inputs artifacts/phase2-routing/operating/validation_inputs.csv \
+            --oos-inputs artifacts/phase2-routing/operating/oos_inputs.csv \
+            --cost-results artifacts/phase2-routing/cost-policy/results.json \
+            --output artifacts/phase2-routing/cost-policy/threshold-transfer-audit.json
+          rm benchmarks/routing/audit_threshold_transfer.py.lock
+
+      - name: Publish cost-policy summary
+        run: cat artifacts/phase2-routing/cost-policy/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload cost-policy evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-routing-cost-policy-${{ github.sha }}
+          path: |
+            artifacts/phase2-routing/cost-policy/
+            artifacts/phase2-routing/operating/
+          if-no-files-found: error
+          retention-days: 14

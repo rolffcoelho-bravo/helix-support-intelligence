@@ -1,0 +1,55 @@
+{
+  "checkpoint_id": "phase2-route-contract-v1",
+  "status": "audited_implementation_contract",
+  "phase": 2,
+  "confirmatory_test_opened": false,
+  "frozen_router": "routing-selected-v1",
+  "endpoint": {
+    "method": "POST",
+    "path": "/v1/tickets/route",
+    "request_schema": "data/contracts/phase2/routing_request.schema.json",
+    "response_schema": "data/contracts/routing.schema.json"
+  },
+  "frozen_policy": {
+    "model_id": "A2",
+    "calibration": "temperature_scaling",
+    "temperature": 0.457974,
+    "threshold": 0.892704,
+    "automatic_route_comparison": "confidence >= threshold",
+    "abstention_decision": "ESCALATE_LOW_CONFIDENCE",
+    "model_failure_decision": "ESCALATE_SYSTEM_FAILURE"
+  },
+  "implementation": {
+    "framework_neutral_domain_boundary": true,
+    "framework_or_vendor_sdk_imports_in_domain_router": false,
+    "low_confidence_clears_intent_and_queue": true,
+    "invalid_model_output_fails_closed": true,
+    "direct_config_validation": true,
+    "phase1_root_contract_suite_unchanged": true
+  },
+  "quality_gate": {
+    "workflow_run": 32194814551,
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "mypy": "passed",
+    "pytest": "70 passed",
+    "phase1_offline_data_contracts": "passed",
+    "publication_audit": "passed"
+  },
+  "hostile_audit_corrections": [
+    "Moved the new request schema from the closed Phase 1 root contract suite into data/contracts/phase2/ rather than weakening the frozen Phase 1 completeness test.",
+    "Changed temperature validation from an incorrect probability-like [0,1] restriction to the mathematically correct positive-finite scalar contract.",
+    "Corrected failure-path test typing so the fake scorer receives probabilities rather than queue strings.",
+    "Added runtime validation so protocol-violating non-mapping and non-string-key scorer outputs fail closed as ESCALATE_SYSTEM_FAILURE.",
+    "Added direct RoutingPolicyConfig validation so callers cannot bypass file-backed safety checks.",
+    "Added an exact boundary regression test proving the frozen automatic-route rule is inclusive at confidence >= 0.892704."
+  ],
+  "scientific_interpretation": {
+    "new_performance_claim": false,
+    "development_metrics_changed": false,
+    "H3_status_changed": false,
+    "H4_status_changed": false,
+    "purpose": "Close the implementation-facing routing contract without reopening model, calibration, OOS, cost, or threshold selection."
+  },
+  "next_locked_action": "Run the final pre-confirmatory Phase 2 hostile audit across all frozen artifacts and workflows. Do not open the BANKING77 confirmatory test until that audit passes."
+}

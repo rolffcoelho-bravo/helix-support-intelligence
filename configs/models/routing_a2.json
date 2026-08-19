@@ -1,0 +1,48 @@
+{
+  "version": "routing-a2-v1",
+  "phase": 2,
+  "status": "frozen_before_evaluation",
+  "representation": {
+    "family": "sentence_transformer",
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "license": "Apache-2.0",
+    "embedding_dimension": 384,
+    "normalize_embeddings": true,
+    "fine_tuned": false,
+    "batch_size": 64,
+    "device": "cpu"
+  },
+  "classifier": {
+    "family": "logistic_regression",
+    "C": 1.0,
+    "solver": "lbfgs",
+    "max_iter": 1000,
+    "tol": 0.0001,
+    "class_weight": null
+  },
+  "evaluation": {
+    "dataset_contract": "banking77-helix-v1",
+    "fit_partition": "train",
+    "selection_partition": "validation",
+    "confirmatory_partition": "test",
+    "test_set_may_select_model": false,
+    "test_set_may_select_threshold": false,
+    "seed": 20260818
+  },
+  "dependency_policy": {
+    "sentence_transformers": "5.5.1",
+    "torch": "2.13.0",
+    "torch_variant": "cpu_only",
+    "torch_index": "https://download.pytorch.org/whl/cpu",
+    "scikit_learn": "1.8.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "script_lock_required": true
+  },
+  "anti_shopping": {
+    "alternate_embedding_model_allowed": false,
+    "hyperparameter_search_allowed": false,
+    "fallback_on_underperformance": "retain A1 as the surviving simpler baseline"
+  }
+}

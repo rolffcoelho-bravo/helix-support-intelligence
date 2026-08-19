@@ -1,0 +1,74 @@
+{
+  "checkpoint_id": "phase2-preconfirmatory-audit-v1",
+  "phase": 2,
+  "status": "passed",
+  "audited_branch_head": "174c71ac1d843c51abf628c6aa4b060fb2c08322",
+  "test_set_opened": false,
+  "phase3_started": false,
+  "release_ci": {
+    "workflow_run": 32197909626,
+    "status": "passed",
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "mypy": "passed",
+    "pytest": "77 passed",
+    "phase1_offline_data_contracts": "passed",
+    "publication_audit": "passed"
+  },
+  "confirmatory_preflight": {
+    "workflow_run": 32197909434,
+    "status": "passed",
+    "manifest_version": "routing-preconfirmatory-freeze-v1",
+    "frozen_artifacts_verified": 35,
+    "scientific_environment": "A2 CPU-only locked environment",
+    "protocol": "routing-confirmatory-v1",
+    "model": "A2",
+    "temperature": 0.457974,
+    "selected_threshold": 0.892704,
+    "raw_comparator_threshold": 0.367217,
+    "bootstrap_replicates": 5000,
+    "H3_scope": "independent_in_domain_component_only",
+    "test_set_opened": false
+  },
+  "confirmatory_governance": {
+    "workflow_trigger": "workflow_dispatch_only",
+    "repository_permissions": "contents_read_only",
+    "exact_authorization_token_required": true,
+    "artifact_freeze_verified_before_preflight": true,
+    "preflight_runs_before_test_access": true,
+    "test_result_may_change_model": false,
+    "test_result_may_change_calibration": false,
+    "test_result_may_change_threshold": false,
+    "test_result_may_change_cost_matrix": false,
+    "phase3_may_start_before_phase2_close": false
+  },
+  "scientific_scope_correction": {
+    "finding": "The frozen 160-query OOS benchmark was already used during development selection and therefore cannot be reused as independent confirmatory evidence.",
+    "repair": "H3 confirmatory scope is explicitly limited to the independent BANKING77-test in-domain cost component. The original mixed in-domain/OOS development endpoint cannot be relabeled fully confirmed by the BANKING77 test alone.",
+    "development_H3_status_changed": false,
+    "development_H4_status_changed": false,
+    "model_or_policy_reselected": false
+  },
+  "hostile_audit_corrections": [
+    "Separated the unseen BANKING77 H3 in-domain component from the previously observed OOS component to prevent an overstated independence claim.",
+    "Added a manual-only, read-only confirmatory workflow with an explicit authorization gate and no automatic pull-request or push test-opening path.",
+    "Added a 35-artifact Git-blob integrity manifest and verifier that blocks confirmatory execution if the frozen scientific or execution surface drifts.",
+    "Separated dependency-free root contract tests from the scientific preflight so the root package remains framework-neutral and free of ML runtime dependencies.",
+    "Corrected the confirmatory preflight BANKING77 expected-hash lookup from the nonexistent split.expected path to the frozen top-level expected contract.",
+    "Removed a self-referential preflight-workflow grep assertion that falsely matched its own forbidden-token search command.",
+    "Resolved Ruff formatting and line-length defects without changing any scientific parameter or result."
+  ],
+  "frozen_scientific_state": {
+    "selected_router": "routing-selected-v1",
+    "model": "A2",
+    "encoder_revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "calibration": "temperature_scaling",
+    "temperature": 0.457974,
+    "threshold": 0.892704,
+    "H3_development": "unsupported_for_A2_primary_expected_cost",
+    "H4_development": "supported",
+    "A4_enabled": false
+  },
+  "decision": "The final pre-confirmatory Phase 2 audit passes. The one-shot registered confirmatory BANKING77 evaluation may be proposed for explicit authorization. No scientific result has yet been produced from the confirmatory test.",
+  "next_locked_action": "After explicit approval, run the manual one-shot Phase 2 confirmatory workflow with the exact authorization token. Permanently record the result, audit all calculations and claims, close the Phase 2 exit report, and only then consider the Phase 2 merge. Phase 3 remains forbidden until Phase 2 is closed."
+}

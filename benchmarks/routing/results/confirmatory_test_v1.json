@@ -1,0 +1,123 @@
+{
+  "version": "phase2-routing-confirmatory-result-v1",
+  "phase": 2,
+  "status": "registered_confirmatory_result",
+  "execution": {
+    "workflow_run_id": 32243835846,
+    "workflow_job_id": 96039984239,
+    "authorization_comment_id": 5340974436,
+    "authorization_token": "OPEN_FROZEN_TEST_ONCE",
+    "frozen_branch_head_at_execution": "9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a",
+    "default_branch_bridge_commit": "4402aa676329dfdfd3a7ec17e6526236981b2e74",
+    "artifact_id": 9361858275,
+    "artifact_name": "phase2-routing-confirmatory-4402aa676329dfdfd3a7ec17e6526236981b2e74",
+    "artifact_zip_sha256": "0e57f9f12d1d86f4f52e74238735cc02f0628b6dc27cc29f96ffa4863a16cda3",
+    "results_json_sha256": "b82f8da068a2bd4870070fbf2d05159452939d5a39d192b97ef821efca2ba962",
+    "report_md_sha256": "643a96188b343fd298a00d9f535348c7d11b3b0e94d40fc7e67e944973b892fd",
+    "test_predictions_csv_sha256": "f8d0fc55f2ca14f02e0df1f15839197996320cce50ca30298910a550255c60cd",
+    "one_scientific_run": true,
+    "later_observer_comments_triggered_scientific_rerun": false
+  },
+  "data": {
+    "dataset": "BANKING77",
+    "source_revision": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+    "test_rows": 3080,
+    "intents": 77,
+    "rows_per_intent": 40,
+    "unique_sample_ids": 3080,
+    "source_test_sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+    "derived_test_sha256": "4c519f47e6d1c640ccb71d322c3cb9b810642bd42ea4d8395293e0044952c468",
+    "test_set_opened": true
+  },
+  "frozen_configuration": {
+    "model": "A2",
+    "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+    "encoder_revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "calibration": "temperature_scaling",
+    "temperature": 0.457974,
+    "raw_threshold": 0.367217,
+    "calibrated_threshold": 0.892704,
+    "bootstrap_replicates": 5000,
+    "bootstrap_seed": 20260819,
+    "confidence_level": 0.95
+  },
+  "metrics": {
+    "accuracy": 0.9016233766233767,
+    "macro_f1": 0.9016077492946899,
+    "balanced_accuracy": 0.9016233766233765,
+    "top3_recall": 0.9743506493506493,
+    "expected_calibration_error_15bin": 0.01685574383114866,
+    "multiclass_brier_score": 0.1456163379425086,
+    "negative_log_likelihood": 0.3466872494458966,
+    "mean_max_probability": 0.898597740417645
+  },
+  "fixed_coverage_risk": {
+    "0.50": {"accepted": 1540, "selective_risk": 0.004545454545454545, "confidence_boundary": 0.9817842435033018},
+    "0.70": {"accepted": 2156, "selective_risk": 0.013914656771799629, "confidence_boundary": 0.9207732579134499},
+    "0.75": {"accepted": 2310, "selective_risk": 0.01948051948051948, "confidence_boundary": 0.8853223964097497},
+    "0.90": {"accepted": 2772, "selective_risk": 0.05303030303030303, "confidence_boundary": 0.6333231379043218},
+    "1.00": {"accepted": 3080, "selective_risk": 0.09837662337662338}
+  },
+  "frozen_application_threshold": {
+    "threshold": 0.892704,
+    "accepted": 2283,
+    "coverage": 0.7412337662337662,
+    "selective_risk": 0.018834866403854577,
+    "accepted_errors": 43,
+    "mean_in_domain_cost": 0.31525974025974024,
+    "event_counts": {
+      "correct_route": 2240,
+      "human_escalation": 797,
+      "unsafe_high_risk_auto_route": 3,
+      "wrong_intent_same_queue": 36,
+      "wrong_queue": 4
+    }
+  },
+  "H3_independent_in_domain_component": {
+    "scope": "independent_in_domain_component_only",
+    "primary_estimand": "mean_test_in_domain_cost_A2_temperature_minus_A2_raw",
+    "raw_mean_in_domain_cost": 0.3112012987012987,
+    "calibrated_mean_in_domain_cost": 0.31525974025974024,
+    "temperature_minus_raw": 0.004058441558441558,
+    "confidence_interval_95": [-0.025974025974025976, 0.030036525974025913],
+    "verdict": "inconclusive",
+    "raw_event_counts": {
+      "correct_route": 2465,
+      "human_escalation": 505,
+      "unsafe_high_risk_auto_route": 6,
+      "wrong_intent_same_queue": 83,
+      "wrong_queue": 21
+    },
+    "calibrated_event_counts": {
+      "correct_route": 2240,
+      "human_escalation": 797,
+      "unsafe_high_risk_auto_route": 3,
+      "wrong_intent_same_queue": 36,
+      "wrong_queue": 4
+    },
+    "full_original_mixed_endpoint_confirmed_by_this_test": false,
+    "interpretation": "The independent BANKING77 in-domain component does not provide confirmatory evidence that calibration lowers routing cost. The point estimate is slightly adverse and the registered 95% interval crosses zero. The original mixed in-domain/OOS H3 endpoint remains a development result and cannot be independently confirmed in Phase 2."
+  },
+  "H4_confirmatory": {
+    "primary_estimand": "selective_risk_at_75pct_confidence_ranked_coverage_minus_full_automation_risk",
+    "full_automation_errors": 303,
+    "full_automation_risk": 0.09837662337662338,
+    "accepted_at_75pct": 2310,
+    "accepted_errors_at_75pct": 45,
+    "selective_risk_at_75pct_coverage": 0.01948051948051948,
+    "selective_minus_full_risk": -0.07889610389610391,
+    "confidence_interval_95": [-0.08777326839826838, -0.06958874458874459],
+    "verdict": "supported",
+    "interpretation": "Selective abstention confirmatorily reduces routing error risk on the independent BANKING77 test under the registered 75% confidence-ranked coverage estimand."
+  },
+  "governance": {
+    "model_changed_after_test": false,
+    "calibration_changed_after_test": false,
+    "threshold_changed_after_test": false,
+    "cost_matrix_changed_after_test": false,
+    "hypothesis_changed_after_test": false,
+    "oos_benchmark_counted_as_independent_confirmatory_evidence": false,
+    "H3_full_mixed_endpoint_claimed_confirmed": false,
+    "phase3_started": false
+  }
+}

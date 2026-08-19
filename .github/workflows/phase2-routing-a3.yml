@@ -1,0 +1,175 @@
+name: Phase 2 Routing A3
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-routing-a3.yml"
+      - "benchmarks/routing/evaluate_a3.py"
+      - "benchmarks/routing/evaluate_a3.py.lock"
+      - "benchmarks/routing/results/a2_validation_v2.json"
+      - "configs/data/banking77.json"
+      - "configs/models/routing_a3.json"
+      - "src/helix_support_intelligence/data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase2-routing-a3-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  a3-validation:
+    name: A3 validation replicate ${{ matrix.replicate }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        replicate: [1, 2]
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Audit committed A3 CPU lock
+        run: |
+          test -f benchmarks/routing/evaluate_a3.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_a3.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_a3.py.lock
+
+      - name: Run frozen A3 validation benchmark
+        run: >-
+          uv run --locked benchmarks/routing/evaluate_a3.py
+          --output-dir artifacts/phase2-routing/a3/run-${{ matrix.replicate }}
+
+      - name: Upload replicate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: a3-run-${{ matrix.replicate }}
+          path: artifacts/phase2-routing/a3/run-${{ matrix.replicate }}/
+          if-no-files-found: error
+          retention-days: 14
+
+  reproducibility-audit:
+    name: A3 cross-runner reproducibility audit
+    needs: a3-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Download A3 run 1
+        uses: actions/download-artifact@v4
+        with:
+          name: a3-run-1
+          path: audit/run-1
+
+      - name: Download A3 run 2
+        uses: actions/download-artifact@v4
+        with:
+          name: a3-run-2
+          path: audit/run-2
+
+      - name: Compare independent A3 runs
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          from pathlib import Path
+
+          root = Path("audit")
+          with (root / "run-1" / "results.json").open(encoding="utf-8") as stream:
+              first = json.load(stream)
+          with (root / "run-2" / "results.json").open(encoding="utf-8") as stream:
+              second = json.load(stream)
+
+          def rows(path):
+              with path.open(encoding="utf-8", newline="") as stream:
+                  return list(csv.DictReader(stream))
+
+          first_rows = rows(root / "run-1" / "a3_validation_predictions.csv")
+          second_rows = rows(root / "run-2" / "a3_validation_predictions.csv")
+          if len(first_rows) != len(second_rows):
+              raise SystemExit("A3 replicate prediction row counts differ")
+
+          sample_order_identical = True
+          predicted_identical = True
+          top3_identical = True
+          max_confidence_delta = 0.0
+          for left, right in zip(first_rows, second_rows, strict=True):
+              sample_order_identical &= left["sample_id"] == right["sample_id"]
+              predicted_identical &= left["predicted_intent"] == right["predicted_intent"]
+              top3_identical &= left["top3_intents"] == right["top3_intents"]
+              max_confidence_delta = max(
+                  max_confidence_delta,
+                  abs(float(left["confidence"]) - float(right["confidence"])),
+              )
+
+          discrete_keys = ["accuracy", "macro_f1", "balanced_accuracy", "top3_recall"]
+          metric_deltas = {
+              key: abs(float(first["metrics"][key]) - float(second["metrics"][key]))
+              for key in discrete_keys
+          }
+          ece_delta = abs(
+              float(first["metrics"]["expected_calibration_error_15bin"])
+              - float(second["metrics"]["expected_calibration_error_15bin"])
+          )
+          brier_delta = abs(
+              float(first["metrics"]["multiclass_brier_score"])
+              - float(second["metrics"]["multiclass_brier_score"])
+          )
+          first_risk = [row["selective_risk"] for row in first["metrics"]["risk_coverage"]]
+          second_risk = [row["selective_risk"] for row in second["metrics"]["risk_coverage"]]
+          selective_risk_identical = first_risk == second_risk
+
+          audit = {
+              "sample_order_identical": sample_order_identical,
+              "predicted_intents_identical": predicted_identical,
+              "top3_intents_identical": top3_identical,
+              "selective_risk_curve_identical": selective_risk_identical,
+              "metric_abs_deltas": metric_deltas,
+              "ece_abs_delta": ece_delta,
+              "brier_abs_delta": brier_delta,
+              "max_abs_confidence_delta": max_confidence_delta,
+          }
+          evidence = {
+              "metrics": first["metrics"],
+              "comparison_to_a2": first["comparison_to_a2"],
+              "risk_coverage_comparison_to_a2": first["risk_coverage_comparison_to_a2"],
+              "a2_principal_confusion_changes": first["a2_principal_confusion_changes"],
+              "tokenization_audit": first["tokenization_audit"],
+              "epoch_history": first["training"]["epoch_history"],
+              "model": first["model"],
+              "environment": first["environment"],
+              "prediction_hashes": first["prediction_hashes"],
+              "test_set_opened": first["test_set_opened"],
+          }
+          print("A3_REPRO_JSON=" + json.dumps(audit, sort_keys=True))
+          print("A3_EVIDENCE_JSON=" + json.dumps(evidence, sort_keys=True))
+          with Path("a3_reproducibility.json").open("w", encoding="utf-8") as stream:
+              json.dump(audit, stream, indent=2, sort_keys=True)
+              stream.write("\n")
+
+          if not sample_order_identical or not predicted_identical or not top3_identical:
+              raise SystemExit("A3 decision reproducibility audit failed")
+          PY
+
+      - name: Publish audit summary
+        run: |
+          echo '## A3 cross-runner audit' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat a3_reproducibility.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

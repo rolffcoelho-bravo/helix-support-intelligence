@@ -1,0 +1,121 @@
+{
+  "checkpoint_id": "phase2-routing-cost-policy-v1",
+  "status": "development_validation_only",
+  "test_set_opened": false,
+  "cost_contract": {
+    "version": "routing-cost-matrix-v1",
+    "primary_matrix": "balanced_risk_v1",
+    "primary_oos_prevalence": 0.1,
+    "costs_are_synthetic_scenario_assumptions": true,
+    "costs_are_real_bank_economics": false
+  },
+  "primary_candidate_results": {
+    "A1_raw": {
+      "threshold": 0.160054,
+      "expected_cost": 0.5571,
+      "id_coverage": 0.7616,
+      "id_selective_risk": 0.0698,
+      "oos_escalation": 0.8687
+    },
+    "A1_temperature": {
+      "threshold": 0.793325,
+      "expected_cost": 0.5428,
+      "id_coverage": 0.7373,
+      "id_selective_risk": 0.0439,
+      "oos_escalation": 0.8062
+    },
+    "A2_raw": {
+      "threshold": 0.367217,
+      "expected_cost": 0.4029,
+      "id_coverage": 0.8330,
+      "id_selective_risk": 0.0352,
+      "oos_escalation": 0.8875
+    },
+    "A2_temperature": {
+      "cross_fitted_threshold": 0.893770120035,
+      "expected_cost": 0.42144325657891446,
+      "id_coverage": 0.75,
+      "id_selective_risk": 0.012145748987854255,
+      "oos_escalation": 0.8799879807692308,
+      "id_event_counts": {
+        "correct_route": 1464,
+        "human_escalation": 494,
+        "unsafe_high_risk_auto_route": 1,
+        "wrong_intent_same_queue": 12,
+        "wrong_queue": 5
+      }
+    }
+  },
+  "selection": {
+    "frozen_calibrated_development_candidate": "A2_temperature",
+    "reason": "Phase 2 protocol requires one calibrated routing configuration; among valid calibrated candidates A2_temperature has lower primary expected routing cost than A1_temperature and wins every registered calibrated sensitivity comparison.",
+    "stable_across_registered_calibrated_sensitivity": true,
+    "registered_sensitivity_cells": 9,
+    "A2_temperature_wins_registered_sensitivity_cells": 9
+  },
+  "H3_development": {
+    "status": "unsupported_for_A2_primary_expected_cost",
+    "A2_raw_min_expected_cost": 0.40288461538458575,
+    "A2_temperature_min_expected_cost": 0.42144325657891446,
+    "temperature_minus_raw": 0.018558641194328707,
+    "interpretation": "Temperature scaling improves probability calibration but does not reduce the registered A2 minimum expected routing cost after each score representation receives its own validation-selected threshold. The same direction holds in all nine registered cost/prevalence sensitivity cells."
+  },
+  "H4_development": {
+    "status": "supported",
+    "selected_candidate": "A2_temperature",
+    "full_automation_expected_cost": 1.0827935222672065,
+    "cost_selected_expected_cost": 0.42144325657891446,
+    "expected_cost_reduction_vs_full_automation": 0.661350265688292,
+    "full_automation_id_selective_risk": 0.09767206477732793,
+    "cost_selected_id_selective_risk": 0.012145748987854255,
+    "selective_risk_reduction_vs_full_automation": 0.08552631578947367,
+    "fixed_coverage_risk": {
+      "0.5": 0.002024291497975672,
+      "0.7": 0.010845986984815648,
+      "0.9": 0.04780652418447695
+    }
+  },
+  "reproducibility": {
+    "first_valid_workflow_run": 32191647418,
+    "read_only_reproduction_run": 32191967937,
+    "selected_candidate_identical": true,
+    "decision_hashes_identical": true,
+    "expected_cost_identical": true,
+    "coverage_identical": true,
+    "selective_risk_identical": true,
+    "oos_escalation_identical": true,
+    "sensitivity_winners_identical": true,
+    "cross_fitted_threshold_abs_delta": 1.90669999788895e-08,
+    "bitwise_probability_identity_required": false
+  },
+  "full_refit_transfer_audit": {
+    "workflow_run": 32192552674,
+    "independent_rerun_byte_identical": true,
+    "audit_json_sha256": "9b32a1a7970d370c1a0965bdadbe61d25c40fe78b992ab312854c516866aa26e",
+    "full_validation_refit_temperature": 0.45797403462200054,
+    "selected_cross_fitted_accepted_rows": 1482,
+    "full_refit_accepted_rows": 1482,
+    "changed_acceptance_decisions": 6,
+    "accepted_set_jaccard": 0.9959595959595959,
+    "full_refit_id_selective_risk": 0.012820512820512775,
+    "full_refit_oos_escalation": 0.88125,
+    "full_refit_decision_plateau": {
+      "max_rejected_confidence": 0.8924628987697818,
+      "min_accepted_confidence": 0.8929442415025021,
+      "midpoint": 0.8927035701361419
+    },
+    "frozen_deployment_threshold": 0.892704,
+    "frozen_deployment_temperature": 0.457974,
+    "threshold_transfer_reoptimized_cost": false,
+    "threshold_transfer_reselected_coverage": false
+  },
+  "governance": {
+    "selected_config": "configs/models/routing_selected_v1.json",
+    "confirmatory_test_pending": true,
+    "confirmatory_test_may_change_model": false,
+    "confirmatory_test_may_change_calibration": false,
+    "confirmatory_test_may_change_threshold": false,
+    "release_claim_status": "pending_confirmatory_evaluation"
+  },
+  "next_locked_action": "Create the router model card and implement /v1/tickets/route contract tests against routing-selected-v1. Do not open the confirmatory BANKING77 test until those Phase 2 implementation contracts are closed."
+}

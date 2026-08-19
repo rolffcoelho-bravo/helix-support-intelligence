@@ -1,0 +1,155 @@
+{
+  "audit": {
+    "banking77_direct_debit_overlap_note": "BANKING77 contains direct_debit_payment_not_recognised; the frozen OOS direct_debit_management category concerns known mandate management and is intentionally near-boundary, not a duplicate in-domain intent.",
+    "calibration_tradeoff": "Temperature scaling improves in-domain calibration but reduces max-probability OOS separation versus the raw-confidence diagnostic for both A1 and A2.",
+    "category_sample_size_warning": "Each category has only 8 queries. Category-level AUROC/FPR values are diagnostics and must not be presented as precise population estimates.",
+    "confirmatory_test_remained_sealed": true,
+    "cpu_only_lock_verified": true,
+    "exact_normalized_overlap_with_banking77_source_train": 0,
+    "high_recall_limitation": "A2 cross-fitted in-domain FPR is about 43.4% at >=95% OOS recall; near-boundary OOS remains difficult and must constrain later cost/threshold selection.",
+    "workflow_permissions_restored_to_read_only": true
+  },
+  "benchmark": {
+    "categories": 20,
+    "exact_normalized_overlap_with_banking77_source_train": 0,
+    "queries": 160,
+    "tier_counts": {
+      "far_support": 16,
+      "medium": 64,
+      "near": 80
+    },
+    "version": "routing-oos-v1"
+  },
+  "benchmark_construction": {
+    "category_count": 20,
+    "frozen_before_model_scoring": true,
+    "kind": "hand_authored_support_like_synthetic_oos",
+    "limitation": "Development benchmark only; it is not an estimate of the production OOS distribution.",
+    "query_count": 160,
+    "tier_counts": {
+      "far_support": 16,
+      "medium": 64,
+      "near": 80
+    }
+  },
+  "checkpoint_id": "phase2-routing-oos-v1",
+  "cross_fitting": {
+    "fold_counts": {
+      "0": 390,
+      "1": 392,
+      "2": 393,
+      "3": 402,
+      "4": 399
+    },
+    "salt": "helix-phase2-calibration-v1-2026-08-18"
+  },
+  "decision": "A2_temperature_preferred_by_frozen_primary_rule_but_high_recall_fpr_remains_high",
+  "in_domain": {
+    "partition": "validation",
+    "rows": 1976,
+    "sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455"
+  },
+  "interpretation": {
+    "H3_status": "not_yet_evaluated",
+    "H4_status": "not_yet_evaluated",
+    "model_choice": "A2 with temperature scaling remains preferred over A1 for the frozen OOS primary metric.",
+    "oos_status": "not_solved",
+    "raw_vs_calibrated": "Raw A2 confidence is a stronger OOS separator in this development benchmark, but raw variants were frozen as diagnostics and cannot replace the calibrated primary policy post hoc.",
+    "release_claim_status": "pending_confirmatory_evaluation",
+    "threshold_status": "not_selected"
+  },
+  "metrics_contract": {
+    "declared_oos_recall": 0.95,
+    "final_operating_threshold_selected": false,
+    "primary": "cross_fitted_oos_auroc"
+  },
+  "models": {
+    "A1": {
+      "category_diagnostics": {
+        "account_statements_bank_references": {"max_fold_oos_auroc": 0.8447959183673469, "min_fold_oos_auroc": 0.8248407643312102, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3623481781376518, "weighted_oos_auroc": 0.8359061234817813},
+        "app_accessibility_localization": {"max_fold_oos_auroc": 0.9069012738853504, "min_fold_oos_auroc": 0.8981186224489796, "weighted_in_domain_fpr_at_declared_oos_recall": 0.562753036437247, "weighted_oos_auroc": 0.902754048582996},
+        "branch_services_safe_deposit": {"max_fold_oos_auroc": 0.8654336734693878, "min_fold_oos_auroc": 0.8449044585987261, "weighted_in_domain_fpr_at_declared_oos_recall": 0.4979757085020243, "weighted_oos_auroc": 0.8561353744939271},
+        "business_merchant_services": {"max_fold_oos_auroc": 0.890625, "min_fold_oos_auroc": 0.8770718849840255, "weighted_in_domain_fpr_at_declared_oos_recall": 0.6442307692307693, "weighted_oos_auroc": 0.8837297570850202},
+        "business_payroll_accounts": {"max_fold_oos_auroc": 0.9291772151898734, "min_fold_oos_auroc": 0.9107142857142857, "weighted_in_domain_fpr_at_declared_oos_recall": 0.40384615384615385, "weighted_oos_auroc": 0.9200404858299596},
+        "credit_card_rewards_points": {"max_fold_oos_auroc": 0.9404458598726115, "min_fold_oos_auroc": 0.9198717948717948, "weighted_in_domain_fpr_at_declared_oos_recall": 0.26568825910931176, "weighted_oos_auroc": 0.9320599696356275},
+        "credit_score_reporting": {"max_fold_oos_auroc": 0.904140127388535, "min_fold_oos_auroc": 0.8828125, "weighted_in_domain_fpr_at_declared_oos_recall": 0.4352226720647773, "weighted_oos_auroc": 0.8946730769230769},
+        "customer_service_complaints": {"max_fold_oos_auroc": 0.9508367346938775, "min_fold_oos_auroc": 0.933754023875402, "weighted_in_domain_fpr_at_declared_oos_recall": 0.30718623481781376, "weighted_oos_auroc": 0.9427034412955465},
+        "direct_debit_management": {"max_fold_oos_auroc": 0.2385204081632653, "min_fold_oos_auroc": 0.2181122448979592, "weighted_in_domain_fpr_at_declared_oos_recall": 0.9483805668016194, "weighted_oos_auroc": 0.2262778340080972},
+        "estate_probate_inheritance": {"max_fold_oos_auroc": 0.9011146496815287, "min_fold_oos_auroc": 0.8903061224489796, "weighted_in_domain_fpr_at_declared_oos_recall": 0.43572874493927133, "weighted_oos_auroc": 0.8961169028340081},
+        "insurance_products_claims": {"max_fold_oos_auroc": 0.8977707006369426, "min_fold_oos_auroc": 0.8801020408163265, "weighted_in_domain_fpr_at_declared_oos_recall": 0.2641700404858299, "weighted_oos_auroc": 0.8890746457489879},
+        "investments_brokerage": {"max_fold_oos_auroc": 0.8861607142857143, "min_fold_oos_auroc": 0.8671875, "weighted_in_domain_fpr_at_declared_oos_recall": 0.4645748987854251, "weighted_oos_auroc": 0.8782262145748987},
+        "joint_accounts_guardians": {"max_fold_oos_auroc": 0.8162420382165605, "min_fold_oos_auroc": 0.7842797783933517, "weighted_in_domain_fpr_at_declared_oos_recall": 0.7252024291497976, "weighted_oos_auroc": 0.8002211538461538},
+        "mortgage_home_loans": {"max_fold_oos_auroc": 0.9145408163265306, "min_fold_oos_auroc": 0.8969648562300319, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3031376518218623, "weighted_oos_auroc": 0.9051740890688259},
+        "overdrafts_credit_lines": {"max_fold_oos_auroc": 0.8753188775510203, "min_fold_oos_auroc": 0.854390127388535, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3466599190283401, "weighted_oos_auroc": 0.8665860323886639},
+        "personal_loans": {"max_fold_oos_auroc": 0.9203020134228188, "min_fold_oos_auroc": 0.9011146496815287, "weighted_in_domain_fpr_at_declared_oos_recall": 0.32793522267206476, "weighted_oos_auroc": 0.9110761639676113},
+        "regulatory_complaints_ombudsman": {"max_fold_oos_auroc": 0.9417027417027417, "min_fold_oos_auroc": 0.92578125, "weighted_in_domain_fpr_at_declared_oos_recall": 0.354251012145749, "weighted_oos_auroc": 0.9352226720647774},
+        "savings_interest_term_deposits": {"max_fold_oos_auroc": 0.85625, "min_fold_oos_auroc": 0.8371804455445544, "weighted_in_domain_fpr_at_declared_oos_recall": 0.40131578947368424, "weighted_oos_auroc": 0.8475450404858299},
+        "standing_orders_scheduled_payments": {"max_fold_oos_auroc": 0.8112244897959183, "min_fold_oos_auroc": 0.7857142857142857, "weighted_in_domain_fpr_at_declared_oos_recall": 0.6442307692307693, "weighted_oos_auroc": 0.7990890688259109},
+        "tax_documents_advice": {"max_fold_oos_auroc": 0.8845541401273885, "min_fold_oos_auroc": 0.8647959183673469, "weighted_in_domain_fpr_at_declared_oos_recall": 0.42611336032388664, "weighted_oos_auroc": 0.8756325910931174}
+      },
+      "folds": [
+        {"actual_oos_recall": 0.95625, "fold": 0, "heldout_rows": 390, "in_domain_fpr_at_declared_oos_recall": 0.658974358974359, "oos_auroc": 0.8440865384615384, "temperature": 0.35412122796883094},
+        {"actual_oos_recall": 0.95625, "fold": 1, "heldout_rows": 392, "in_domain_fpr_at_declared_oos_recall": 0.6658163265306123, "oos_auroc": 0.847640306122449, "temperature": 0.34164465020116785},
+        {"actual_oos_recall": 0.95625, "fold": 2, "heldout_rows": 393, "in_domain_fpr_at_declared_oos_recall": 0.6234096692111959, "oos_auroc": 0.8527826018099548, "temperature": 0.34030024445541484},
+        {"actual_oos_recall": 0.95625, "fold": 3, "heldout_rows": 402, "in_domain_fpr_at_declared_oos_recall": 0.6393034825870647, "oos_auroc": 0.8558613184079602, "temperature": 0.3500605849571377},
+        {"actual_oos_recall": 0.95625, "fold": 4, "heldout_rows": 399, "in_domain_fpr_at_declared_oos_recall": 0.6340852130325815, "oos_auroc": 0.8448934837092732, "temperature": 0.3456397275777198}
+      ],
+      "full_validation_temperature_diagnostic": {"actual_oos_recall": 0.95625, "in_domain_fpr_at_declared_oos_recall": 0.6447368421052632, "metric_threshold": 0.00559739389372238, "oos_auroc": 0.849256705465587, "score_quantiles": {"in_domain": {"q05": 4.200112941626921e-05, "q25": 0.0015529150438805261, "q50": 0.02480715777042697, "q75": 0.22906130659182908, "q95": 0.644223129696265}, "oos": {"q05": 0.006170412711469442, "q25": 0.3088139242114649, "q50": 0.6049672874743041, "q75": 0.8028306540371893, "q95": 0.8907829351424532}}, "temperature": 0.3464179550044782},
+      "primary_cross_fitted": {"max_fold_fpr": 0.6658163265306123, "max_fold_oos_auroc": 0.8558613184079602, "min_fold_fpr": 0.6234096692111959, "min_fold_oos_auroc": 0.8440865384615384, "weighted_actual_oos_recall": 0.9562499999999999, "weighted_in_domain_fpr_at_declared_oos_recall": 0.6442307692307693, "weighted_oos_auroc": 0.8490795799595141},
+      "raw_diagnostic": {"actual_oos_recall": 0.95625, "in_domain_fpr_at_declared_oos_recall": 0.5495951417004049, "metric_threshold": 0.6384220329253345, "oos_auroc": 0.8802252024291497},
+      "tier_diagnostics": {"far_support": {"max_fold_oos_auroc": 0.9250954198473282, "min_fold_oos_auroc": 0.918546365914787, "weighted_in_domain_fpr_at_declared_oos_recall": 0.562753036437247, "weighted_oos_auroc": 0.9227289979757085}, "medium": {"max_fold_oos_auroc": 0.8989816542288557, "min_fold_oos_auroc": 0.8861998746867168, "weighted_in_domain_fpr_at_declared_oos_recall": 0.4144736842105263, "weighted_oos_auroc": 0.8920325151821862}, "near": {"max_fold_oos_auroc": 0.8076492537313433, "min_fold_oos_auroc": 0.7935576923076922, "weighted_in_domain_fpr_at_declared_oos_recall": 0.8269230769230769, "weighted_oos_auroc": 0.7999873481781375}}
+    },
+    "A2": {
+      "category_diagnostics": {
+        "account_statements_bank_references": {"max_fold_oos_auroc": 0.98125, "min_fold_oos_auroc": 0.9701530612244897, "weighted_in_domain_fpr_at_declared_oos_recall": 0.06477732793522267, "weighted_oos_auroc": 0.9770361842105263},
+        "app_accessibility_localization": {"max_fold_oos_auroc": 0.9625, "min_fold_oos_auroc": 0.9492984693877551, "weighted_in_domain_fpr_at_declared_oos_recall": 0.14574898785425103, "weighted_oos_auroc": 0.9576796558704453},
+        "branch_services_safe_deposit": {"max_fold_oos_auroc": 0.9459375, "min_fold_oos_auroc": 0.9279336734693877, "weighted_in_domain_fpr_at_declared_oos_recall": 0.20850202429149797, "weighted_oos_auroc": 0.9382826417004049},
+        "business_merchant_services": {"max_fold_oos_auroc": 0.8778698979591836, "min_fold_oos_auroc": 0.8545918367346939, "weighted_in_domain_fpr_at_declared_oos_recall": 0.5490890688259109, "weighted_oos_auroc": 0.8659412955465587},
+        "business_payroll_accounts": {"max_fold_oos_auroc": 0.9553571428571429, "min_fold_oos_auroc": 0.9410076530612245, "weighted_in_domain_fpr_at_declared_oos_recall": 0.14726720647773278, "weighted_oos_auroc": 0.9488863866396761},
+        "credit_card_rewards_points": {"max_fold_oos_auroc": 0.9484375, "min_fold_oos_auroc": 0.9343112244897959, "weighted_in_domain_fpr_at_declared_oos_recall": 0.15738866396761134, "weighted_oos_auroc": 0.9418932186234819},
+        "credit_score_reporting": {"max_fold_oos_auroc": 0.940625, "min_fold_oos_auroc": 0.9247448979591837, "weighted_in_domain_fpr_at_declared_oos_recall": 0.1513157894736842, "weighted_oos_auroc": 0.9321863613360324},
+        "customer_service_complaints": {"max_fold_oos_auroc": 0.9154974489795918, "min_fold_oos_auroc": 0.8883928571428571, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3714574898785425, "weighted_oos_auroc": 0.9031943319838056},
+        "direct_debit_management": {"max_fold_oos_auroc": 0.4030612244897959, "min_fold_oos_auroc": 0.36989795918367346, "weighted_in_domain_fpr_at_declared_oos_recall": 0.9240890688259109, "weighted_oos_auroc": 0.38812651821862343},
+        "estate_probate_inheritance": {"max_fold_oos_auroc": 0.9068877551020408, "min_fold_oos_auroc": 0.8813775510204082, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3557692307692308, "weighted_oos_auroc": 0.8956857287449392},
+        "insurance_products_claims": {"max_fold_oos_auroc": 0.9620535714285714, "min_fold_oos_auroc": 0.9489795918367347, "weighted_in_domain_fpr_at_declared_oos_recall": 0.10931174089068826, "weighted_oos_auroc": 0.9547691042510121},
+        "investments_brokerage": {"max_fold_oos_auroc": 0.8826530612244898, "min_fold_oos_auroc": 0.8584183673469388, "weighted_in_domain_fpr_at_declared_oos_recall": 0.4342105263157895, "weighted_oos_auroc": 0.8705080971659919},
+        "joint_accounts_guardians": {"max_fold_oos_auroc": 0.8309948979591837, "min_fold_oos_auroc": 0.8115433673469388, "weighted_in_domain_fpr_at_declared_oos_recall": 0.9741902834008097, "weighted_oos_auroc": 0.8213567813765182},
+        "mortgage_home_loans": {"max_fold_oos_auroc": 0.9457908163265306, "min_fold_oos_auroc": 0.9292091836734694, "weighted_in_domain_fpr_at_declared_oos_recall": 0.13562753036437247, "weighted_oos_auroc": 0.9370253036437247},
+        "overdrafts_credit_lines": {"max_fold_oos_auroc": 0.9375, "min_fold_oos_auroc": 0.9154974489795918, "weighted_in_domain_fpr_at_declared_oos_recall": 0.17459514170040486, "weighted_oos_auroc": 0.9265048076923077},
+        "personal_loans": {"max_fold_oos_auroc": 0.9754464285714286, "min_fold_oos_auroc": 0.9630102040816326, "weighted_in_domain_fpr_at_declared_oos_recall": 0.14423076923076922, "weighted_oos_auroc": 0.9696437246963563},
+        "regulatory_complaints_ombudsman": {"max_fold_oos_auroc": 0.9221938775510204, "min_fold_oos_auroc": 0.9094387755102041, "weighted_in_domain_fpr_at_declared_oos_recall": 0.2424089068825911, "weighted_oos_auroc": 0.9157389939271255},
+        "savings_interest_term_deposits": {"max_fold_oos_auroc": 0.9502551020408163, "min_fold_oos_auroc": 0.9349489795918368, "weighted_in_domain_fpr_at_declared_oos_recall": 0.15890688259109312, "weighted_oos_auroc": 0.9436356275303644},
+        "standing_orders_scheduled_payments": {"max_fold_oos_auroc": 0.8995535714285714, "min_fold_oos_auroc": 0.8807397959183674, "weighted_in_domain_fpr_at_declared_oos_recall": 0.23076923076923078, "weighted_oos_auroc": 0.8908785425101214},
+        "tax_documents_advice": {"max_fold_oos_auroc": 0.9330357142857143, "min_fold_oos_auroc": 0.9183673469387755, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3942307692307692, "weighted_oos_auroc": 0.9258276821862348}
+      },
+      "folds": [
+        {"actual_oos_recall": 0.95625, "fold": 0, "heldout_rows": 390, "in_domain_fpr_at_declared_oos_recall": 0.4358974358974359, "oos_auroc": 0.9011057692307692, "temperature": 0.4714452043218624},
+        {"actual_oos_recall": 0.95625, "fold": 1, "heldout_rows": 392, "in_domain_fpr_at_declared_oos_recall": 0.4387755102040816, "oos_auroc": 0.8825255102040817, "temperature": 0.4550495563369718},
+        {"actual_oos_recall": 0.95625, "fold": 2, "heldout_rows": 393, "in_domain_fpr_at_declared_oos_recall": 0.3893129770992366, "oos_auroc": 0.8983460559796437, "temperature": 0.4538611402872746},
+        {"actual_oos_recall": 0.95625, "fold": 3, "heldout_rows": 402, "in_domain_fpr_at_declared_oos_recall": 0.4527363184079602, "oos_auroc": 0.8990827114427861, "temperature": 0.4611735673817531},
+        {"actual_oos_recall": 0.95625, "fold": 4, "heldout_rows": 399, "in_domain_fpr_at_declared_oos_recall": 0.45363408521303256, "oos_auroc": 0.8970864661654135, "temperature": 0.4474193560467444}
+      ],
+      "full_validation_temperature_diagnostic": {"actual_oos_recall": 0.95625, "in_domain_fpr_at_declared_oos_recall": 0.43370445344129555, "metric_threshold": 0.02820599100982113, "oos_auroc": 0.8956446103238868, "score_quantiles": {"in_domain": {"q05": 0.00042961325503007575, "q25": 0.003567604134718627, "q50": 0.018378331293263495, "q75": 0.1071761567184179, "q95": 0.4973051842261016}, "oos": {"q05": 0.03564731365163717, "q25": 0.32876813614151207, "q50": 0.5591320279769144, "q75": 0.7065409667749957, "q95": 0.8210171821337402}}, "temperature": 0.45797404927014607},
+      "primary_cross_fitted": {"max_fold_fpr": 0.45363408521303256, "max_fold_oos_auroc": 0.9011057692307692, "min_fold_fpr": 0.3893129770992366, "min_fold_oos_auroc": 0.8825255102040817, "weighted_actual_oos_recall": 0.9562499999999999, "weighted_in_domain_fpr_at_declared_oos_recall": 0.4342105263157895, "weighted_oos_auroc": 0.8956477732793521},
+      "raw_diagnostic": {"actual_oos_recall": 0.95625, "in_domain_fpr_at_declared_oos_recall": 0.33653846153846156, "metric_threshold": 0.46424090953591934, "oos_auroc": 0.9336064018218624},
+      "tier_diagnostics": {"far_support": {"max_fold_oos_auroc": 0.9363782051282051, "min_fold_oos_auroc": 0.9170918367346939, "weighted_in_domain_fpr_at_declared_oos_recall": 0.3714574898785425, "weighted_oos_auroc": 0.930414979757085}, "medium": {"max_fold_oos_auroc": 0.9294070512820514, "min_fold_oos_auroc": 0.9125876913265306, "weighted_in_domain_fpr_at_declared_oos_recall": 0.39119433198380565, "weighted_oos_auroc": 0.9250379554655871}, "near": {"max_fold_oos_auroc": 0.8714102564102564, "min_fold_oos_auroc": 0.8515625000000001, "weighted_in_domain_fpr_at_declared_oos_recall": 0.8699392712550608, "weighted_oos_auroc": 0.8651821862348179}}
+    }
+  },
+  "next_locked_action": "Freeze the routing cost matrix before using any cost result, then evaluate expected routing cost and the final risk-coverage operating point for the surviving A1 reference and calibrated A2 candidate without opening the confirmatory test.",
+  "preferred_model": "A2",
+  "reproducibility": {
+    "A1_primary_metrics_identical": true,
+    "A1_tier_diagnostics_identical": true,
+    "A2_primary_metrics_identical": true,
+    "A2_tier_diagnostics_identical": true,
+    "benchmark_metadata_identical": true,
+    "bitwise_probability_identity_required": false,
+    "fold_assignment_metadata_identical": true,
+    "max_observed_numeric_delta_across_all_float_fields": 5.333605852531065e-07,
+    "oos_lock_sha256": "e46b877897e03fbf67fe35b90e4907fd812c81c092486ddf16c9dc7f1948cd8d",
+    "preferred_model_identical": true,
+    "workflow_runs": [32182459303, 32182888464]
+  },
+  "status": "development_validation_plus_frozen_synthetic_oos",
+  "test_set_opened": false
+}

@@ -1,0 +1,157 @@
+{
+  "checkpoint_id": "phase2-a3-validation-v1",
+  "status": "development_validation_only",
+  "decision": "A3_rejected_A2_retained",
+  "test_set_opened": false,
+  "data": {
+    "dataset_contract": "banking77-helix-v1",
+    "derived_train_rows": 7904,
+    "derived_validation_rows": 1976,
+    "quarantine_rows": 123,
+    "derived_train_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "derived_validation_sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455"
+  },
+  "specification": {
+    "config_version": "routing-a3-v1",
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "pooling": "attention_masked_mean",
+    "normalize_pooled_representation": true,
+    "fine_tuned": true,
+    "classification_head": "linear_384_to_77",
+    "head_dropout": 0.0,
+    "max_length": 96,
+    "max_epochs": 3,
+    "early_stopping": false,
+    "train_batch_size": 32,
+    "validation_batch_size": 64,
+    "optimizer": "adamw",
+    "learning_rate": 0.00002,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "seed": 20260818
+  },
+  "environment": {
+    "python": "3.12.3",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "scikit_learn": "1.8.0",
+    "torch": "2.13.0+cpu",
+    "torch_cuda_available": false,
+    "transformers": "4.57.1",
+    "omp_num_threads": "1",
+    "openblas_num_threads": "1"
+  },
+  "model": {
+    "total_parameters": 22742861,
+    "trainable_parameters": 22742861
+  },
+  "metrics": {
+    "accuracy": 0.7403846153846154,
+    "macro_f1": 0.6898162842262942,
+    "balanced_accuracy": 0.7105247880311993,
+    "top3_recall": 0.9225708502024291,
+    "expected_calibration_error_15bin": 0.7220684507718453,
+    "multiclass_brier_score": 0.9771372079849243,
+    "mean_max_probability": 0.01831616461277008
+  },
+  "comparison_to_a2": {
+    "macro_f1_delta": -0.20878558170585793,
+    "balanced_accuracy_delta": -0.18577998978239774,
+    "top3_recall_delta": -0.05060728744939269,
+    "ece_delta": 0.431082488012017,
+    "brier_delta": 0.7270212938796347
+  },
+  "epoch_history": [
+    {
+      "epoch": 1,
+      "mean_training_loss": 4.24879172939038,
+      "validation_macro_f1": 0.5117400551823297,
+      "validation_balanced_accuracy": 0.5506651396471226,
+      "validation_top3_recall": 0.8375506072874493
+    },
+    {
+      "epoch": 2,
+      "mean_training_loss": 4.0945613220153065,
+      "validation_macro_f1": 0.6623871229486501,
+      "validation_balanced_accuracy": 0.6830979380952478,
+      "validation_top3_recall": 0.9114372469635628
+    },
+    {
+      "epoch": 3,
+      "mean_training_loss": 4.044758922175357,
+      "validation_macro_f1": 0.6898162842262942,
+      "validation_balanced_accuracy": 0.7105247880311993,
+      "validation_top3_recall": 0.9225708502024291
+    }
+  ],
+  "risk_coverage_comparison_to_a2": [
+    {"coverage": 0.1, "a2_selective_risk": 0.0, "a3_selective_risk": 0.030303030303030276},
+    {"coverage": 0.2, "a2_selective_risk": 0.0025316455696202667, "a3_selective_risk": 0.048101265822784844},
+    {"coverage": 0.3, "a2_selective_risk": 0.001686340640809414, "a3_selective_risk": 0.062394603709949426},
+    {"coverage": 0.4, "a2_selective_risk": 0.0012658227848101333, "a3_selective_risk": 0.07721518987341769},
+    {"coverage": 0.5, "a2_selective_risk": 0.004048582995951455, "a3_selective_risk": 0.10323886639676116},
+    {"coverage": 0.6, "a2_selective_risk": 0.005059021922428353, "a3_selective_risk": 0.12816188870151768},
+    {"coverage": 0.7, "a2_selective_risk": 0.01590744757772955, "a3_selective_risk": 0.15473608098336944},
+    {"coverage": 0.8, "a2_selective_risk": 0.02909550917141046, "a3_selective_risk": 0.18026565464895639},
+    {"coverage": 0.9, "a2_selective_risk": 0.05455568053993254, "a3_selective_risk": 0.218785151856018},
+    {"coverage": 1.0, "a2_selective_risk": 0.09767206477732793, "a3_selective_risk": 0.2596153846153846}
+  ],
+  "principal_a3_confusions": [
+    {"true_intent": "pending_top_up", "predicted_intent": "top_up_reverted", "count": 27},
+    {"true_intent": "top_up_failed", "predicted_intent": "top_up_reverted", "count": 23},
+    {"true_intent": "why_verify_identity", "predicted_intent": "verify_my_identity", "count": 16},
+    {"true_intent": "get_disposable_virtual_card", "predicted_intent": "disposable_card_limits", "count": 16},
+    {"true_intent": "request_refund", "predicted_intent": "Refund_not_showing_up", "count": 15},
+    {"true_intent": "wrong_exchange_rate_for_cash_withdrawal", "predicted_intent": "card_payment_wrong_exchange_rate", "count": 12},
+    {"true_intent": "card_delivery_estimate", "predicted_intent": "card_arrival", "count": 10},
+    {"true_intent": "card_swallowed", "predicted_intent": "declined_cash_withdrawal", "count": 10},
+    {"true_intent": "beneficiary_not_allowed", "predicted_intent": "failed_transfer", "count": 10}
+  ],
+  "tokenization_audit": {
+    "train": {
+      "max_length": 96,
+      "max_observed_tokens": 98,
+      "p99_tokens": 52.0,
+      "truncated_examples": 1,
+      "truncation_fraction": 0.00012651821862348178
+    },
+    "validation": {
+      "max_length": 96,
+      "max_observed_tokens": 83,
+      "p99_tokens": 53.25,
+      "truncated_examples": 0,
+      "truncation_fraction": 0.0
+    }
+  },
+  "reproducibility": {
+    "workflow_run": 32172469396,
+    "independent_replicates": 2,
+    "sample_order_identical": true,
+    "predicted_intents_identical": true,
+    "top3_intents_identical": true,
+    "selective_risk_curve_identical": true,
+    "max_abs_confidence_delta": 0.0,
+    "ece_abs_delta": 0.0,
+    "brier_abs_delta": 0.0,
+    "discrete_metric_abs_deltas": {
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "balanced_accuracy": 0.0,
+      "top3_recall": 0.0
+    },
+    "predicted_intents_sha256": "0875b3894b34f9c1db575de6776656519a5727c5a78f1c87046dd1df37fc1fc8",
+    "top3_intents_sha256": "dd4fdb82b49ca2e72ce27cb641eb86a504285ad12f2bf36d94764afa75fe9b91",
+    "confidence_rounded_6_sha256": "acfd8d9608b55e7d0eb220469e88f36b2e314273d77a4979bfdae32513963ea6"
+  },
+  "audit": {
+    "code_path_valid": true,
+    "split_integrity_valid": true,
+    "cpu_lock_valid": true,
+    "tokenization_materially_truncated": false,
+    "cross_runner_reproducible": true,
+    "interpretation_correction": "The result establishes that A3 under the frozen three-epoch, 2e-5 learning-rate recipe does not justify its added complexity. It does not establish that task-specific transformer fine-tuning is intrinsically inferior to A2.",
+    "underfitting_signal": "Training loss remained close to the 77-class uniform cross-entropy scale and mean maximum probability remained near uniform despite improving validation classification across epochs. The registered fixed budget is therefore best interpreted as an underfit A3 configuration, not a broken execution."
+  },
+  "next_locked_action": "Freeze and execute the Phase 2 calibration comparison for surviving A2 with A1 as the simpler reference, using leakage-safe cross-fitted validation calibration. Do not calibrate rejected A3 for selection and do not open the confirmatory test."
+}

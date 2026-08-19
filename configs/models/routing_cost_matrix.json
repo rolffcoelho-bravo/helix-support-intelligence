@@ -1,0 +1,75 @@
+{
+  "version": "routing-cost-matrix-v1",
+  "phase": 2,
+  "status": "published_after_private_selection_audit",
+  "unit": "human_review_equivalent_cost_unit",
+  "interpretation": "Synthetic decision-analysis weights for Helix development. They are not estimates of real-bank monetary loss, staffing cost, customer harm, or production traffic economics.",
+  "event_semantics": {
+    "correct_route": "Automatically routed to the correct intent.",
+    "wrong_intent_same_queue": "Automatic intent prediction is wrong but predicted and true intents belong to the same frozen operational queue.",
+    "wrong_queue": "Automatic prediction sends an in-domain case to a different operational queue, or automatically routes a frozen synthetic OOS request instead of escalating it.",
+    "unsafe_high_risk_auto_route": "Automatic intent prediction is wrong when the true in-domain intent is marked high_risk in routing-operations-v1. This overrides same-queue and wrong-queue error costs.",
+    "human_escalation": "The router abstains and sends the request to human review. This is the unit-cost anchor."
+  },
+  "primary_matrix": {
+    "id": "balanced_risk_v1",
+    "costs": {
+      "correct_route": 0.0,
+      "wrong_intent_same_queue": 2.5,
+      "wrong_queue": 6.0,
+      "unsafe_high_risk_auto_route": 20.0,
+      "human_escalation": 1.0
+    }
+  },
+  "sensitivity_matrices": [
+    {
+      "id": "automation_favoring_v1",
+      "costs": {
+        "correct_route": 0.0,
+        "wrong_intent_same_queue": 1.5,
+        "wrong_queue": 4.0,
+        "unsafe_high_risk_auto_route": 12.0,
+        "human_escalation": 1.0
+      }
+    },
+    {
+      "id": "risk_conservative_v1",
+      "costs": {
+        "correct_route": 0.0,
+        "wrong_intent_same_queue": 3.0,
+        "wrong_queue": 8.0,
+        "unsafe_high_risk_auto_route": 30.0,
+        "human_escalation": 1.0
+      }
+    }
+  ],
+  "population_mixture": {
+    "primary_oos_prevalence": 0.10,
+    "sensitivity_oos_prevalence": [0.05, 0.20],
+    "in_domain_distribution": "frozen BANKING77-derived validation empirical distribution",
+    "oos_distribution": "uniform empirical distribution over the 160 frozen synthetic routing-oos-v1 queries",
+    "limitation": "OOS prevalence and synthetic-query mixture are scenario assumptions, not estimates of production traffic."
+  },
+  "policy": {
+    "automatic_route_rule": "AUTO_ROUTE when confidence >= threshold; otherwise escalate. For frozen OOS queries, automatic routing is scored as wrong_queue and escalation as human_escalation.",
+    "threshold_candidates": "all unique observed confidence values plus 0 and 1",
+    "primary_selection": "minimum expected cost under balanced_risk_v1 and 10% OOS prevalence",
+    "tie_break_order": [
+      "lower unsafe_high_risk_auto_route rate",
+      "lower wrong_queue rate",
+      "higher in-domain automation coverage",
+      "simpler model"
+    ],
+    "sensitivity_does_not_override_primary_selection": true,
+    "final_confirmatory_test_may_change_threshold": false
+  },
+  "comparisons": {
+    "H3_development": "Compare each surviving model raw versus temperature-scaled confidence under the same frozen cost assumptions; primary endpoint is minimum expected routing cost.",
+    "H4_development": "Report selective risk at fixed coverage and the cost-selected operating point versus full automation."
+  },
+  "publication": {
+    "selection_completed_before_public_weight_disclosure": true,
+    "weights_are_synthetic_assumptions": true,
+    "weights_are_real_bank_economics": false
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "checkpoint_id": "phase2-routing-calibration-v1",
+  "status": "development_validation_only",
+  "decision": "temperature_scaling_selected_for_A1_and_A2",
+  "test_set_opened": false,
+  "data": {
+    "dataset_contract": "banking77-helix-v1",
+    "train_rows": 7904,
+    "validation_rows": 1976,
+    "train_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "validation_sha256": "5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455"
+  },
+  "cross_fitting": {
+    "folds": 5,
+    "stratification": "intent",
+    "assignment": "within-intent salted stable-sample-id ordering with deterministic intent-specific round-robin start offsets",
+    "salt": "helix-phase2-calibration-v1-2026-08-18",
+    "fold_counts": {
+      "0": 390,
+      "1": 392,
+      "2": 393,
+      "3": 402,
+      "4": 399
+    },
+    "each_row_scored_once": true,
+    "score_row_used_to_fit_its_calibrator": false
+  },
+  "selection_rule": {
+    "primary_metric": "multiclass_brier_score",
+    "secondary_metrics": [
+      "negative_log_likelihood",
+      "expected_calibration_error_15bin"
+    ],
+    "guardrails": {
+      "max_macro_f1_drop_vs_raw": 0.005,
+      "max_top3_recall_drop_vs_raw": 0.002
+    },
+    "operating_threshold_selected": false,
+    "routing_cost_used": false
+  },
+  "A1": {
+    "raw": {
+      "macro_f1": 0.842193694590008,
+      "top3_recall": 0.9534412955465587,
+      "expected_calibration_error_15bin": 0.4895411369931626,
+      "multiclass_brier_score": 0.49507311098458373,
+      "negative_log_likelihood": 1.3665669693266915,
+      "mean_max_probability": 0.36673416665056213
+    },
+    "candidates": {
+      "temperature_scaling": {
+        "passes_guardrails": true,
+        "macro_f1": 0.842193694590008,
+        "top3_recall": 0.9534412955465587,
+        "expected_calibration_error_15bin": 0.026261461552991163,
+        "multiclass_brier_score": 0.21499662172338085,
+        "negative_log_likelihood": 0.5402826915134346,
+        "mean_max_probability": 0.8551692143088958
+      },
+      "isotonic_regression": {
+        "passes_guardrails": false,
+        "macro_f1": 0.831922606209657,
+        "top3_recall": 0.9423076923076923,
+        "expected_calibration_error_15bin": 0.051766965674686846,
+        "multiclass_brier_score": 0.24614412152751133,
+        "negative_log_likelihood": 1.6838681982702692
+      },
+      "platt_scaling": {
+        "passes_guardrails": true,
+        "macro_f1": 0.847691490362473,
+        "top3_recall": 0.9554655870445344,
+        "expected_calibration_error_15bin": 0.08980842006527938,
+        "multiclass_brier_score": 0.23144021506642268,
+        "negative_log_likelihood": 0.5920178471926436
+      }
+    },
+    "selected_method": "temperature_scaling",
+    "full_validation_refit_temperature": 0.3464179550044782
+  },
+  "A2": {
+    "raw": {
+      "macro_f1": 0.8986018659321521,
+      "top3_recall": 0.9731781376518218,
+      "expected_calibration_error_15bin": 0.2909859746299267,
+      "multiclass_brier_score": 0.25011592002293587,
+      "negative_log_likelihood": 0.6683295683875136,
+      "mean_max_probability": 0.6113996478885227
+    },
+    "candidates": {
+      "temperature_scaling": {
+        "passes_guardrails": true,
+        "macro_f1": 0.8986018659321521,
+        "top3_recall": 0.9731781376518218,
+        "expected_calibration_error_15bin": 0.016173087866352017,
+        "multiclass_brier_score": 0.13984882850016983,
+        "negative_log_likelihood": 0.3349591685572301,
+        "mean_max_probability": 0.9011160017851648,
+        "risk_coverage": [
+          {"coverage": 0.1, "selective_risk": 0.0},
+          {"coverage": 0.2, "selective_risk": 0.0},
+          {"coverage": 0.3, "selective_risk": 0.001686340640809414},
+          {"coverage": 0.4, "selective_risk": 0.0025316455696202667},
+          {"coverage": 0.5, "selective_risk": 0.002024291497975672},
+          {"coverage": 0.6, "selective_risk": 0.005059021922428353},
+          {"coverage": 0.7, "selective_risk": 0.010845986984815648},
+          {"coverage": 0.8, "selective_risk": 0.021505376344086002},
+          {"coverage": 0.9, "selective_risk": 0.04780652418447695},
+          {"coverage": 1.0, "selective_risk": 0.09767206477732793}
+        ]
+      },
+      "isotonic_regression": {
+        "passes_guardrails": false,
+        "macro_f1": 0.8898279462706098,
+        "top3_recall": 0.9615384615384616,
+        "expected_calibration_error_15bin": 0.012631446469256027,
+        "multiclass_brier_score": 0.15706519514058948,
+        "negative_log_likelihood": 1.2764333290479255
+      },
+      "platt_scaling": {
+        "passes_guardrails": false,
+        "macro_f1": 0.8948211549582628,
+        "top3_recall": 0.9691295546558705,
+        "expected_calibration_error_15bin": 0.030493189687223147,
+        "multiclass_brier_score": 0.1496985447504528,
+        "negative_log_likelihood": 0.40224509397530145
+      }
+    },
+    "selected_method": "temperature_scaling",
+    "full_validation_refit_temperature": 0.45797404927014607
+  },
+  "audit": {
+    "pre_audit_fold_imbalance_detected": true,
+    "pre_audit_fold_counts": [430, 411, 392, 380, 363],
+    "correction_basis": "deterministic intent-specific start offsets derived only from the pre-frozen salt and intent name; no performance-guided fold tuning",
+    "selection_stable_after_fold_correction": true,
+    "workflow_permissions_restored_to_read_only": true,
+    "cpu_only_lock_verified": true,
+    "confirmatory_test_remained_sealed": true
+  },
+  "reproducibility": {
+    "workflow_runs": [32181166628, 32181444378],
+    "sample_order_identical": true,
+    "fold_assignment_identical": true,
+    "raw_predicted_intents_identical": true,
+    "calibrated_predicted_intents_identical": true,
+    "discrete_classification_metrics_identical": true,
+    "selective_risk_curves_identical": true,
+    "bitwise_probability_identity_required": false,
+    "A1_max_raw_confidence_delta": 1.000088900582341e-12,
+    "A1_max_calibrated_confidence_delta": 3.000044657142098e-12,
+    "A2_max_raw_confidence_delta": 9.20314999985905e-7,
+    "A2_max_calibrated_confidence_delta": 1.4107169999943991e-6,
+    "A2_cross_fitted_ece_abs_delta": 3.4467275943084186e-9,
+    "A2_cross_fitted_brier_abs_delta": 1.7423163467533698e-9,
+    "A2_cross_fitted_nll_abs_delta": 5.85850484791095e-9,
+    "calibration_lock_sha256": "e46b877897e03fbf67fe35b90e4907fd812c81c092486ddf16c9dc7f1948cd8d"
+  },
+  "interpretation": {
+    "calibration_choice": "Temperature scaling is the frozen calibration method for both A1 and A2 development candidates.",
+    "leading_candidate": "A2 plus temperature scaling is the leading calibrated Phase 2 development candidate.",
+    "H3_status": "not_yet_evaluated",
+    "H3_reason": "The registered H3 primary endpoint is expected routing cost, which has not yet been evaluated.",
+    "threshold_status": "not_selected",
+    "release_claim_status": "pending_confirmatory_evaluation"
+  },
+  "next_locked_action": "Freeze the Phase 2 out-of-scope benchmark before inspecting any OOS model result, then evaluate A1 and calibrated A2 under that frozen benchmark. Do not open the confirmatory BANKING77 test split."
+}
