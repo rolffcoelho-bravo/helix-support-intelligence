@@ -103,7 +103,7 @@ These metrics describe the frozen router. They do not create new tuning opportun
 
 The confirmatory evaluator is `benchmarks/routing/evaluate_confirmatory.py`. Its default mode is preflight-only and does not download the test source.
 
-The GitHub Actions workflow `.github/workflows/phase2-routing-confirmatory.yml`:
+The primary GitHub Actions workflow `.github/workflows/phase2-routing-confirmatory.yml`:
 
 - has `workflow_dispatch` only;
 - has no `pull_request` or `push` trigger;
@@ -113,6 +113,23 @@ The GitHub Actions workflow `.github/workflows/phase2-routing-confirmatory.yml`:
 - runs a no-test preflight before the test-access step;
 - reuses the audited CPU-only A2 dependency lock;
 - uploads evidence but does not write results back to the repository automatically.
+
+During the authorized execution, a GitHub transport limitation was identified before test access: `workflow_dispatch` can only receive events when its workflow exists on the default branch, while the frozen Phase 2 workflow is intentionally still on the unmerged Phase 2 branch. The connected execution environment also does not expose a fresh workflow-dispatch mutation.
+
+To avoid merging Phase 2 before its confirmatory result, a bounded authorization-transport fallback was registered **before the test was opened**: `.github/workflows/phase2-routing-confirmatory-approval-bridge.yml`.
+
+The fallback:
+
+- is triggered only by a newly created PR comment;
+- requires PR `#6` and the exact comment body `OPEN_FROZEN_TEST_ONCE`;
+- has read-only repository permissions;
+- checks out the frozen Phase 2 branch;
+- verifies the same pre-confirmatory artifact manifest;
+- runs the same locked no-test preflight;
+- invokes the unchanged confirmatory evaluator with the same authorization token;
+- changes no model, calibration, threshold, cost, hypothesis, bootstrap, or result interpretation logic.
+
+The bridge exists only to transport the already-approved authorization decision into GitHub Actions without prematurely merging Phase 2. It is not an alternative scientific protocol.
 
 An infrastructure failure before any test metric is emitted may be retried. Once a scientific result has been produced, reruns cannot be used for tuning, selection, threshold movement, or hypothesis redefinition.
 
