@@ -1,0 +1,72 @@
+{
+  "integration_id": "phase3-retrieval-r3.3-v1",
+  "phase": 3,
+  "checkpoint": "R3.3",
+  "retrieval_version": "retrieval-selected-v1",
+  "selection_source": "phase3-retrieval-r3.2-v1",
+  "endpoint": {
+    "method": "POST",
+    "path": "/v1/search",
+    "read_only": true
+  },
+  "request": {
+    "query": {
+      "required": true,
+      "minimum_length": 1,
+      "maximum_length": 2000,
+      "whitespace_only_allowed": false
+    },
+    "limit": {
+      "default": 10,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "extra_fields": "forbidden"
+  },
+  "runtime_retrieval": {
+    "candidate": "B0",
+    "algorithm": "BM25",
+    "k1": 1.2,
+    "b": 0.75,
+    "retrieve_k_ceiling": 50,
+    "tie_break": "document_id ascending",
+    "evaluation_date": "2026-08-19",
+    "expected_eligible_documents": 147
+  },
+  "forbidden_runtime_query_metadata": [
+    "intent",
+    "queue",
+    "case_type",
+    "expected_decision",
+    "gold_citations",
+    "allowed_resolution_types",
+    "relevance_judgments"
+  ],
+  "response": {
+    "deterministic": true,
+    "random_identifiers": false,
+    "timestamps": false,
+    "hit_fields": [
+      "document_id",
+      "rank",
+      "score",
+      "title",
+      "body",
+      "kind",
+      "resolution_type"
+    ]
+  },
+  "failure_contract": {
+    "invalid_request_status": 422,
+    "known_backend_failure_status": 503,
+    "known_backend_failure_code": "SEARCH_UNAVAILABLE",
+    "internal_exception_text_returned": false
+  },
+  "guardrails": {
+    "archived_documents_rankable": false,
+    "query_or_gold_derived_filtering": false,
+    "runtime_model_substitution": false,
+    "post_r32_retrieval_retuning": false,
+    "generation_inside_search_endpoint": false
+  }
+}

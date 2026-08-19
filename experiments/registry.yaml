@@ -1,5 +1,5 @@
 schema_version: 1
-status: phase-1-contract-frozen
+status: phase-3-retrieval-integrated
 publication_rule: >-
   Public entries are added only after publication review. Unpublished hypotheses,
   private acceptance thresholds, cost weights, and remediation logic remain outside
@@ -18,4 +18,42 @@ required_fields:
   - software_lock_hash
   - result
   - decision
-experiments: []
+experiments:
+  - experiment_id: phase3-retrieval-r3.2-v1
+    workstream: retrieval
+    status: validated-post-audit
+    dataset_versions:
+      - helixbank-policy-v1.0.0
+    split_hashes:
+      documents: 13572a02eddadbd621a39490238358acccf8c5f01fc7a26dcfe3f4017aad2d8f
+      queries: 2c54b5353d71a399cb15303fb6d751dd18c9ba814c992c4f676fb19bd865481c
+      judgments: 8d5b4b816a807d5976d0102dcdd3d917a16c9c4a916e4776f5023b47043d5a4d
+    baseline: B0 deterministic BM25
+    candidate: B1 dense, B2 hybrid RRF, and B3 hybrid plus cross-encoder reranking
+    primary_metric: nDCG@10
+    secondary_metrics:
+      - MRR@10
+      - Recall@20
+      - Recall@50
+      - P95 CPU latency
+    seeds:
+      - 20260819
+    software_lock_hash: deb4fc663e645371788b6c8e83a34b0f5d244110bdde8c703ec84fb02c058740
+    result:
+      B0_ndcg_at_10: 0.9009179145489322
+      B0_mrr_at_10: 0.7727272727272727
+      B0_p95_latency_ms: 0.4870045
+      H1_B2_minus_B0_ndcg_at_10: -0.013092665462505561
+      H1_95_ci:
+        - -0.019143134208121304
+        - -0.007367937168091304
+      H1_verdict: adverse
+      H2_B3_minus_B2_mrr_at_10: 0.0016233766233766235
+      H2_95_ci:
+        - 0.0
+        - 0.00487012987012987
+      H2_verdict: inconclusive
+    decision: >-
+      Select B0 as retrieval-selected-v1. B1 and B2 did not earn the required
+      relevance improvement, while B3 improved nDCG@10 but exceeded its frozen
+      500 ms P95 latency budget.

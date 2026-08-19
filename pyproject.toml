@@ -27,7 +27,10 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+  "fastapi>=0.116,<1",
+  "uvicorn>=0.35,<1",
+]
 
 [project.urls]
 Homepage = "https://github.com/rolffcoelho-bravo/helix-support-intelligence"
@@ -39,6 +42,7 @@ helix = "helix_support_intelligence.__main__:main"
 
 [dependency-groups]
 dev = [
+  "httpx>=0.28,<1",
   "mypy>=1.18,<2",
   "pytest>=8.4,<10",
   "ruff>=0.14,<1",
