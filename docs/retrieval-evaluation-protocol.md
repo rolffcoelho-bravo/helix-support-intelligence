@@ -34,11 +34,13 @@ Before Phase 3 scoring:
 1. the pinned BANKING77 train source checksum is verified;
 2. the Phase 1 leakage quarantine and deterministic validation assignment are replayed;
 3. only the resulting `fit_train` partition is eligible as a Phase 3 query source;
-4. a Phase 3-specific salted deterministic ranking selects 20 development and 10 confirmatory utterances per each of 77 intents;
+4. a Phase 3-specific salted deterministic ranking selects 18 development and 8 confirmatory utterances per each of 77 intents;
 5. the two retrieval partitions are disjoint by stable sample ID;
 6. the official BANKING77 test URL is never accessed by the Phase 3 benchmark materializer.
 
-This produces 1,540 development queries and 770 confirmatory queries.
+This produces 1,386 development queries and 616 confirmatory queries.
+
+The first pre-scoring materialization attempt established that the smallest frozen `fit_train` intent contains 27 rows. The originally proposed 20+10 allocation was therefore infeasible and was reduced to 18+8 **before any retrieval score or benchmark hash freeze**. The final allocation requires 26 rows per intent and leaves at least one eligible source row unused in every intent.
 
 The confirmatory query contents are not materialized by the pre-scoring hash-freeze workflow. Their deterministic hash is frozen before B0 scoring, and they are opened only after B0-B3 selection and a final pre-confirmatory audit.
 
@@ -122,6 +124,10 @@ If H1 or H2 fails:
 4. keep the simpler valid system when the more complex candidate does not justify itself;
 5. close Phase 3 rather than extending the model family.
 
+## Workflow correctness rule
+
+Scientific shell pipelines must propagate the exit code of the model/materializer command rather than the logging command. The benchmark-freeze workflow therefore enables `pipefail` before piping output through `tee`. This rule was added after the first feasibility failure showed that a missing `pipefail` could mislabel a failed Python command as a successful workflow step.
+
 ## Mandatory hostile execution audit
 
 Every Phase 3 execution closes only after checking:
@@ -133,7 +139,7 @@ Every Phase 3 execution closes only after checking:
 - official BANKING77 test non-access during Phase 3 development;
 - reproducibility and deterministic hashes;
 - dependency and hardware consistency;
-- workflow permissions and triggers;
+- workflow permissions, triggers, and exit-code propagation;
 - public wording and private-information leakage;
 - consistency with the normative blueprint.
 
