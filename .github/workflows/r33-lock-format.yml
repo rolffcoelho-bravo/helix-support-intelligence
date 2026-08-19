@@ -1,3 +1,4 @@
+# Temporary preflight workflow; removed before merge.
 name: R3.3 Lock and Format
 
 on:
