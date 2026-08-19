@@ -1,0 +1,253 @@
+{
+  "protocol_id": "phase3-retrieval-r3.0-v1",
+  "status": "frozen_pre_evaluation",
+  "phase": 3,
+  "checkpoint": "R3.0",
+  "frozen_on": "2026-08-19",
+  "purpose": "Predeclare the bounded retrieval ladder, evaluation semantics, inference, latency measurement, and complexity-adoption rule before any B0-B3 scoring.",
+  "corpus": {
+    "version": "helixbank-policy-v1.0.0",
+    "generator_version": "1.0.0",
+    "counts": {
+      "documents": 154,
+      "queries": 308,
+      "judgments": 616,
+      "intents": 77
+    },
+    "sha256": {
+      "documents": "13572a02eddadbd621a39490238358acccf8c5f01fc7a26dcfe3f4017aad2d8f",
+      "queries": "2c54b5353d71a399cb15303fb6d751dd18c9ba814c992c4f676fb19bd865481c",
+      "judgments": "8d5b4b816a807d5976d0102dcdd3d917a16c9c4a916e4776f5023b47043d5a4d"
+    },
+    "evaluation_date": "2026-08-19",
+    "eligibility_filters": {
+      "apply_before_ranking": true,
+      "status": [
+        "current"
+      ],
+      "permission": [
+        "public_support"
+      ],
+      "audience": [
+        "customer_support"
+      ],
+      "jurisdiction": [
+        "fictional-global"
+      ],
+      "validity_rule": "valid_from <= evaluation_date and (valid_to is null or valid_to >= evaluation_date)",
+      "explicitly_forbidden_query_derived_filters": [
+        "intent",
+        "queue",
+        "case_type",
+        "expected_decision",
+        "gold_citations",
+        "allowed_resolution_types",
+        "relevance_judgments"
+      ],
+      "conflict_fixture_policy": "Current conflict fixtures remain eligible evidence and are not suppressed by retrieval.",
+      "untrusted_content_policy": "Untrusted-content fixtures remain data; their text must never be interpreted as instructions."
+    },
+    "qrel_semantics": {
+      "grades": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unjudged_document_grade": 0,
+      "exclude_ineligible_documents_from_qrels_before_metric_computation": true,
+      "ndcg_gain": "2^relevance - 1",
+      "binary_relevance_threshold_for_mrr_and_recall": 2
+    }
+  },
+  "document_representation": {
+    "index_text": "title + newline + body",
+    "query_text": "retrieval_query.text",
+    "no_label_or_gold_metadata_in_text": true
+  },
+  "ladder": [
+    {
+      "id": "B0",
+      "name": "BM25",
+      "role": "lexical baseline",
+      "implementation": "repository-owned deterministic BM25",
+      "parameters": {
+        "k1": 1.2,
+        "b": 0.75
+      },
+      "tokenization": {
+        "normalization": "Unicode NFKC then lowercase",
+        "token_pattern": "[A-Za-z0-9]+",
+        "stopword_removal": false,
+        "stemming": false
+      },
+      "retrieve_k": 50
+    },
+    {
+      "id": "B1",
+      "name": "dense retrieval",
+      "role": "semantic single-retriever candidate",
+      "model": {
+        "id": "sentence-transformers/all-MiniLM-L6-v2",
+        "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+        "pooling": "model-native mean pooling",
+        "normalize_embeddings": true,
+        "similarity": "cosine",
+        "max_sequence_length": 256
+      },
+      "retrieve_k": 50
+    },
+    {
+      "id": "B2",
+      "name": "hybrid RRF",
+      "role": "lexical-semantic fusion candidate",
+      "inputs": [
+        "B0",
+        "B1"
+      ],
+      "source_depth": 50,
+      "rrf": {
+        "formula": "sum(1 / (k + rank_i)) over source rankings containing document",
+        "k": 60
+      },
+      "retrieve_k": 50
+    },
+    {
+      "id": "B3",
+      "name": "hybrid plus cross-encoder reranking",
+      "role": "reranked hybrid candidate",
+      "input": "B2",
+      "rerank_depth": 20,
+      "model": {
+        "id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+        "revision": "c5f2b386de279a97c53a702dd5189d1c407160dc",
+        "max_sequence_length": 512,
+        "pair_format": "query text paired with title + newline + body"
+      },
+      "tail_policy": "Rerank B2 ranks 1-20; append B2 ranks 21-50 unchanged.",
+      "retrieve_k": 50
+    }
+  ],
+  "ranking_determinism": {
+    "primary_sort": "descending candidate score",
+    "tie_break": "document_id ascending",
+    "rrf_source_ties": "resolve each source ranking by document_id ascending before fusion",
+    "randomized_ranking": false
+  },
+  "metrics": {
+    "primary": "nDCG@10",
+    "registered_secondary": [
+      "MRR@10",
+      "Recall@20",
+      "Recall@50"
+    ],
+    "diagnostic_slices": [
+      "case_type",
+      "document_kind",
+      "conflict_fixture",
+      "untrusted_content_fixture"
+    ],
+    "mrr_rule": "First eligible document with relevance >= 2; queries with no eligible relevance >= 2 contribute 0.",
+    "recall_rule": "Macro-average only over queries with at least one eligible document of relevance >= 2; report applicable-query count.",
+    "no_metric_substitution_after_scoring": true
+  },
+  "registered_hypotheses": {
+    "H1": {
+      "comparison": "B2 - B0",
+      "endpoint": "nDCG@10",
+      "direction": "greater_than_zero",
+      "interpretation": "Hybrid lexical-semantic fusion improves graded top-10 ranking relevance over the lexical baseline."
+    },
+    "H2": {
+      "comparison": "B3 - B2",
+      "endpoint": "MRR@10",
+      "direction": "greater_than_zero",
+      "interpretation": "Cross-encoder reranking improves the rank of the first directly relevant evidence item over hybrid retrieval."
+    }
+  },
+  "inference": {
+    "unit": "query",
+    "method": "paired nonparametric bootstrap",
+    "replicates": 5000,
+    "seed": 20260819,
+    "interval": "two-sided percentile 95%",
+    "difference_orientation": "candidate minus comparator",
+    "supported_if": "point estimate > 0 and lower confidence bound > 0",
+    "inconclusive_if": "confidence interval includes 0",
+    "adverse_if": "point estimate < 0 and upper confidence bound < 0"
+  },
+  "latency": {
+    "device": "CPU only",
+    "scope": "warm per-query retrieval latency",
+    "include": [
+      "query tokenization",
+      "query embedding for B1-B3",
+      "lexical scoring where applicable",
+      "dense similarity where applicable",
+      "RRF fusion where applicable",
+      "cross-encoder scoring where applicable"
+    ],
+    "exclude": [
+      "model download",
+      "model load",
+      "corpus generation",
+      "BM25 index construction",
+      "document embedding construction"
+    ],
+    "warmup_queries_per_candidate": 30,
+    "timed_passes": 5,
+    "query_order": "canonical query_id ascending in every pass",
+    "report": [
+      "mean_ms",
+      "p50_ms",
+      "p95_ms",
+      "p99_ms",
+      "queries_per_second"
+    ],
+    "record_environment": [
+      "OS",
+      "Python",
+      "CPU model",
+      "logical CPU count",
+      "RAM",
+      "torch version",
+      "transformers version",
+      "sentence-transformers version"
+    ],
+    "selection_budgets_ms": {
+      "B0": 100,
+      "B1": 250,
+      "B2": 250,
+      "B3": 500
+    }
+  },
+  "complexity_adoption": {
+    "principle": "A more complex candidate replaces the current simpler winner only when relevance improves materially and reproducibly within the declared latency budget.",
+    "starting_winner": "B0",
+    "evaluation_order": [
+      "B1",
+      "B2",
+      "B3"
+    ],
+    "candidate_rule": {
+      "minimum_delta_ndcg_at_10": 0.01,
+      "require_paired_95_ci_lower_bound_above_zero": true,
+      "require_mrr_at_10_delta_not_below": -0.005,
+      "require_candidate_p95_within_declared_budget": true
+    },
+    "if_rule_fails": "Keep the current simpler winner and preserve the negative or inconclusive result.",
+    "final_tie_rule": "If multiple candidates satisfy replacement rules with nDCG@10 within 0.005 of one another, select the lower-p95 candidate; if still tied, select the simpler lower-numbered candidate.",
+    "no_post_score_parameter_tuning": true
+  },
+  "execution_guard": {
+    "results_opened": false,
+    "scoring_allowed_only_after_protocol_merge": true,
+    "prohibited_before_first_score": [
+      "changing corpus records or qrels",
+      "changing B0-B3 model identities or revisions",
+      "changing K values, RRF k, rerank depth, metrics, filters, latency rules, bootstrap settings, or adoption thresholds",
+      "using retrieval results to redesign the frozen ladder"
+    ],
+    "post_score_change_rule": "Any result-motivated change creates a new protocol version and cannot overwrite R3.0 v1 evidence."
+  }
+}
