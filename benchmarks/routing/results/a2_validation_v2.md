@@ -116,6 +116,6 @@ A1 remains the required simpler reference. A3 remains mandatory under the frozen
 
 The README release benchmark remains `pending`; the confirmatory test remains unopened.
 
-## Next locked action
+## Next evaluation step
 
-Implement **A3 — one frozen compact transformer classifier** under the identical train/validation contract. Freeze the base checkpoint, tokenizer, training budget, seed, early-stopping rule, and optimization specification before the first A3 result. Do not open the confirmatory test and do not introduce another classifier family.
+Implement **A3 — one frozen compact transformer classifier** under the identical train/validation contract. Freeze the base checkpoint, tokenizer, training budget, seed, early-stopping rule, and optimization specification before the first A3 result. The confirmatory test remains separate and no additional classifier family is introduced.
