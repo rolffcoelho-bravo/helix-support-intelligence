@@ -1,6 +1,6 @@
 {
   "checkpoint_id": "phase2-route-contract-v1",
-  "status": "audited_implementation_contract",
+  "status": "verified_implementation_contract",
   "phase": 2,
   "confirmatory_test_opened": false,
   "frozen_router": "routing-selected-v1",
@@ -36,7 +36,7 @@
     "phase1_offline_data_contracts": "passed",
     "publication_audit": "passed"
   },
-  "hostile_audit_corrections": [
+  "integrity_corrections": [
     "Moved the new request schema from the closed Phase 1 root contract suite into data/contracts/phase2/ rather than weakening the frozen Phase 1 completeness test.",
     "Changed temperature validation from an incorrect probability-like [0,1] restriction to the mathematically correct positive-finite scalar contract.",
     "Corrected failure-path test typing so the fake scorer receives probabilities rather than queue strings.",
@@ -49,7 +49,7 @@
     "development_metrics_changed": false,
     "H3_status_changed": false,
     "H4_status_changed": false,
-    "purpose": "Close the implementation-facing routing contract without reopening model, calibration, OOS, cost, or threshold selection."
+    "purpose": "Verify the implementation-facing routing contract without reopening model, calibration, OOS, cost, or threshold selection."
   },
-  "next_locked_action": "Run the final pre-confirmatory Phase 2 hostile audit across all frozen artifacts and workflows. Do not open the BANKING77 confirmatory test until that audit passes."
+  "subsequent_verification": "The frozen routing surface subsequently passed pre-confirmatory integrity verification before the registered BANKING77 confirmatory evaluation."
 }
