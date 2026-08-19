@@ -1,6 +1,6 @@
 # Evaluation Contracts
 
-Phase 1 establishes evaluation semantics before any model family is allowed to compete.
+Helix defines evaluation semantics before comparing model families.
 
 ## Separation of evidence
 
@@ -20,24 +20,24 @@ For BANKING77:
 
 - `train` may fit model parameters;
 - `validation` may select models and operating thresholds;
-- `test` is confirmatory and remains untouched until a registered release candidate is evaluated;
+- `test` is confirmatory and remains untouched until a fixed candidate is evaluated;
 - `quarantine` is excluded from fitting and validation because of cross-split similarity risk.
 
-For HelixBank Policy Corpus v1, the committed golden queries and judgments define the initial retrieval and evidence semantics. Later phases may create development subsets without altering the frozen records.
+For HelixBank Policy Corpus v1, the committed golden queries and judgments define the initial retrieval and evidence semantics. Development subsets may be created without altering the frozen records.
 
 ## Metric ownership
 
-Each workstream must declare a primary endpoint before its confirmatory run. Secondary metrics provide diagnostic context and cannot replace a failed primary comparison after results are observed.
+Each workstream declares a primary endpoint before confirmatory evaluation. Secondary metrics provide diagnostic context and cannot replace a failed primary comparison after results are observed.
 
-Results must include uncertainty where the metric supports resampling or paired comparison. Failed seeds may be removed only for documented systems failures, not because their score is inconvenient.
+Results include uncertainty where the metric supports resampling or paired comparison. Failed seeds may be removed only for documented system failures, not because their score is inconvenient.
 
-## Registration boundary
+## Public experiment registry
 
-`experiments/registry.yaml` is the public registry surface. Phase 1 freezes its schema but intentionally contains no unpublished confirmatory result or private acceptance threshold. A later experiment enters the public registry only when its publication status is approved.
+`experiments/registry.yaml` is the public registry surface for versioned experiments that are appropriate for repository scrutiny. Private research notes, unpublished hypotheses, and publication-preparation material are maintained outside the public repository.
 
 ## Test-set opening
 
-Opening the final test set for a release candidate is a recorded event. Any subsequent change chosen because of that test result belongs to a new release-candidate protocol and must be disclosed.
+Opening a final test set for a fixed candidate is a recorded event. Any subsequent change chosen because of that test result belongs to a new candidate/evaluation version and must be disclosed.
 
 ## Reproducibility identifiers
 
