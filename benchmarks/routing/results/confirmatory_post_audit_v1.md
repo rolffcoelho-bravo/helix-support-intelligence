@@ -1,20 +1,18 @@
-# Phase 2 Confirmatory Post-Result Hostile Audit
+# Phase 2 Confirmatory Independent Integrity Verification
 
-> Audit verdict: **PASSED**. The one-shot scientific result is internally consistent and remains unchanged.
+> Verification verdict: **PASSED**. The confirmatory scientific result is internally consistent and remains unchanged.
 
 ## Source evidence
 
-The audit is anchored to GitHub Actions run `32243835846`, job `96039984239`, artifact `9361858275`, and the immutable artifact hashes recorded in `confirmatory_test_v1.json`.
+The verification is anchored to the immutable confirmatory artifact and the hashes recorded in `confirmatory_test_v1.json`.
 
-The scientific workflow checked out Phase 2 commit `9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a`, verified all 36 frozen pre-confirmatory artifacts, passed the no-test preflight, and only then opened the official BANKING77 test split.
+Before test evaluation, the execution verified all 36 frozen pre-confirmatory artifacts and passed its no-test preflight. The official BANKING77 test split was then evaluated without changing the frozen model, calibration, threshold, cost matrix, or registered H3/H4 definitions.
 
-Later observer comments did **not** rerun the scientific evaluation. The two later bridge runs were both skipped because their comment bodies did not equal the registered `OPEN_FROZEN_TEST_ONCE` token.
-
-## Audit table
+## Verification table
 
 | Surface | Result |
 |---|---|
-| One-shot execution integrity | **passed** |
+| Confirmatory execution integrity | **passed** |
 | Frozen artifact verification before test | **36 / 36 passed** |
 | Test source hash | **matched** |
 | Test derived hash | **matched** |
@@ -56,7 +54,7 @@ At the frozen deployment threshold `0.892704`, exactly 2,283 rows are accepted a
 
 Realized test coverage is `2283 / 3080 = 0.7412337662337662`. The threshold was **not** moved to force 75% test coverage.
 
-## H3 cost audit
+## H3 cost verification
 
 Using the frozen routing operations map and the published `balanced_risk_v1` costs, the row-level event classification was independently rebuilt from the prediction artifact.
 
@@ -82,11 +80,11 @@ The corresponding mean cost is exactly `0.31525974025974024`.
 
 The independent H3 in-domain point estimate therefore reproduces exactly as `+0.004058441558441558` calibrated minus raw.
 
-The point estimate is adverse to calibration, but the inferential rule—not the sign of the point estimate—determines the registered verdict.
+The point estimate is adverse to calibration, but the inferential rule, rather than the sign of the point estimate, determines the registered verdict.
 
-## Bootstrap audit
+## Bootstrap verification
 
-The audit independently reimplemented the registered paired percentile bootstrap from the artifact:
+The registered paired percentile bootstrap was independently reimplemented from the artifact:
 
 - 5,000 replicates;
 - seed `20260819`;
@@ -101,13 +99,13 @@ The independent reproduction obtained **exactly**:
 
 The H3 interval crosses zero, so the registered independent in-domain verdict is **inconclusive**. The H4 interval lies completely below zero, so H4 is **supported**.
 
-No CI implementation or verdict-rule defect was found.
+No confidence-interval implementation or verdict-rule defect was found.
 
-## Interpretation audit
+## Interpretation verification
 
 The result supports a narrower and more defensible conclusion than a generic claim that calibration improves all routing outcomes.
 
-Temperature scaling remains strongly useful for probability calibration. On the untouched test set, ECE is approximately `0.0169`, Brier `0.1456`, and NLL `0.3467`. But the independent H3 in-domain component does not establish lower routing cost: its point estimate is slightly worse and uncertainty spans zero. Combined with the already-unsupported development mixed-cost endpoint, there is no basis for claiming a calibration-driven routing-cost improvement.
+Temperature scaling remains strongly useful for probability calibration. On the untouched test set, ECE is approximately `0.0169`, Brier `0.1456`, and NLL `0.3467`. But the independent H3 in-domain component does not establish lower routing cost: its point estimate is slightly worse and uncertainty spans zero. Combined with the unsupported development mixed-cost endpoint, there is no basis for claiming a calibration-driven routing-cost improvement.
 
 By contrast, selective abstention survives independent confirmation. At exactly 75% confidence-ranked coverage, routing error risk falls from approximately `9.84%` under full automation to `1.95%`, an absolute reduction of approximately `7.89` percentage points under the registered estimand.
 
@@ -115,13 +113,13 @@ The frozen application threshold realizes 74.12% test coverage rather than exact
 
 ## Residual failures
 
-The selected frozen application policy still produces three unsafe high-risk wrong automatic routes on the official test set. The post-result audit identified them in the immutable prediction artifact. Their existence does not invalidate H4, but it prevents any claim that selective routing eliminates high-risk failures.
+The selected frozen application policy still produces three unsafe high-risk wrong automatic routes on the official test set. Their existence does not invalidate H4, but it prevents any claim that selective routing eliminates high-risk failures.
 
 The raw comparator produces six such unsafe high-risk automatic routes. The calibrated threshold therefore reduces, but does not remove, this failure mode.
 
-## Public-claim discipline
+## Public interpretation boundary
 
-The permitted Phase 2 conclusions are:
+The supported Phase 2 conclusions are:
 
 - **A2 test performance:** macro-F1 approximately `0.9016`, balanced accuracy approximately `0.9016`, top-3 recall approximately `0.9744`.
 - **Calibration:** aggregate test calibration remains strong.
@@ -129,16 +127,16 @@ The permitted Phase 2 conclusions are:
 - **H3 independent BANKING77 in-domain component:** inconclusive.
 - **H4 independent BANKING77 confirmatory endpoint:** supported at the registered 75% confidence-ranked coverage.
 
-The following claims remain prohibited:
+The evidence does not establish:
 
-- that the full mixed in-domain/OOS H3 endpoint was independently confirmed;
-- that real-bank economics were validated;
-- that the synthetic OOS benchmark is independent confirmatory evidence;
-- that production latency, drift robustness, staffing impact, customer harm, or live deployment performance were established;
-- that high-risk automatic-routing errors were eliminated.
+- independent confirmation of the full mixed in-domain/OOS H3 endpoint;
+- real-bank economics;
+- independent confirmatory validity of the synthetic OOS benchmark;
+- production latency, drift robustness, staffing impact, customer harm, or live deployment performance;
+- elimination of high-risk automatic-routing errors.
 
-## Final audit verdict
+## Final verification verdict
 
 **PASSED.**
 
-No code, arithmetic, split, calibration, threshold, bootstrap, verdict-rule, reproducibility, or public-interpretation defect requires a scientific rerun or post-test repair. The registered confirmatory result must be preserved as observed.
+No code, arithmetic, split, calibration, threshold, bootstrap, verdict-rule, reproducibility, or public-interpretation defect requires a scientific rerun or post-test repair. The registered confirmatory result is preserved as observed.
