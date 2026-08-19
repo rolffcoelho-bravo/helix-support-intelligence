@@ -29,8 +29,6 @@ build/
 *_private.*
 *_internal.*
 notes*.txt
-*BLUEPRINT*.md
-*blueprint*.md
 
 # Local data, artifacts, and model outputs
 data/raw/
