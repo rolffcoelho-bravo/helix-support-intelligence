@@ -18,22 +18,22 @@
 | Mypy strict typecheck | passed |
 | Pytest | **70 passed** |
 | Phase 1 offline data contracts | passed |
-| Publication audit | passed |
+| Publication boundary check | passed |
 | Confirmatory test opened | **false** |
 
 ## What this checkpoint establishes
 
-The selected Phase 2 routing policy now has a framework-neutral, typed application contract. The domain layer reads the already-frozen `routing-selected-v1` configuration, applies temperature scaling, maps intents to the frozen operational queues, and enforces selective abstention without importing FastAPI, scikit-learn, sentence-transformers, or another deployment/provider SDK into the domain contract.
+The selected Phase 2 routing policy has a framework-neutral, typed application contract. The domain layer reads the frozen `routing-selected-v1` configuration, applies temperature scaling, maps intents to the frozen operational queues, and enforces selective abstention without importing FastAPI, scikit-learn, sentence-transformers, or another deployment/provider SDK into the domain contract.
 
 High-confidence accepted predictions terminate as `AUTO_ROUTE`. Low-confidence predictions deliberately clear `intent` and `queue` before returning `ESCALATE_LOW_CONFIDENCE`; the strongest candidates remain available only as diagnostic alternatives. This prevents a downstream consumer from accidentally treating an abstained prediction as an authorized route.
 
 Scorer exceptions, incomplete intent sets, invalid probabilities, non-mapping outputs, and non-string intent keys fail closed as `ESCALATE_SYSTEM_FAILURE`. The endpoint does not silently continue after malformed model output.
 
-## Hostile audit findings and corrections
+## Integrity findings and corrections
 
-The audit found several issues before closure:
+The implementation review found several issues before the contract was accepted:
 
-1. The first request-schema placement accidentally extended the root Phase 1 contract suite. Because Phase 1 is already closed, the correct repair was **not** to weaken its completeness test. The new request schema was moved into `data/contracts/phase2/`, leaving the frozen Phase 1 root suite unchanged.
+1. The first request-schema placement accidentally extended the root Phase 1 contract suite. The new request schema was moved into `data/contracts/phase2/`, leaving the frozen Phase 1 root suite unchanged.
 2. Temperature was initially validated like a probability and incorrectly restricted to `[0,1]`. Temperature scaling requires a positive finite scalar, so the validator was corrected without changing the frozen value `0.457974`.
 3. A failure-path test passed queue strings to a probability-typed fake scorer. The test fixture was corrected even though the scorer raised before using the values.
 4. Direct `RoutingPolicyConfig` construction could bypass file-backed validation. The dataclass now validates its own model/version identifiers, temperature, threshold, and queue mapping.
@@ -44,20 +44,20 @@ None of these corrections changes A1/A2/A3 validation metrics, calibration evide
 
 ## Methodological value
 
-This checkpoint increases the research value by connecting the statistical decision rule to explicit executable semantics. A routing paper or public repository is weaker when the reported selective-risk curve and the actual application decision can diverge silently. Here the threshold, calibration policy, queue mapping, output schema, failure posture, and terminal-decision vocabulary are versioned and tested together.
+This checkpoint connects the statistical decision rule to explicit executable semantics. A selective-routing system is weaker when the reported risk-coverage rule and the actual application decision can diverge silently. Here the threshold, calibration policy, queue mapping, output schema, failure posture, and terminal-decision vocabulary are versioned and tested together.
 
-It also strengthens reproducibility and reviewability. The model implementation can later be replaced or served through a different framework without changing the domain decision contract, while malformed adapters fail closed. That separation makes the public project look more like a controlled decision system than a benchmark notebook.
+It also strengthens reproducibility and reviewability. The model implementation can later be replaced or served through a different framework without changing the domain decision contract, while malformed adapters fail closed. That separation makes the public project a more controlled decision system rather than a benchmark-only demonstration.
 
 ## Remaining limitations
 
-This checkpoint does **not** prove network-service behavior, production latency, concurrency, model-artifact loading, live monitoring, or real-bank effectiveness. The scorer is an injected boundary for contract testing; provider/runtime integration belongs to later authorized infrastructure work. `out_of_scope_score` remains `1 - max(calibrated class probability)`, a diagnostic score rather than an independently calibrated probability of OOS membership.
+This checkpoint does **not** establish network-service behavior, production latency, concurrency, model-artifact loading, live monitoring, or real-bank effectiveness. The scorer is an injected boundary for contract testing. `out_of_scope_score` remains `1 - max(calibrated class probability)`, a diagnostic score rather than an independently calibrated probability of OOS membership.
 
-These limitations should remain explicit rather than being disguised as completed production capability.
+These limitations remain explicit rather than being presented as completed production capability.
 
 ## Decision
 
-The router model card and `/v1/tickets/route` implementation-contract tests pass. The Phase 1 contract suite remains frozen and the confirmatory test remains sealed.
+The router model card and `/v1/tickets/route` implementation-contract tests pass. The Phase 1 contract suite remains frozen and the confirmatory test remained separate at this checkpoint.
 
-## Next locked action
+## Subsequent verification
 
-Run the **final pre-confirmatory Phase 2 hostile audit** across the complete frozen model, calibration, OOS, cost, threshold, model-card, contract, workflow, and public-claim surface. Only if that audit passes may the one-shot BANKING77 confirmatory evaluation be proposed/unlocked. Phase 3 retrieval remains forbidden.
+The complete frozen routing surface subsequently passed pre-confirmatory integrity verification before the registered BANKING77 confirmatory evaluation. Those results are reported separately in the corresponding confirmatory evidence files.
