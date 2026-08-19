@@ -22,6 +22,7 @@ jobs:
       TARGET_SHA: d13bc04383c8cc59b2cc418fe48c9ef0756b2a6a
       TARGET_WORKFLOW: phase3-retrieval-r32.yml
       CAPTURE_BRANCH: phase3-r32-evidence-capture
+      CAPTURE_ATTEMPT: "2"
 
     steps:
       - name: Check out repository
@@ -118,7 +119,8 @@ jobs:
           cp "${root}/artifact.json" "${destination}/metadata/artifact.json"
           cp -a "${root}/evidence/." "${destination}/artifact/"
           printf '%s\n' "run_id=${RUN_ID}" "conclusion=${RUN_CONCLUSION}" \
-            "target_sha=${TARGET_SHA}" > "${destination}/metadata/capture.txt"
+            "target_sha=${TARGET_SHA}" "capture_attempt=${CAPTURE_ATTEMPT}" \
+            > "${destination}/metadata/capture.txt"
           git add "${destination}"
           git commit -m "Capture immutable R3.2 execution evidence"
           git push --force origin "HEAD:refs/heads/${CAPTURE_BRANCH}"
