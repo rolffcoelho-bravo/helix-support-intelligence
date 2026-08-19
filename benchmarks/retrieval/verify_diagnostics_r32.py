@@ -104,13 +104,10 @@ def _groups() -> dict[str, dict[str, list[str]]]:
         for kind in ("POLICY", "FAQ"):
             if kind in kinds:
                 result["document_kind"][kind].append(query_id)
-        if any(
-            bool(metadata[document_id]["conflict_fixture"]) for document_id in documents
-        ):
+        if any(bool(metadata[document_id]["conflict_fixture"]) for document_id in documents):
             result["conflict_fixture"]["associated"].append(query_id)
         if any(
-            bool(metadata[document_id]["untrusted_content_fixture"])
-            for document_id in documents
+            bool(metadata[document_id]["untrusted_content_fixture"]) for document_id in documents
         ):
             result["untrusted_content_fixture"]["associated"].append(query_id)
     return result
@@ -120,9 +117,7 @@ def verify(output_dir: Path) -> dict[str, object]:
     failures: list[str] = []
     slices = _read_json(output_dir / "diagnostic_slices.json")
     metric_rows = _read_jsonl(output_dir / "query_metrics.jsonl")
-    metric_map = {
-        (str(row["candidate"]), str(row["query_id"])): row for row in metric_rows
-    }
+    metric_map = {(str(row["candidate"]), str(row["query_id"])): row for row in metric_rows}
     if len(metric_map) != 308 * 4:
         failures.append("query_metrics.jsonl does not contain exactly 308 x 4 unique rows")
 

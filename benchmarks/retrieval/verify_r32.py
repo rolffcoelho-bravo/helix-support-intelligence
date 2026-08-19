@@ -128,8 +128,7 @@ def _bootstrap(candidate: Sequence[float], comparator: Sequence[float]) -> dict[
     rng = random.Random(SEED)
     size = len(differences)
     samples = [
-        statistics.fmean(differences[rng.randrange(size)] for _ in range(size))
-        for _ in range(5000)
+        statistics.fmean(differences[rng.randrange(size)] for _ in range(size)) for _ in range(5000)
     ]
     return {
         "point_estimate": statistics.fmean(differences),
@@ -327,7 +326,9 @@ def verify(output_dir: Path) -> dict[str, object]:
     if any(len(ranking_map[candidate]) != 308 for candidate in CANDIDATES):
         ranking_shape_ok = False
     if not ranking_shape_ok:
-        failures.append("ranking evidence shape, rank continuity, uniqueness, or eligibility failed")
+        failures.append(
+            "ranking evidence shape, rank continuity, uniqueness, or eligibility failed"
+        )
 
     per_query: dict[str, dict[str, dict[str, float | None]]] = {
         candidate: {} for candidate in CANDIDATES
@@ -413,10 +414,9 @@ def verify(output_dir: Path) -> dict[str, object]:
     _check_bootstrap(results["hypotheses"]["H2"]["difference"], h2, "H2", failures)
     bootstrap_ok = len(failures) == before
 
-    hypothesis_verdict_ok = (
-        results["hypotheses"]["H1"]["verdict"] == _verdict(h1)
-        and results["hypotheses"]["H2"]["verdict"] == _verdict(h2)
-    )
+    hypothesis_verdict_ok = results["hypotheses"]["H1"]["verdict"] == _verdict(h1) and results[
+        "hypotheses"
+    ]["H2"]["verdict"] == _verdict(h2)
     if not hypothesis_verdict_ok:
         failures.append("registered hypothesis verdict does not match reconstructed interval")
 

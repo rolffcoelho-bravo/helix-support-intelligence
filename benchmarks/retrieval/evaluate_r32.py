@@ -26,7 +26,7 @@ import sys
 import time
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +43,8 @@ if str(SRC_ROOT) not in sys.path:
 
 from helix_support_intelligence.data.helixbank import (  # noqa: E402
     generate_bundle,
+)
+from helix_support_intelligence.data.helixbank import (  # noqa: E402
     manifest as corpus_manifest,
 )
 from helix_support_intelligence.retrieval.core import (  # noqa: E402
@@ -265,7 +267,7 @@ def _environment_payload(resolved_models: Mapping[str, str]) -> dict[str, object
         if dist.metadata.get("Name")
     }
     return {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": datetime.now(UTC).isoformat(),
         "os": platform.platform(),
         "python": platform.python_version(),
         "cpu_model": _cpu_model(),
@@ -430,7 +432,9 @@ def run(output_dir: Path) -> dict[str, object]:
             )
 
     aggregate = {
-        candidate: _aggregate_payload([per_candidate[candidate][str(q["query_id"])] for q in queries])
+        candidate: _aggregate_payload(
+            [per_candidate[candidate][str(q["query_id"])] for q in queries]
+        )
         for candidate in ("B0", "B1", "B2", "B3")
     }
 
@@ -485,7 +489,9 @@ def run(output_dir: Path) -> dict[str, object]:
     budgets = latency_config["budgets_ms"]
     for candidate in ("B1", "B2", "B3"):
         candidate_ndcg = [per_candidate[candidate][str(q["query_id"])].ndcg_at_10 for q in queries]
-        winner_ndcg = [per_candidate[current_winner][str(q["query_id"])].ndcg_at_10 for q in queries]
+        winner_ndcg = [
+            per_candidate[current_winner][str(q["query_id"])].ndcg_at_10 for q in queries
+        ]
         ndcg_interval = paired_bootstrap_difference(
             candidate_ndcg,
             winner_ndcg,

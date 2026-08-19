@@ -106,6 +106,5 @@ def test_r32_requires_post_execution_reconstruction_before_closure() -> None:
     assert "checksums.sha256" in evidence["output_files"]
     assert immutability["no_result_motivated_changes"] is True
     assert (
-        immutability["any_scientific_change_after_first_ranking_requires_new_execution_id"]
-        is True
+        immutability["any_scientific_change_after_first_ranking_requires_new_execution_id"] is True
     )

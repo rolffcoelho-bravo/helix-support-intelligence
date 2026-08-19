@@ -77,9 +77,7 @@ def _aggregate(rows: list[dict[str, Any]]) -> dict[str, float | int]:
 
 def generate(output_dir: Path) -> dict[str, object]:
     metric_rows = _read_jsonl(output_dir / "query_metrics.jsonl")
-    metric_map = {
-        (str(row["candidate"]), str(row["query_id"])): row for row in metric_rows
-    }
+    metric_map = {(str(row["candidate"]), str(row["query_id"])): row for row in metric_rows}
     if len(metric_map) != 308 * 4:
         raise ValueError("query metric evidence is incomplete")
 
@@ -107,8 +105,7 @@ def generate(output_dir: Path) -> dict[str, object]:
             if kind in kinds:
                 groups["document_kind"][kind].append(query_id)
         if any(
-            bool(metadata[document_id]["conflict_fixture"])
-            for document_id in positive_documents
+            bool(metadata[document_id]["conflict_fixture"]) for document_id in positive_documents
         ):
             groups["conflict_fixture"]["associated"].append(query_id)
         if any(
