@@ -59,7 +59,9 @@ def test_public_experiment_registry_contains_only_validated_published_runs() -> 
     registry = (ROOT / "experiments" / "registry.yaml").read_text(encoding="utf-8")
     lines = registry.splitlines()
     experiment_lines = [
-        index for index, line in enumerate(lines) if line.strip().startswith("experiment_id:")
+        index
+        for index, line in enumerate(lines)
+        if line.strip().removeprefix("- ").startswith("experiment_id:")
     ]
 
     assert experiment_lines
