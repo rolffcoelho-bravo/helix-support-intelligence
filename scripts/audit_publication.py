@@ -72,11 +72,7 @@ def tracked_files() -> list[Path]:
         ".uv-cache",
         ".venv",
     }
-    return [
-        path
-        for path in ROOT.rglob("*")
-        if path.is_file() and not excluded & set(path.parts)
-    ]
+    return [path for path in ROOT.rglob("*") if path.is_file() and not excluded & set(path.parts)]
 
 
 def audit() -> list[str]:
