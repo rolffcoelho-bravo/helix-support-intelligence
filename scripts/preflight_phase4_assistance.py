@@ -31,9 +31,7 @@ def _sha256(path: Path) -> str:
 def _intent_partition() -> tuple[set[str], set[str]]:
     bundle = generate_bundle()
     conflict_intents = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflict_intents = set(INTENTS) - conflict_intents
 
@@ -94,14 +92,10 @@ def main() -> None:
 
     bundle = generate_bundle()
     dev_query_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in development
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in development
     }
     confirm_query_ids = {
-        str(row["query_id"])
-        for row in bundle.queries
-        if str(row["intent"]) in confirmatory
+        str(row["query_id"]) for row in bundle.queries if str(row["intent"]) in confirmatory
     }
     if len(dev_query_ids) != 240 or len(confirm_query_ids) != 68:
         raise RuntimeError("A4.0 query partition does not reconstruct.")
