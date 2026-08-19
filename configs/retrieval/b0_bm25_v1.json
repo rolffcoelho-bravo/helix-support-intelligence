@@ -1,0 +1,59 @@
+{
+  "version": "retrieval-b0-bm25-v1",
+  "phase": 3,
+  "status": "frozen_before_first_score",
+  "benchmark_version": "retrieval-benchmark-v1",
+  "model": {
+    "family": "okapi_bm25",
+    "text_field": "title_newline_body",
+    "tokenization": {
+      "unicode_normalization": "NFKC",
+      "casefold": true,
+      "pattern": "[^\\W_]+",
+      "stopword_removal": false,
+      "stemming": false
+    },
+    "k1": 1.2,
+    "b": 0.75,
+    "idf": "log(1 + (N - df + 0.5) / (df + 0.5))",
+    "tie_break": "document_id_ascending"
+  },
+  "evaluation": {
+    "partition": "development",
+    "rank_depth": 147,
+    "ndcg_at_10": {
+      "gain": "2^relevance - 1",
+      "discount": "1/log2(rank+1)",
+      "unjudged_relevance": 0
+    },
+    "mrr_at_10": {
+      "relevant_if": "relevance > 0",
+      "no_relevant_in_top_k": 0
+    },
+    "recall_at_20": {
+      "relevant_if": "relevance > 0",
+      "aggregation": "macro_mean_per_query"
+    },
+    "recall_at_50": {
+      "relevant_if": "relevance > 0",
+      "aggregation": "macro_mean_per_query"
+    },
+    "success_at_1": {
+      "success_if": "rank_1_relevance > 0",
+      "aggregation": "mean"
+    },
+    "citation_eligible_recall_at_20": {
+      "target": "governing_policy_relevance_grade_3",
+      "success_if": "at_least_one_grade_3_document_in_top_20",
+      "aggregation": "mean"
+    },
+    "latency": {
+      "scope": "single_query_scoring_and_sort_only_after_index_build",
+      "clock": "time.perf_counter_ns",
+      "passes": 1,
+      "reported_percentiles": [50, 95],
+      "interpretation": "descriptive_ci_hardware_only"
+    }
+  },
+  "selection_rule": "B0 is the frozen lexical reference. No BM25 parameter tuning is permitted after the first development score."
+}
