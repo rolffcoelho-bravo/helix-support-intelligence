@@ -126,7 +126,9 @@ def select_queries(
     for intent in sorted(grouped):
         ordered = sorted(grouped[intent], key=lambda pair: (pair[0], pair[1].source_index))
         if len(ordered) < required:
-            raise ValueError(f"intent {intent!r} has only {len(ordered)} fit-train rows; need {required}")
+            raise ValueError(
+                f"intent {intent!r} has only {len(ordered)} fit-train rows; need {required}"
+            )
 
         selected = ordered[:required]
         for position, (_, item) in enumerate(selected):
