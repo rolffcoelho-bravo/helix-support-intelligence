@@ -52,7 +52,14 @@
     "store_top_k": 50,
     "metrics": ["nDCG@10", "MRR@10", "Recall@20", "Recall@50"],
     "paired_bootstrap_replicates": 5000,
-    "paired_bootstrap_seed": 20260819
+    "paired_bootstrap_seed": 20260819,
+    "diagnostic_slices": {
+      "case_type": "Group queries by frozen retrieval_query.case_type and aggregate the ordinary full-qrel metrics within each group.",
+      "document_kind": "For each kind POLICY and FAQ, include queries having at least one eligible judged document of that kind with relevance >= 1, then aggregate the ordinary full-qrel metrics on that query subset.",
+      "conflict_fixture": "Include queries having at least one eligible judged conflict-fixture document with relevance >= 1, then aggregate the ordinary full-qrel metrics on that query subset.",
+      "untrusted_content_fixture": "Include queries having at least one eligible judged untrusted-content-fixture document with relevance >= 1, then aggregate the ordinary full-qrel metrics on that query subset.",
+      "selection_use": "Diagnostic slices are descriptive only and cannot change H1, H2, or the complexity-selection decision."
+    }
   },
   "latency_execution": {
     "warmup_queries_per_candidate": 30,
