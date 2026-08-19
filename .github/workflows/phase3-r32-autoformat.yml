@@ -33,14 +33,19 @@ jobs:
           uv run ruff check benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
           uv run ruff format --check benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
 
-      - name: Commit formatter output
+      - name: Freeze R3.2 script dependencies
+        run: uv lock --script benchmarks/retrieval/evaluate_r32.py
+
+      - name: Commit formatter and lock output
         run: |
           if git diff --quiet; then
-            echo "No formatter changes required."
+            echo "No formatter or lock changes required."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
-          git commit -m "Format R3.2 retrieval execution code"
+          git add \
+            benchmarks/retrieval \
+            tests/test_phase3_retrieval_execution_plan.py
+          git commit -m "Format and lock R3.2 retrieval execution"
           git push origin HEAD:phase3-r32-retrieval-execution
