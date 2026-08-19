@@ -25,12 +25,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?event=issue_comment&per_page=50" \
-            --jq '.workflow_runs[] | select(.path == ".github/workflows/phase2-routing-confirmatory-approval-bridge.yml") | .id' \
-            | head -n 1)
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?event=issue_comment&per_page=50" > runs.json
+          jq -r '.workflow_runs[] | [.id, .path, .name, .created_at, .status, (.conclusion // "pending")] | @tsv' runs.json \
+            | head -n 20 > runs-summary.txt
+          RUN_ID=$(jq -r '[.workflow_runs[] | select(.path == ".github/workflows/phase2-routing-confirmatory-approval-bridge.yml")][0].id // empty' runs.json)
           if [ -z "$RUN_ID" ]; then
-            echo "No confirmatory bridge run found" >&2
-            exit 1
+            echo "run_id=" >> "$GITHUB_OUTPUT"
+            echo "status=no_run_found" >> "$GITHUB_OUTPUT"
+            echo "conclusion=no_run_found" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$RUN_ID" > run.json
@@ -38,6 +41,9 @@ jobs:
           CONCLUSION=$(jq -r '.conclusion // "pending"' run.json)
           echo "status=$STATUS" >> "$GITHUB_OUTPUT"
           echo "conclusion=$CONCLUSION" >> "$GITHUB_OUTPUT"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$RUN_ID/jobs?per_page=100" \
+            --jq '.jobs[] | [.id, .name, .status, (.conclusion // "pending")] | @tsv' \
+            > jobs-summary.txt || true
 
       - name: Download confirmatory artifact when successful
         if: steps.locate.outputs.conclusion == 'success'
@@ -48,9 +54,10 @@ jobs:
           gh run download "${{ steps.locate.outputs.run_id }}" \
             --repo "$GITHUB_REPOSITORY" \
             --dir evidence
-          find evidence -maxdepth 4 -type f -print
+          find evidence -maxdepth 5 -type f -print > evidence-files.txt
 
       - name: Publish observer result to PR
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ steps.locate.outputs.run_id }}
@@ -60,13 +67,29 @@ jobs:
           {
             echo "PHASE2_CONFIRMATORY_OBSERVER"
             echo
-            echo "Run ID: $RUN_ID"
-            echo "Status: $STATUS"
-            echo "Conclusion: $CONCLUSION"
+            echo "Run ID: ${RUN_ID:-not_found}"
+            echo "Status: ${STATUS:-unknown}"
+            echo "Conclusion: ${CONCLUSION:-unknown}"
             echo
+            echo '<details><summary>Latest issue_comment workflow runs</summary>'
+            echo
+            echo '```text'
+            cat runs-summary.txt 2>/dev/null || echo "runs summary unavailable"
+            echo '```'
+            echo '</details>'
+            echo
+            if [ -s jobs-summary.txt ]; then
+              echo '<details><summary>Target run jobs</summary>'
+              echo
+              echo '```text'
+              cat jobs-summary.txt
+              echo '```'
+              echo '</details>'
+              echo
+            fi
             if [ "$CONCLUSION" = "success" ]; then
-              RESULTS=$(find evidence -name results.json -print -quit)
-              REPORT=$(find evidence -name report.md -print -quit)
+              RESULTS=$(find evidence -name results.json -print -quit 2>/dev/null || true)
+              REPORT=$(find evidence -name report.md -print -quit 2>/dev/null || true)
               if [ -n "$REPORT" ]; then
                 cat "$REPORT"
                 echo
@@ -78,9 +101,11 @@ jobs:
                 cat "$RESULTS"
                 echo '```'
                 echo '</details>'
+              else
+                echo "Successful bridge run found, but results.json was not recovered by the observer."
               fi
             else
-              echo "The observer did not rerun the scientific evaluation. Inspect the recorded run before any retry decision."
+              echo "Observer only: no scientific rerun was requested or performed."
             fi
           } > observer-comment.md
           jq -Rs '{body: .}' observer-comment.md \
