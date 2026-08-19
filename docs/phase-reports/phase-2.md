@@ -1,103 +1,111 @@
 # Phase 2 Exit Report
 
 - Phase: Routing baseline and selective decision policy
-- Status: Active — final pre-confirmatory audit passed; one-shot registered confirmatory evaluation next
+- Status: **Closed — confirmatory result recorded and post-result hostile audit passed**
 - Date opened: 2026-08-18
+- Date closed: 2026-08-19
 - Public version: 0.1.0
 
-## Frozen inputs
+## Exit decision
 
-- Phase 1 status: Passed.
+Phase 2 is complete. The routing model ladder, calibration study, OOS development benchmark, declared routing-cost model, selective operating point, frozen router, model card, route contract, pre-confirmatory freeze, one-shot official BANKING77 confirmatory evaluation, and post-result hostile audit are all complete.
+
+The selected Phase 2 router remains `routing-selected-v1`:
+
+- model: **A2**;
+- encoder: `sentence-transformers/all-MiniLM-L6-v2`;
+- encoder revision: `c315f904dfc467d8b9c40ab4ed50b3a8d0866c15`;
+- calibration: temperature scaling;
+- frozen temperature: `0.457974`;
+- automatic routing when maximum calibrated class probability is `>= 0.892704`;
+- otherwise: `ESCALATE_LOW_CONFIDENCE`.
+
+No post-test model search, calibration refit, threshold movement, cost change, or hypothesis redefinition occurred.
+
+## Frozen data
+
 - BANKING77 train: 7,904 rows; SHA-256 `bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3`.
 - BANKING77 validation: 1,976 rows; SHA-256 `5a6e2bef72257bb3aa33aba4ca4a93a13738e0a487be88e7846b986b33713455`.
-- BANKING77 confirmatory test: 3,080 rows; SHA-256 `4c519f47e6d1c640ccb71d322c3cb9b810642bd42ea4d8395293e0044952c468`.
-- Model ladder: `routing-ladder-v1`, A0-A3 required; A4 disabled unless bounded remediation is authorized.
-- Selection partition: validation only.
+- BANKING77 confirmatory test: 3,080 rows; canonical SHA-256 `4c519f47e6d1c640ccb71d322c3cb9b810642bd42ea4d8395293e0044952c468`.
+- Official source test SHA-256: `d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d`.
+- Test distribution: exactly 77 intents × 40 rows.
+
+The official test remained sealed through all development selection and was opened exactly once only after the pre-confirmatory integrity gate passed.
 
 ## Required deliverables
 
-- [x] Public A0-A3 model-ladder contract.
-- [x] Routing evaluation protocol.
-- [x] Reproducible A0-A3 implementations and evaluation artifacts.
-  - [x] A0/A1 development benchmark and evidence checkpoint.
-  - [x] A2 sentence-embedding + linear-classifier benchmark and audited evidence checkpoint.
-  - [x] A3 compact-transformer benchmark and audited negative-result checkpoint.
-- [x] Calibration comparison.
-- [x] Frozen out-of-scope benchmark and evaluation.
-- [x] Declared routing cost matrix.
-- [x] Final development risk-coverage report and operating-point selection.
+- [x] Public A0-A3 routing ladder.
+- [x] Reproducible A0/A1 baseline evaluation.
+- [x] Reproducible A2 sentence-embedding + linear classifier evaluation.
+- [x] Registered A3 negative result with no rescue tuning.
+- [x] Cross-fitted calibration comparison.
+- [x] Frozen OOS development benchmark.
+- [x] Declared routing cost matrix and sensitivity analysis.
+- [x] Frozen selective operating point.
+- [x] Full-refit threshold-transfer audit.
 - [x] Router model card.
-- [x] `/v1/tickets/route` contract tests.
-- [x] One frozen development routing configuration and operating threshold.
+- [x] Framework-neutral `/v1/tickets/route` contract.
 - [x] Final pre-confirmatory hostile audit and machine-checkable freeze.
-- [ ] Registered confirmatory result for H3 and H4.
+- [x] One-shot registered BANKING77 confirmatory evaluation.
+- [x] Mandatory post-result hostile audit.
+- [x] Consumed confirmatory execution workflows retired before merge.
 
 ## Model ladder
 
-### A1 classical reference
+| Model | Development macro-F1 | Balanced accuracy | Top-3 recall | Decision |
+|---|---:|---:|---:|---|
+| A1 TF-IDF + logistic regression | 0.8422 | 0.8407 | 0.9534 | simpler reference |
+| **A2 MiniLM embeddings + logistic regression** | **0.8986** | **0.8963** | **0.9732** | **selected** |
+| A3 fixed three-epoch fine-tuning | 0.6898 | 0.7105 | 0.9226 | rejected negative result |
 
-A1 — fixed TF-IDF plus logistic regression — produced macro-F1 `0.8422`, balanced accuracy `0.8407`, top-3 recall `0.9534`, ECE `0.4895`, and Brier `0.4951` on frozen validation. It is a substantial baseline but strongly under-confident.
+A3's registered recipe underfit. It was preserved as a negative result rather than rescued post hoc. A4 remained disabled throughout Phase 2.
 
-Permanent evidence: `benchmarks/routing/results/a0_a1_validation_v1.{json,md}`.
+Permanent evidence:
 
-### A2 leading candidate
+- `benchmarks/routing/results/a0_a1_validation_v1.{json,md}`
+- `benchmarks/routing/results/a2_validation_v2.{json,md}`
+- `benchmarks/routing/results/a3_validation_v1.{json,md}`
 
-A2 was frozen before evaluation as `sentence-transformers/all-MiniLM-L6-v2` at revision `c315f904dfc467d8b9c40ab4ed50b3a8d0866c15`, used as a normalized 384-dimensional feature extractor with the same fixed logistic-regression specification as A1.
+## Calibration
 
-| Model | Macro-F1 | Balanced accuracy | Top-3 recall | ECE | Brier |
-|---|---:|---:|---:|---:|---:|
-| A1 | 0.8422 | 0.8407 | 0.9534 | 0.4895 | 0.4951 |
-| **A2** | **0.8986** | **0.8963** | **0.9732** | **0.2910** | **0.2501** |
+Five-fold deterministic intent-stratified cross-fitting selected temperature scaling for A1 and A2.
 
-The audited A2 environment resolves CPU-only PyTorch. Independent runs support exact decision reproducibility plus bounded numerical reproducibility rather than bitwise floating-point identity.
+For A2 on validation:
 
-Permanent evidence: `benchmarks/routing/results/a2_validation_v2.{json,md}` and `benchmarks/routing/evaluate_a2.py.lock`.
+- ECE: `0.2910 -> 0.0162`;
+- Brier: `0.2501 -> 0.1398`;
+- NLL: `0.6683 -> 0.3350`;
+- macro-F1 and top-3 recall unchanged.
 
-### A3 registered negative result
+The full-validation A2 temperature refit is approximately `0.457974035`, frozen publicly as `0.457974`.
 
-A3 tested end-to-end task-specific fine-tuning of the same MiniLM transformer under a fixed three-epoch, no-rescue contract. It produced macro-F1 `0.6898`, balanced accuracy `0.7105`, top-3 recall `0.9226`, ECE `0.7221`, and Brier `0.9771`.
+Permanent evidence: `benchmarks/routing/results/calibration_validation_v1.{json,md}`.
 
-The hostile audit found no code, split, truncation, dependency, or reproducibility defect that invalidates this result. The registered A3 recipe underfits and does not justify its added complexity. This does not establish that transformer fine-tuning is intrinsically inferior; changing the recipe after the result would violate the anti-shopping rule.
+## OOS development evidence
 
-**Decision:** A3 is rejected. A2 remains the leader; A1 remains the simpler reference; A4 remains disabled.
+The frozen `routing-oos-v1` benchmark contains 160 support-like OOS queries across 20 categories. It was frozen before scoring and was valid for development evaluation, but after being used for operating-policy selection it no longer qualified as independent confirmatory evidence.
 
-Permanent evidence: `benchmarks/routing/results/a3_validation_v1.{json,md}` and `benchmarks/routing/evaluate_a3.py.lock`.
+Development OOS results:
 
-## Calibration checkpoint
+- A1 + temperature AUROC: `0.8491`;
+- A2 + temperature AUROC: `0.8956`;
+- A2 ID FPR at >=95% OOS recall: `0.4342`.
 
-Calibration was evaluated for A1 and A2 only using deterministic five-fold intent-stratified cross-fitting. The final audited score-fold counts are **390 / 392 / 393 / 402 / 399**. Rejected A3 was not allowed to re-enter through post-hoc calibration.
-
-| Model | Raw ECE | Temperature ECE | Raw Brier | Temperature Brier | Raw NLL | Temperature NLL |
-|---|---:|---:|---:|---:|---:|---:|
-| A1 | 0.4895 | **0.0263** | 0.4951 | **0.2150** | 1.3666 | **0.5403** |
-| A2 | 0.2910 | **0.0162** | 0.2501 | **0.1398** | 0.6683 | **0.3350** |
-
-Temperature scaling wins the frozen calibration selection rule for both A1 and A2 without changing A2 macro-F1 or top-3 recall. The full-validation refit temperatures are approximately `0.346418` for A1 and `0.457974` for A2.
-
-**Decision:** temperature scaling is frozen. A2 + temperature scaling becomes the leading calibrated development candidate.
-
-Permanent evidence: `benchmarks/routing/results/calibration_validation_v1.{json,md}` and `benchmarks/routing/evaluate_calibration.py.lock`.
-
-## Frozen OOS checkpoint
-
-`routing-oos-v1` was frozen before model scoring. It contains 160 hand-authored support-like OOS queries across 20 categories: 80 near-boundary, 64 medium, and 16 far-support. Exact normalized overlap with the frozen BANKING77 source train is zero.
-
-The primary OOS estimate uses the same five cross-fitted calibration folds, so each in-domain row is scored by a calibrator that did not fit on that row.
-
-| Model | Cross-fitted OOS AUROC | ID FPR at >=95% OOS recall |
-|---|---:|---:|
-| A1 + temperature | 0.8491 | 0.6442 |
-| **A2 + temperature** | **0.8956** | **0.4342** |
-
-A2 is better than A1 under the frozen OOS primary rule, but OOS is not solved: at high recall, approximately 43.4% of in-domain A2 cases are still falsely flagged by the metric-specific OOS threshold. This limitation is carried into cost/operating-point selection rather than hidden.
+OOS separation therefore remained materially imperfect.
 
 Permanent evidence: `benchmarks/routing/results/oos_validation_v1.{json,md}`.
 
-## Routing cost and selective operating point
+## Routing cost and operating point
 
-The public cost matrix `routing-cost-matrix-v1` uses synthetic human-review-equivalent scenario units. These weights are explicit decision-analysis assumptions and are **not** claims about real-bank economics. The primary OOS prevalence assumption is 10%, with registered 5% and 20% sensitivity cases and three registered cost matrices.
+The registered public routing costs are synthetic decision-analysis units, not real-bank economics:
 
-### Primary development comparison
+- correct route: `0`;
+- wrong intent, same queue: `2.5`;
+- wrong queue: `6`;
+- unsafe high-risk wrong automatic route: `20`;
+- human escalation: `1`.
+
+Primary development results:
 
 | Candidate | Expected cost | ID coverage | ID selective risk | OOS escalation |
 |---|---:|---:|---:|---:|
@@ -106,118 +114,166 @@ The public cost matrix `routing-cost-matrix-v1` uses synthetic human-review-equi
 | A2 raw | **0.4029** | 83.30% | 3.52% | 88.75% |
 | **A2 + temperature** | 0.4214 | **75.00%** | **1.21%** | **88.00%** |
 
-The Phase 2 protocol requires one calibrated router. Among eligible calibrated candidates, A2 + temperature has lower primary expected cost than A1 + temperature and wins all nine registered calibrated cost/prevalence sensitivity cells.
+### H3 development
 
-### H3 development result
+**Unsupported.** A2 temperature scaling increased the registered minimum development expected routing cost from `0.4028846154` to `0.4214432566`, a deterioration of `+0.0185586412`. The same direction held in all nine registered sensitivity cells.
 
-**Unsupported for A2 on the registered primary endpoint.** A2 temperature scaling changes minimum expected routing cost from `0.4028846154` raw to `0.4214432566` calibrated, a `+0.0185586412` deterioration. The same direction holds in all nine registered sensitivity cells.
+This result is retained. Better probability calibration did not automatically imply better decision cost.
 
-This is an important negative result: temperature scaling materially improves ECE, Brier, and NLL, but it does not earn a routing-cost benefit under the frozen A2 development decision problem after each score representation receives its own validation-selected threshold.
+### H4 development
 
-### H4 development result
+**Supported on development evidence.** Calibrated A2 reduced scenario cost from `1.0827935223` under full automation to `0.4214432566`, while ID selective risk fell from approximately `9.77%` to `1.21%` at 75% coverage.
 
-**Supported on development evidence.** For calibrated A2, the selected cross-fitted policy reduces expected scenario cost from `1.0827935223` under full automation to `0.4214432566`, a reduction of `0.6613502657`. ID selective risk falls from `9.77%` under full automation to `1.21%` at 75% coverage.
+Permanent evidence: `benchmarks/routing/results/cost_policy_validation_v1.{json,md}`.
 
-At fixed development coverage, calibrated A2 selective risk is approximately `0.20%` at 50%, `1.08%` at 70%, and `4.78%` at 90%.
+## Threshold transfer
 
-### Reproducibility and threshold-transfer audit
-
-Two independent cost-policy runs reproduced the selected candidate, all route/escalate decision hashes, expected cost, coverage, selective risk, OOS escalation, H3/H4 development status, and every registered sensitivity winner. The selected cross-fitted threshold differed by only about `1.91e-8` across CPU runs; this checkpoint therefore claims exact decision reproducibility plus bounded numerical threshold reproducibility.
-
-Because unbiased development selection uses cross-fitted calibration while deployment uses one full-validation temperature refit, a separate audit transferred the already-selected 75% coverage to the final calibration scale without re-optimizing model, calibration, cost, or coverage. That audit was reproduced byte-for-byte.
-
-Full-refit transfer result:
+The selected 75% development coverage was transferred to the full-validation calibration scale without a second cost optimization.
 
 - full-validation temperature: approximately `0.457974035`;
-- 75%-coverage confidence plateau: `(0.892462899, 0.892944242]`;
-- midpoint: `0.892703570`;
-- changed acceptance identities relative to cross-fitting: `6 / 1976`;
+- 75%-coverage plateau: `(0.892462899, 0.892944242]`;
+- rounded frozen threshold: `0.892704`;
+- changed validation acceptance identities: `6 / 1976`;
 - accepted-set Jaccard: `0.99596`;
 - transfer selective risk: `1.28%`;
-- transfer OOS escalation: `88.125%`;
-- implied primary scenario cost: approximately `0.4235`.
+- transfer OOS escalation: `88.125%`.
 
-**Frozen development configuration:** `routing-selected-v1` uses A2, temperature scaling with canonical temperature `0.457974`, and automatic routing when maximum calibrated class probability is `>= 0.892704`; otherwise it returns `ESCALATE_LOW_CONFIDENCE`. The threshold is the six-decimal rounded midpoint of the audited full-refit decision plateau, not a second cost optimization.
+## Final pre-confirmatory gate
 
-Permanent evidence: `benchmarks/routing/results/cost_policy_validation_v1.{json,md}` and `configs/models/routing_selected_v1.json`.
+Before test access, the hostile audit froze the scientific and execution surface with `routing-preconfirmatory-freeze-v1`. The final authorization-transport version verified **36 exact Git blobs** before opening the test.
 
-## Router model card and route contract checkpoint
+The audit also corrected, before test access, a real evaluator bug involving the BANKING77 contract path and narrowed H3's independent confirmatory scope. Because the 160-query OOS set had already participated in development selection, only the unseen BANKING77 **in-domain cost component** could receive an independent H3 confirmatory verdict.
 
-The selected router now has a public model card and a framework-neutral implementation contract for `POST /v1/tickets/route`.
+Permanent evidence:
 
-The implementation deliberately keeps the ML scorer behind an injected `IntentScorer` boundary. The domain router therefore does not import FastAPI, scikit-learn, sentence-transformers, or another framework/provider SDK. It applies the already-frozen temperature and threshold, maps accepted intents to frozen operational queues, and fails closed on malformed scorer output.
+- `benchmarks/routing/results/preconfirmatory_audit_v1.{json,md}`
+- `configs/models/routing_preconfirmatory_manifest_v1.json`
+- `configs/models/routing_confirmatory_v1.json`
+- `docs/phase2-confirmatory-protocol.md`
 
-Contract semantics:
+## One-shot confirmatory execution
 
-- confidence `>= 0.892704` -> `AUTO_ROUTE`;
-- confidence below threshold -> `ESCALATE_LOW_CONFIDENCE` with `intent=null` and `queue=null`;
-- scorer exception or invalid runtime output -> `ESCALATE_SYSTEM_FAILURE`;
-- request schema -> `data/contracts/phase2/routing_request.schema.json`;
-- response schema -> existing Phase 1 `data/contracts/routing.schema.json`.
+The approved one-shot evaluation ran successfully in GitHub Actions:
 
-The Phase 2 request schema is intentionally namespaced below `data/contracts/phase2/`. A hostile audit caught an initial placement in the root Phase 1 contract suite; that was corrected by restoring the closed Phase 1 suite rather than weakening its completeness test.
+- workflow run: `32243835846`;
+- job: `96039984239`;
+- frozen Phase 2 commit actually checked out: `9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a`;
+- artifact ID: `9361858275`;
+- artifact ZIP SHA-256: `0e57f9f12d1d86f4f52e74238735cc02f0628b6dc27cc29f96ffa4863a16cda3`;
+- `results.json` SHA-256: `b82f8da068a2bd4870070fbf2d05159452939d5a39d192b97ef821efca2ba962`;
+- `test_predictions.csv` SHA-256: `f8d0fc55f2ca14f02e0df1f15839197996320cce50ca30298910a550255c60cd`.
 
-The same audit corrected temperature validation semantics, hardened direct configuration and runtime scorer boundaries, and added an exact inclusive-threshold regression test.
+Later observer comments did not rerun the scientific job; their bridge jobs were skipped because the authorization token did not match.
 
-Latest release-blocking quality gate: Ruff passed, strict mypy passed, **77 tests passed**, Phase 1 offline data contracts passed, and publication audit passed. No Phase 2 scientific metric or selected policy changed.
+## Confirmatory performance
 
-Permanent evidence: `docs/routing-model-card.md`, `benchmarks/routing/results/route_contract_v1.{json,md}`, `src/helix_support_intelligence/domain/routing.py`, and `tests/test_phase2_route_contract.py`.
+| Metric | Official test result |
+|---|---:|
+| Accuracy | **0.9016** |
+| Macro-F1 | **0.9016** |
+| Balanced accuracy | **0.9016** |
+| Top-3 recall | **0.9744** |
+| ECE, 15 bins | **0.0169** |
+| Multiclass Brier | **0.1456** |
+| Negative log-likelihood | **0.3467** |
 
-## Final pre-confirmatory hostile audit
+The selected router therefore retained approximately the same classification quality and strong aggregate calibration on the untouched official test set.
 
-The final pre-confirmatory gate passed before any BANKING77 test access.
+## Confirmatory H3 — independent in-domain component
 
-The audit added a machine-checkable freeze, `routing-preconfirmatory-freeze-v1`, that pins **35** selection-critical scientific and execution artifacts by Git blob SHA. The manual confirmatory workflow verifies that manifest before running a locked no-test preflight and before any test-access step can execute.
+| Quantity | Result |
+|---|---:|
+| Raw-A2 mean in-domain cost | `0.3112013` |
+| Calibrated-A2 mean in-domain cost | `0.3152597` |
+| Calibrated minus raw | `+0.0040584` |
+| Paired-bootstrap 95% CI | `[-0.0259740, 0.0300365]` |
+| Verdict | **INCONCLUSIVE** |
 
-Authoritative gate results:
+The point estimate remains slightly adverse to calibration, but uncertainty spans zero. The independent BANKING77 component does not provide evidence that calibration lowers routing cost.
 
-- release CI run `32197909626`: **passed**;
-- Ruff lint and format: passed;
-- strict mypy: passed;
-- pytest: **77 passed**;
-- Phase 1 offline data contracts: passed;
-- publication audit: passed;
-- no-test confirmatory preflight run `32197909434`: **passed**;
-- frozen artifacts verified: **35**;
-- selected model: A2;
-- frozen temperature: `0.457974`;
-- frozen selected threshold: `0.892704`;
-- frozen raw-A2 H3 comparator threshold: `0.367217`;
-- paired bootstrap registration: 5,000 replicates, seed `20260819`;
-- confirmatory test opened: **false**.
+This does **not** replace the development H3 verdict. The full mixed in-domain/OOS H3 endpoint remains **unsupported on development evidence** and cannot be independently confirmed in Phase 2 because no unseen OOS confirmatory sample exists.
 
-### H3 independence correction
+## Confirmatory H4 — selective abstention
 
-The audit identified one publication-critical limitation before test access. The 160-query synthetic OOS benchmark was used during development operating-policy selection. It therefore cannot be reused as independent confirmatory evidence.
+| Quantity | Result |
+|---|---:|
+| Full-automation errors | `303 / 3080` |
+| Full-automation risk | **9.84%** |
+| Errors at exactly 75% coverage | `45 / 2310` |
+| Selective risk at 75% coverage | **1.95%** |
+| Selective minus full risk | **-7.89 percentage points** |
+| Paired-bootstrap 95% CI | **[-8.78 pp, -6.96 pp]** |
+| Verdict | **SUPPORTED** |
 
-The registered confirmatory H3 scope is consequently limited to the unseen BANKING77 **in-domain cost component**: frozen calibrated A2 policy versus frozen raw-A2 comparator. The original mixed in-domain/OOS development H3 endpoint cannot be relabeled fully confirmed from the BANKING77 test alone because Phase 2 has no unseen OOS confirmatory sample.
+H4 survives independent confirmation strongly. The full registered interval lies below zero.
 
-This narrows the future claim without changing any development result or selection. H3 remains unsupported on the development mixed-cost endpoint; H4 remains supported on development selective-risk evidence.
+The frozen deployment threshold `0.892704` realizes **74.12%** test coverage, accepts 2,283 rows, and has **1.88%** selective risk. The threshold was not moved after test access to force 75% realized coverage.
 
-### Code and workflow corrections
+At that frozen threshold, three unsafe high-risk wrong automatic routes remain. This residual failure mode is part of the public limitation set.
 
-The preflight also caught a real contract-path defect before the one-shot test was consumed: the confirmatory evaluator initially read derived hashes from a nonexistent `split.expected` location instead of the frozen top-level `expected` object in the BANKING77 contract. That path was corrected and the locked preflight subsequently passed.
+Permanent evidence:
 
-The audit also separated generic dependency-free contract tests from the scientific runtime, resolved formatting defects, and removed a self-referential workflow assertion. None of these changes moved the model, temperature, threshold, costs, OOS benchmark, or hypotheses.
+- `benchmarks/routing/results/confirmatory_test_v1.{json,md}`
+- `benchmarks/routing/results/confirmatory_post_audit_v1.{json,md}`
 
-Permanent evidence: `benchmarks/routing/results/preconfirmatory_audit_v1.{json,md}`, `configs/models/routing_preconfirmatory_manifest_v1.json`, `benchmarks/routing/verify_preconfirmatory_freeze.py`, `configs/models/routing_confirmatory_v1.json`, and `docs/phase2-confirmatory-protocol.md`.
+## Post-result hostile audit
 
-## Post-execution audit rule
+The immutable artifact was independently re-read and the critical arithmetic was reconstructed outside the evaluator.
 
-Every Phase 2 checkpoint closes only after a hostile audit covering code correctness, metric interpretation, split integrity, reproducibility, dependency/hardware consistency, CI behavior, and public wording. Material findings are corrected before the checkpoint is accepted; negative scientific results are preserved rather than tuned away.
+The audit reproduced exactly:
 
-Every execution close must also provide a results table, interpretation, limitations, methodological/value assessment, improvement recommendations, the next locked blueprint action, and a final double-check for code or result errors and misleading claims. Recommendations do not authorize blueprint drift.
+- 303 total top-1 errors;
+- 45 errors among the 2,310 highest-confidence rows at 75% coverage;
+- 43 errors among 2,283 rows accepted at threshold `0.892704`;
+- raw and calibrated routing-event counts;
+- raw mean cost `0.3112012987`;
+- calibrated mean cost `0.3152597403`;
+- H3 difference `+0.0040584416`;
+- H3 bootstrap interval `[-0.02597402597, 0.03003652597]`;
+- H4 difference `-0.0788961039`;
+- H4 bootstrap interval `[-0.08777326840, -0.06958874459]`.
 
-## Test-set status
+No arithmetic, bootstrap, verdict-rule, split, threshold, calibration, or post-test-selection defect was found.
 
-The official BANKING77 test split remains confirmatory and **has not been downloaded or opened** by the Phase 2 development or pre-confirmatory workflows. The successful preflight explicitly reported `test_set_opened=false`.
+## Scientific interpretation
 
-The test remains unauthorized for model selection, calibration selection, feature selection, error-driven tuning, OOS benchmark construction, cost-weight selection, or threshold selection. It cannot change `routing-selected-v1`; it can only evaluate the frozen configuration under `routing-confirmatory-v1`.
+Phase 2 closes with three distinct findings that must not be collapsed into one claim:
 
-## Current decision
+1. **A2 classification generalizes well** on untouched BANKING77 test data.
+2. **Temperature scaling provides strong probability calibration**, but no evidence that calibration itself reduces routing cost; the development mixed endpoint was adverse and the independent in-domain component is inconclusive.
+3. **Selective abstention is independently supported** as a risk-control mechanism at the registered 75% confidence-ranked coverage level.
 
-The model ladder, calibration choice, OOS benchmark, public cost matrix, selective operating point, frozen development router, model card, route implementation contract, confirmatory protocol, and final pre-confirmatory integrity audit are complete. **A2 + temperature scaling remains the selected calibrated development router. H3 remains unsupported on development mixed-cost evidence; H4 remains supported on development selective-routing evidence. The confirmatory test has not yet produced a scientific result.**
+This distinction is methodologically useful: calibration quality, economic decision quality, and selective-routing reliability are related but non-equivalent objectives.
 
-Phase 2 remains open for exactly **one** gate: the registered one-shot confirmatory evaluation, followed by its mandatory post-result audit and formal Phase 2 closure.
+## Limitations
 
-**Next locked action:** after explicit approval, run the manual one-shot BANKING77 confirmatory evaluation using the exact frozen authorization gate. Permanently record and hostile-audit the result before closing Phase 2. **Phase 3 retrieval remains forbidden until Phase 2 is formally closed.**
+Phase 2 does not establish:
+
+- independent OOS confirmation;
+- real-bank costs or customer harm;
+- production latency or throughput;
+- live traffic drift robustness;
+- staffing or business impact;
+- elimination of high-risk routing failures.
+
+The public cost weights remain scenario assumptions, and the synthetic OOS set remains development evidence only.
+
+## Engineering closure
+
+The temporary confirmatory authorization bridge and executable one-shot confirmatory workflows were removed after the scientific result was permanently captured. Their exact pre-test blobs remain recorded in the historical freeze manifest and Git history, but they will not become an active rerun surface when Phase 2 is merged.
+
+The evaluator and frozen protocol remain as reproducibility documentation; the consumed one-shot execution path is retired.
+
+## Final Phase 2 verdict
+
+**Phase 2: PASSED AND CLOSED.**
+
+- Selected router: A2 + temperature scaling.
+- H3 development mixed endpoint: **unsupported**.
+- H3 independent in-domain confirmatory component: **inconclusive**.
+- H4 independent confirmatory endpoint: **supported**.
+- Post-result hostile audit: **passed**.
+- A4: never activated.
+- Phase 3: **not started**.
+
+The next blueprint action is the Phase 2 merge decision. Phase 3 retrieval remains forbidden until the Phase 2 branch is merged and the new phase is explicitly opened.
