@@ -111,7 +111,10 @@ def _verify_model_weights(model: Mapping[str, Any]) -> str:
 def _stable_rank(scores: np.ndarray, document_ids: list[str]) -> list[str]:
     if scores.ndim != 1 or len(scores) != len(document_ids):
         raise ValueError("B1 score vector shape drifted")
-    order = sorted(range(len(document_ids)), key=lambda index: (-float(scores[index]), document_ids[index]))
+    order = sorted(
+        range(len(document_ids)),
+        key=lambda index: (-float(scores[index]), document_ids[index]),
+    )
     return [document_ids[index] for index in order]
 
 
@@ -282,7 +285,8 @@ def evaluate(input_dir: Path, output_dir: Path) -> dict[str, object]:
         (
             "# Phase 3 B1 Dense Retrieval Development Result",
             "",
-            "> Development evidence only. The sealed Phase 3 confirmatory partition was not opened.",
+            "> Development evidence only. The sealed Phase 3 confirmatory "
+            "partition was not opened.",
             "",
             "| Metric | B0 | B1 | B1 - B0 |",
             "|---|---:|---:|---:|",
