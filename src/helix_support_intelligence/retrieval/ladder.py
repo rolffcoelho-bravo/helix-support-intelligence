@@ -64,7 +64,13 @@ class RetrievalLadder:
             depth=self._rerank_depth,
             retrieve_k=self._retrieve_k,
         )
-        return {"B0": b0, "B1": b1, "B2": b2, "B3": b3}
+        rankings: dict[CandidateId, tuple[RankedDocument, ...]] = {
+            "B0": b0,
+            "B1": b1,
+            "B2": b2,
+            "B3": b3,
+        }
+        return rankings
 
     def rank(self, candidate: CandidateId, query: str) -> tuple[RankedDocument, ...]:
         """Return one requested candidate ranking without changing ladder semantics."""
