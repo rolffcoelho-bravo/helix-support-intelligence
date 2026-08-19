@@ -55,6 +55,7 @@ jobs:
             src/helix_support_intelligence/retrieval/evaluation.py \
             src/helix_support_intelligence/retrieval/ladder.py \
             benchmarks/retrieval/evaluate_r32.py \
+            benchmarks/retrieval/evaluate_r32.py.lock \
             benchmarks/retrieval/diagnostics_r32.py \
             benchmarks/retrieval/verify_diagnostics_r32.py \
             benchmarks/retrieval/verify_r32.py \
@@ -63,7 +64,7 @@ jobs:
 
       - name: Execute registered B0-B3 benchmark
         run: >-
-          uv run benchmarks/retrieval/evaluate_r32.py
+          uv run --locked benchmarks/retrieval/evaluate_r32.py
           --output-dir artifacts/phase3-retrieval/r32
 
       - name: Generate registered diagnostic slices
