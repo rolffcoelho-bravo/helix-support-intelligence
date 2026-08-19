@@ -1,48 +1,42 @@
 from __future__ import annotations
 
-import importlib.util
 import json
-import sys
 from pathlib import Path
-from typing import Any, cast
+from typing import cast
 
 ROOT = Path(__file__).resolve().parents[1]
-VERIFIER = ROOT / "benchmarks" / "routing" / "verify_preconfirmatory_freeze.py"
 MANIFEST = ROOT / "configs" / "models" / "routing_preconfirmatory_manifest_v1.json"
-WORKFLOW = ROOT / ".github" / "workflows" / "phase2-routing-confirmatory.yml"
+RESULT = ROOT / "benchmarks" / "routing" / "results" / "confirmatory_test_v1.json"
+AUDIT = ROOT / "benchmarks" / "routing" / "results" / "confirmatory_post_audit_v1.json"
 
 
-def _module() -> Any:
-    spec = importlib.util.spec_from_file_location("test_phase2_preconfirmatory_verifier", VERIFIER)
-    if spec is None or spec.loader is None:
-        raise RuntimeError("could not load pre-confirmatory verifier")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-def _manifest() -> dict[str, object]:
-    payload: object = json.loads(MANIFEST.read_text(encoding="utf-8"))
+def _json(path: Path) -> dict[str, object]:
+    payload: object = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
-        raise TypeError("pre-confirmatory manifest must be an object")
+        raise TypeError(f"expected JSON object in {path}")
     return cast(dict[str, object], payload)
 
 
-def test_preconfirmatory_manifest_verifies_current_repository_bytes() -> None:
-    module = _module()
-    result = module.verify()
-    assert result["status"] == "preconfirmatory_freeze_verified"
-    assert result["test_set_opened"] is False
-    assert int(result["artifacts_checked"]) >= 30
-
-
-def test_manifest_freezes_selected_scientific_and_execution_surface() -> None:
-    manifest = _manifest()
+def test_preconfirmatory_manifest_is_preserved_as_historical_freeze_record() -> None:
+    manifest = _json(MANIFEST)
     artifacts = manifest["artifacts"]
     governance = manifest["governance"]
     assert isinstance(artifacts, dict)
     assert isinstance(governance, dict)
+
+    assert manifest["status"] == "frozen_before_confirmatory_test_open"
+    assert manifest["test_set_opened"] is False
+    assert len(artifacts) == 36
+    assert governance["artifact_hash_mismatch_blocks_test_open"] is True
+    assert governance["confirmatory_test_may_change_frozen_artifacts"] is False
+    assert governance["oos_benchmark_is_independent_confirmatory_evidence"] is False
+    assert governance["approval_bridge_is_authorization_transport_only"] is True
+
+
+def test_manifest_freezes_selected_scientific_and_historical_execution_surface() -> None:
+    manifest = _json(MANIFEST)
+    artifacts = manifest["artifacts"]
+    assert isinstance(artifacts, dict)
 
     required = {
         "configs/data/banking77.json",
@@ -58,23 +52,33 @@ def test_manifest_freezes_selected_scientific_and_execution_surface() -> None:
         "benchmarks/routing/verify_preconfirmatory_freeze.py",
         "benchmarks/routing/results/cost_policy_validation_v1.json",
         ".github/workflows/phase2-routing-confirmatory.yml",
+        ".github/workflows/phase2-routing-confirmatory-preflight.yml",
+        ".github/workflows/phase2-routing-confirmatory-approval-bridge.yml",
     }
     assert required <= set(artifacts)
-    assert manifest["test_set_opened"] is False
-    assert governance["artifact_hash_mismatch_blocks_test_open"] is True
-    assert governance["confirmatory_test_may_change_frozen_artifacts"] is False
-    assert governance["phase3_may_start_before_phase2_close"] is False
-    assert governance["oos_benchmark_is_independent_confirmatory_evidence"] is False
+    assert artifacts[".github/workflows/phase2-routing-confirmatory-approval-bridge.yml"] == (
+        "2ccb726ded479fb51c68647f2b344a95393cd878"
+    )
 
 
-def test_confirmatory_workflow_checks_freeze_before_preflight_and_test_access() -> None:
-    workflow = WORKFLOW.read_text(encoding="utf-8")
-    freeze = workflow.index("Verify pre-confirmatory artifact freeze")
-    preflight = workflow.index("Run no-test preflight")
-    test_open = workflow.index("Open frozen test and run registered confirmatory evaluation")
-    assert freeze < preflight < test_open
-    assert "workflow_dispatch:" in workflow
-    assert "pull_request:" not in workflow
-    assert "push:" not in workflow
-    assert "contents: read" in workflow
-    assert "contents: write" not in workflow
+def test_consumed_freeze_is_linked_to_permanent_confirmatory_result_and_audit() -> None:
+    result = _json(RESULT)
+    audit = _json(AUDIT)
+    execution = result["execution"]
+    data = result["data"]
+    governance = result["governance"]
+
+    assert isinstance(execution, dict)
+    assert isinstance(data, dict)
+    assert isinstance(governance, dict)
+    assert result["status"] == "registered_confirmatory_result"
+    assert execution["workflow_run_id"] == 32243835846
+    assert execution["frozen_branch_head_at_execution"] == (
+        "9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a"
+    )
+    assert execution["one_scientific_run"] is True
+    assert data["test_set_opened"] is True
+    assert governance["model_changed_after_test"] is False
+    assert governance["calibration_changed_after_test"] is False
+    assert governance["threshold_changed_after_test"] is False
+    assert audit["status"] == "passed"
