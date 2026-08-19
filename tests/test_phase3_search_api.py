@@ -197,12 +197,8 @@ def test_http_rankings_reproduce_all_frozen_r32_b0_evidence() -> None:
         assert response.status_code == 200, query_id
         actual = response.json()["results"]
         expected = expected_by_query[query_id]
-        assert [
-            (row["document_id"], row["rank"], row["score"])
-            for row in actual
-        ] == [
-            (row["document_id"], row["rank"], row["score"])
-            for row in expected
+        assert [(row["document_id"], row["rank"], row["score"]) for row in actual] == [
+            (row["document_id"], row["rank"], row["score"]) for row in expected
         ], query_id
 
 
