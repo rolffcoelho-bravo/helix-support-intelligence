@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
 from typing import Protocol
@@ -119,8 +118,3 @@ class SelectedRetrievalSearch:
 def corpus_version() -> str:
     """Expose the exact corpus version bound to the selected search service."""
     return CORPUS_VERSION
-
-
-def result_ids(hits: Sequence[SearchHit]) -> tuple[str, ...]:
-    """Return result IDs for deterministic contract assertions."""
-    return tuple(hit.document_id for hit in hits)
