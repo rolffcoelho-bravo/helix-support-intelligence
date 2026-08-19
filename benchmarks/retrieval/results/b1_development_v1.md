@@ -1,6 +1,6 @@
 # Phase 3 B1 Dense Retrieval Development Checkpoint
 
-> **Verdict: accepted as the dense development reference.** The sealed retrieval confirmatory partition remains unopened.
+> **Verdict: accepted as the leading dense development reference.** The sealed retrieval confirmatory partition remains unopened.
 
 ## Result
 
@@ -13,7 +13,7 @@
 | Success@1 | 0.3384 | **0.6248** | **+0.2864** |
 | Governing-policy recall@20 | 0.6522 | **0.9228** | **+0.2706** |
 
-B1 materially improves every aggregate retrieval metric on the frozen 1,386-query development benchmark. The complete ranking SHA-256 is:
+B1 materially improves every aggregate retrieval metric on the frozen 1,386-query development benchmark. The accepted complete-ranking SHA-256 is:
 
 `b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20`
 
@@ -31,32 +31,40 @@ B1 uses `BAAI/bge-small-en-v1.5` at immutable revision `5c38ec7c405ec4b44b94cc5a
 - batch size 64;
 - no fine-tuning;
 - the model's documented retrieval query instruction;
-- title plus body as the passage text;
+- title plus body as passage text;
 - normalized dot-product similarity;
 - deterministic document-ID tie breaking.
 
 No alternative dense model, query-instruction variant, pooling rule, similarity metric, or fine-tuned configuration was selected after observing the result.
 
-## Reproducibility
+## Reproducibility evidence and correction
 
-Two independent GitHub-hosted CPU executions reproduced the scientific result exactly.
+The original accepted B1 run and an independent replication reproduced the accepted ranking hash, aggregate metrics, per-intent metrics, and similarity diagnostics exactly. A later standalone B1 run on the current Phase 3 branch again reproduced the same accepted ranking hash and all metrics exactly.
 
-| Evidence | Run 32256394681 | Run 32257841759 |
-|---|---|---|
-| Ranking SHA-256 | `b51d2649…fe20` | `b51d2649…fe20` |
-| Aggregate metrics | identical | identical |
-| Per-intent metrics | identical | identical |
-| Similarity diagnostics | identical | identical |
-| Markdown report SHA-256 | `9b1453f4…aed5` | `9b1453f4…aed5` |
-| Artifact ZIP SHA-256 | `1083c4b9…f9f5` | `9f66f6e3…75e0` |
+A subsequent **B2 parent-reconstruction audit** exposed an important boundary to the earlier wording. One fresh hosted CPU reconstruction produced a different complete B1 ranking SHA-256:
 
-The `results.json` byte hashes differ because each artifact records wall-clock timing. The retrieval decisions, ranking hash, all aggregate metrics, all per-intent metrics, similarity diagnostics, model hash, and scientific environment fields are identical.
+`4161dc01a108f067678ae116ce11a59f21704d81ea7f6933c545a6cabb78964d`
 
-This supports **exact ranking and metric reproducibility with runner-dependent timing**, not byte-identical timing evidence.
+instead of the accepted:
+
+`b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20`
+
+The B2 evaluator failed closed before fusion, so that alternative complete ranking was not silently accepted and no B2 replication metric set was emitted from it.
+
+After that event, a fresh standalone B1 run again reproduced the accepted B1 ranking hash and all aggregate/per-intent metrics exactly.
+
+The correct claim is therefore:
+
+- B1's accepted development metrics are repeatedly reproducible in standalone B1 evaluations;
+- the accepted full-ranking hash has also reproduced repeatedly;
+- **universal bitwise identity of the complete floating-point ranking across every heterogeneous hosted CPU execution context is not claimed**;
+- wall-clock timing remains runner-dependent.
+
+This correction does not change the B1 metric values or its status as the leading measured retrieval reference. It narrows an earlier reproducibility statement that was too broad.
 
 ## Intent-level behavior
 
-The aggregate gain is broad rather than being driven by a small number of categories.
+The aggregate gain remains broad:
 
 | Metric | B1 better | Tied | B1 worse |
 |---|---:|---:|---:|
@@ -77,7 +85,7 @@ The three nDCG@10 regressions relative to B0 are:
 
 The only governing-policy recall@20 regression is `declined_transfer`, from 0.9444 under B0 to 0.8889 under B1.
 
-These regressions matter because they show that the lexical and dense systems retain complementary strengths. B1 is much stronger overall, but BM25 still preserves useful signal in a small number of intent groups.
+These local regressions show that lexical retrieval retains useful information, but they do not overturn B1's much stronger aggregate performance.
 
 ## Remaining weak areas
 
@@ -96,43 +104,30 @@ The ten weakest B1 intent groups by nDCG@10 are:
 | `card_swallowed` | 0.3887 |
 | `getting_spare_card` | 0.4026 |
 
-The strongest residual cluster is the card lifecycle: obtaining a physical card, ordering, arrival, delivery timing, linking, acceptance, and spare-card requests remain semantically close enough to challenge the dense model.
-
-This matters for later fusion and reranking because aggregate retrieval quality is already high; remaining value must come from reducing these local failures rather than merely reproducing B1's broad gains.
+The strongest residual cluster remains the card lifecycle: physical-card acquisition, ordering, arrival, delivery timing, linking, acceptance, and spare-card requests are semantically close enough to challenge the dense model.
 
 ## Source-taxonomy fidelity
 
-Two BANKING77 labels have unusual surface forms: `Refund_not_showing_up` and `reverted_card_payment?`. They are preserved from the source taxonomy rather than introduced by Helix. The retrieval benchmark retains source intent strings exactly so its hashes and data lineage remain reproducible.
-
-## Timing
-
-The two successful CI runs show material wall-clock variation:
-
-| Component | Earlier run | Later run |
-|---|---:|---:|
-| Model load | 0.83 s | 1.64 s |
-| Document encoding | 10.30 s | 8.66 s |
-| Query encoding | 24.84 s | 20.95 s |
-| Similarity + ranking | 0.116 s | 0.124 s |
-
-These are descriptive GitHub-hosted CPU measurements only. They are not production latency claims and are deliberately excluded from the scientific model comparison.
+The unusual BANKING77 labels `Refund_not_showing_up` and `reverted_card_payment?` are preserved from the source taxonomy rather than introduced by Helix. Source intent strings remain unchanged for data-lineage reproducibility.
 
 ## Interpretation
 
-B1 establishes that semantic retrieval adds substantial value on the harder natural-language Helix retrieval benchmark. Its gains are especially important at the top of the ranking: Success@1 rises from roughly 0.338 to 0.625 and MRR@10 from roughly 0.421 to 0.701. Governing-policy recall@20 also rises from roughly 0.652 to 0.923, directly improving the probability that a later evidence-grounded system has the relevant policy available within its retrieval window.
+B1 establishes that semantic retrieval adds substantial value on the harder natural-language Helix retrieval benchmark. Success@1 rises from roughly 0.338 to 0.625, MRR@10 from roughly 0.421 to 0.701, and governing-policy recall@20 from roughly 0.652 to 0.923.
 
-The result does not establish that dense retrieval is sufficient by itself. B1 still loses to BM25 in a small number of intent groups and remains weak on several card-lifecycle categories. Those residual differences create a real empirical target for reciprocal-rank fusion rather than assuming hybrid retrieval must help.
+The later B2 experiment strengthens rather than weakens the selection decision: fixed equal-weight RRF improves some lexical-favored intents but degrades all six aggregate metrics relative to B1. B1 therefore remains the leading Phase 3 retrieval reference.
 
 ## Limitations
 
 This remains development evidence. The sealed retrieval confirmatory partition is still untouched.
 
-The benchmark maps natural BANKING77 queries to a fictional HelixBank policy corpus through deterministic intent-based relevance judgments. That is stronger than the original templated-query benchmark for natural-language retrieval testing, but it is not a sample of live enterprise-search traffic and does not capture every form of multi-document or partially relevant evidence found in production knowledge bases.
+The benchmark maps natural BANKING77 queries to a fictional HelixBank policy corpus through deterministic intent-based relevance judgments. It is not live enterprise-search traffic.
 
-The model is evaluated as a fixed off-the-shelf bi-encoder. The result does not establish that BGE is globally optimal, and no such claim is needed for this bounded comparison.
+Hosted CPU timing is descriptive only. Complete floating-point ranking bytes should not be assumed universally bitwise identical across every heterogeneous hosted CPU execution context even when the model weights, software stack, benchmark bytes, and deterministic-algorithm settings are fixed.
+
+The model is evaluated as a fixed off-the-shelf bi-encoder. The result does not establish that BGE is globally optimal.
 
 ## Decision
 
-**B1 is accepted as the frozen dense development reference.** It materially exceeds B0 on every aggregate relevance metric, reproduces the exact ranking and metrics across independent CPU runs, and retains visible intent-level weaknesses rather than hiding them behind the aggregate score.
+**B1 remains the leading frozen dense development reference.** Its development metrics are unchanged and repeatedly reproduced. The earlier statement implying universal bitwise complete-ranking reproducibility across hosted CPU runners is withdrawn after a later B2 parent-reconstruction counterexample.
 
-The next evaluation step is **B2 reciprocal-rank fusion of the already-frozen B0 and B1 rankings** on the same development benchmark. B2 must demonstrate value against the now-strong B1 reference rather than merely outperforming BM25.
+B2 is separately preserved as a negative development result. No confirmatory retrieval evaluation is opened by this correction.
