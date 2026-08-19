@@ -93,6 +93,8 @@
       "report.md",
       "rankings.jsonl",
       "query_metrics.jsonl",
+      "diagnostic_slices.json",
+      "diagnostic_audit.json",
       "latency_samples.jsonl",
       "environment.json",
       "execution_manifest.json",
