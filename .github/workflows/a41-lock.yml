@@ -49,3 +49,5 @@ jobs:
           fi
           git commit -m "Freeze A4.1 benchmark dependency lock"
           git push origin HEAD:phase4-a41-assistance-binding
+
+# Temporary pre-score lock-generation workflow. Removed before merge.
