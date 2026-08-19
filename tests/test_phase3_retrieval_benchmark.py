@@ -64,9 +64,7 @@ def test_phase3_candidate_filter_excludes_archived_documents_before_scoring() ->
 
 def test_phase3_qrels_and_manifest_match_frozen_semantics() -> None:
     spec = RetrievalBenchmarkSpec.from_json(CONFIG)
-    development, confirmatory = select_queries(
-        _synthetic_fit_train(), spec, "synthetic-revision"
-    )
+    development, confirmatory = select_queries(_synthetic_fit_train(), spec, "synthetic-revision")
     documents = eligible_documents(generate_bundle().documents, spec)
     development_qrels = build_qrels(development, documents, spec)
     confirmatory_qrels = build_qrels(confirmatory, documents, spec)
