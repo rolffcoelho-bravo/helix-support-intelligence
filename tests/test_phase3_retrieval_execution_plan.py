@@ -68,6 +68,28 @@ def test_r32_query_latency_and_inference_rules_match_registration() -> None:
     assert latency["budgets_ms"] == {"B0": 100, "B1": 250, "B2": 250, "B3": 500}
 
 
+def test_r32_diagnostic_slices_are_frozen_and_descriptive_only() -> None:
+    protocol = _load(PROTOCOL)
+    execution = _load(EXECUTION)
+    diagnostics = execution["quality_execution"]["diagnostic_slices"]
+
+    assert set(diagnostics) == {
+        "case_type",
+        "document_kind",
+        "conflict_fixture",
+        "untrusted_content_fixture",
+        "selection_use",
+    }
+    assert set(protocol["metrics"]["diagnostic_slices"]) == {
+        "case_type",
+        "document_kind",
+        "conflict_fixture",
+        "untrusted_content_fixture",
+    }
+    assert "descriptive" in diagnostics["selection_use"].lower()
+    assert "cannot change H1, H2" in diagnostics["selection_use"]
+
+
 def test_r32_requires_post_execution_reconstruction_before_closure() -> None:
     execution = _load(EXECUTION)
     evidence = execution["evidence"]
@@ -75,6 +97,8 @@ def test_r32_requires_post_execution_reconstruction_before_closure() -> None:
 
     assert evidence["independent_post_execution_reconstruction_required"] is True
     assert evidence["run_is_provisional_until_post_audit_passes"] is True
+    assert "diagnostic_slices.json" in evidence["output_files"]
+    assert "diagnostic_audit.json" in evidence["output_files"]
     assert "post_audit.json" in evidence["output_files"]
     assert "checksums.sha256" in evidence["output_files"]
     assert immutability["no_result_motivated_changes"] is True
