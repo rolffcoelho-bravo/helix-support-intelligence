@@ -1,0 +1,53 @@
+{
+  "version": "retrieval-benchmark-v1",
+  "phase": 3,
+  "status": "protocol_frozen_hash_manifest_pending",
+  "purpose": "Primary natural-language retrieval benchmark for B0-B3 model selection and one-shot confirmatory evaluation.",
+  "source": {
+    "banking77_config": "configs/data/banking77.json",
+    "raw_split": "train",
+    "derived_partition": "fit_train_only",
+    "official_test_access_allowed": false,
+    "selection_note": "Phase 3 query selection uses only the already-pinned BANKING77 source train after the frozen Phase 1 quarantine and validation assignment. The official BANKING77 test URL is not accessed by this benchmark materializer."
+  },
+  "selection": {
+    "salt": "helix-phase3-retrieval-benchmark-2026-08-19",
+    "development_per_intent": 20,
+    "confirmatory_per_intent": 10,
+    "intent_count": 77,
+    "expected_counts": {
+      "development_queries": 1540,
+      "confirmatory_queries": 770
+    }
+  },
+  "documents": {
+    "corpus_version": "helixbank-policy-v1.0.0",
+    "eligibility": {
+      "status": "current",
+      "permission": "public_support"
+    }
+  },
+  "qrels": {
+    "governing_policy_relevance": 3,
+    "current_faq_relevance": 2,
+    "archived_faq_is_candidate": false,
+    "unjudged_document_relevance": 0
+  },
+  "evaluation": {
+    "primary_metric": "ndcg_at_10",
+    "secondary_metrics": [
+      "mrr_at_10",
+      "recall_at_20",
+      "recall_at_50",
+      "success_at_1",
+      "citation_eligible_recall_at_20"
+    ],
+    "selection_partition": "development",
+    "confirmatory_partition": "confirmatory",
+    "confirmatory_open_policy": "Open once after B0-B3 selection, configuration freeze, and pre-confirmatory audit."
+  },
+  "hash_manifest": {
+    "status": "pending_pre_scoring_materialization",
+    "note": "No B0-B3 retrieval score may be produced until the deterministic materializer output is audited and these hashes are frozen."
+  }
+}
