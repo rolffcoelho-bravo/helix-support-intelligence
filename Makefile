@@ -1,4 +1,4 @@
-.PHONY: setup lint format typecheck test data-check publication-audit quality
+.PHONY: setup lint format typecheck test data-check retrieval-preflight publication-audit quality
 
 setup:
 	uv sync --locked --group dev
@@ -20,7 +20,10 @@ test:
 data-check:
 	uv run python scripts/validate_phase1_data.py
 
+retrieval-preflight:
+	uv run python scripts/preflight_phase3_retrieval.py
+
 publication-audit:
 	uv run python scripts/audit_publication.py
 
-quality: lint typecheck test data-check publication-audit
+quality: lint typecheck test data-check retrieval-preflight publication-audit

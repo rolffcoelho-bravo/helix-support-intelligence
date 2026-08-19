@@ -1,0 +1,62 @@
+{
+  "implementation_id": "phase3-retrieval-r3.1-v1",
+  "protocol_id": "phase3-retrieval-r3.0-v1",
+  "status": "implemented_preflight_no_results",
+  "frozen_query_scores_computed": 0,
+  "core_package_dependency_policy": "No external model runtime dependency in the core package; exact model implementations are injected behind typed adapters.",
+  "eligibility": {
+    "application_stage": "before ranking",
+    "expected_eligible_documents": 147,
+    "expected_current_conflict_fixtures": 7,
+    "expected_current_untrusted_content_fixtures": 5
+  },
+  "B0": {
+    "implementation": "helix_support_intelligence.retrieval.core.BM25Retriever",
+    "idf_formula": "ln(1 + (N - df + 0.5) / (df + 0.5))",
+    "query_term_multiplicity": "retained",
+    "score_sort": "descending score then document_id ascending"
+  },
+  "B1": {
+    "implementation": "helix_support_intelligence.retrieval.core.DenseRetriever",
+    "adapter": "EmbeddingEncoder",
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "c315f904dfc467d8b9c40ab4ed50b3a8d0866c15",
+    "normalization": "L2 normalize document and query vectors in the retrieval core",
+    "similarity": "dot product over normalized vectors, equivalent to cosine",
+    "score_sort": "descending score then document_id ascending"
+  },
+  "B2": {
+    "implementation": "helix_support_intelligence.retrieval.core.reciprocal_rank_fusion",
+    "rrf_k": 60,
+    "source_depth": 50,
+    "retrieve_k": 50,
+    "score_sort": "descending RRF score then document_id ascending"
+  },
+  "B3": {
+    "implementation": "helix_support_intelligence.retrieval.core.rerank_top",
+    "adapter": "PairScorer",
+    "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "revision": "c5f2b386de279a97c53a702dd5189d1c407160dc",
+    "rerank_depth": 20,
+    "tail_policy": "Ranks 21-50 retain B2 order and are appended after the reranked head.",
+    "head_tie_break": "document_id ascending"
+  },
+  "evaluation": {
+    "implementation": "helix_support_intelligence.retrieval.evaluation",
+    "ndcg_gain": "2^relevance - 1",
+    "mrr_and_recall_relevance_threshold": 2,
+    "recall_inapplicable_rule": "Queries with no eligible relevance >=2 return null per-query recall and are excluded from the recall macro-average.",
+    "bootstrap_percentile_interpolation": "linear interpolation at 0.025 and 0.975 over sorted replicate means"
+  },
+  "latency": {
+    "summary_implementation": "helix_support_intelligence.retrieval.core.summarize_latency",
+    "measurement_execution": "deferred to R3.2 because R3.1 performs no frozen-query retrieval",
+    "percentile_interpolation": "linear"
+  },
+  "execution": {
+    "composed_ladder": "helix_support_intelligence.retrieval.ladder.RetrievalLadder",
+    "unit_fixture_only_in_r3.1": true,
+    "benchmark_query_ranking_allowed_in_r3.1": false,
+    "concrete_model_runtime_binding": "R3.2 execution environment must load the protocol-pinned revisions; result-motivated model substitution is prohibited."
+  }
+}
