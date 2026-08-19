@@ -106,7 +106,10 @@ def generate(output_dir: Path) -> dict[str, object]:
         for kind in ("POLICY", "FAQ"):
             if kind in kinds:
                 groups["document_kind"][kind].append(query_id)
-        if any(bool(metadata[document_id]["conflict_fixture"]) for document_id in positive_documents):
+        if any(
+            bool(metadata[document_id]["conflict_fixture"])
+            for document_id in positive_documents
+        ):
             groups["conflict_fixture"]["associated"].append(query_id)
         if any(
             bool(metadata[document_id]["untrusted_content_fixture"])
