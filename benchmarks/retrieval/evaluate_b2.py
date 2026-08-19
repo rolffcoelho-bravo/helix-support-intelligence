@@ -142,9 +142,7 @@ def _reconstruct_b0(
     started = time.perf_counter()
     index = BM25Index.build(documents, k1=float(model["k1"]), b=float(model["b"]))
     rankings = {
-        str(query["query_id"]): [
-            item.document_id for item in index.score(str(query["text"]))
-        ]
+        str(query["query_id"]): [item.document_id for item in index.score(str(query["text"]))]
         for query in queries
     }
     return rankings, time.perf_counter() - started
@@ -279,12 +277,8 @@ def evaluate(input_dir: Path, output_dir: Path) -> dict[str, object]:
         raise ValueError("B2 development-qrel count drifted")
 
     parents = cast(dict[str, Any], b2_config["parents"])
-    accepted_b0 = str(
-        cast(dict[str, Any], b0_result["deterministic_evidence"])["ranking_sha256"]
-    )
-    accepted_b1 = str(
-        cast(dict[str, Any], b1_result["deterministic_evidence"])["ranking_sha256"]
-    )
+    accepted_b0 = str(cast(dict[str, Any], b0_result["deterministic_evidence"])["ranking_sha256"])
+    accepted_b1 = str(cast(dict[str, Any], b1_result["deterministic_evidence"])["ranking_sha256"])
     if parents["B0"]["accepted_ranking_sha256"] != accepted_b0:
         raise ValueError("B2 frozen B0 parent hash disagrees with audited B0 result")
     if parents["B1"]["accepted_ranking_sha256"] != accepted_b1:
