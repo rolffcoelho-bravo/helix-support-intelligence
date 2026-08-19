@@ -181,7 +181,8 @@ def evaluate(input_dir: Path, output_dir: Path) -> dict[str, object]:
         (
             "# Phase 3 B0 BM25 Development Result",
             "",
-            "> Development evidence only. The sealed Phase 3 confirmatory partition was not opened.",
+            "> Development evidence only. The sealed Phase 3 confirmatory "
+            "partition was not opened.",
             "",
             "| Metric | Result |",
             "|---|---:|",
