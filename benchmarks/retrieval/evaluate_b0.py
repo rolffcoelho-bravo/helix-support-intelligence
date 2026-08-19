@@ -191,8 +191,7 @@ def evaluate(input_dir: Path, output_dir: Path) -> dict[str, object]:
             f"| Recall@20 | {metrics['recall_at_20']:.6f} |",
             f"| Recall@50 | {metrics['recall_at_50']:.6f} |",
             f"| Success@1 | {metrics['success_at_1']:.6f} |",
-            "| Citation-eligible recall@20 | "
-            f"{metrics['citation_eligible_recall_at_20']:.6f} |",
+            f"| Citation-eligible recall@20 | {metrics['citation_eligible_recall_at_20']:.6f} |",
             "",
             f"Ranking SHA-256: `{results['ranking_sha256']}`.",
             "",
