@@ -1,0 +1,89 @@
+name: Phase 3 Retrieval B0
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase3-retrieval-b0.yml"
+      - "configs/data/banking77.json"
+      - "configs/retrieval/phase3_benchmark_v1.json"
+      - "configs/retrieval/b0_bm25_v1.json"
+      - "src/helix_support_intelligence/data/banking77.py"
+      - "src/helix_support_intelligence/data/helixbank.py"
+      - "src/helix_support_intelligence/retrieval/**"
+      - "scripts/materialize_retrieval_benchmark.py"
+      - "benchmarks/retrieval/evaluate_b0.py"
+      - "tests/test_phase3_retrieval_benchmark.py"
+      - "tests/test_phase3_bm25.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase3-retrieval-b0-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  b0:
+    name: Frozen B0 BM25 development benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install locked development environment
+        run: uv sync --locked --group dev
+
+      - name: Verify B0 source and metric semantics
+        run: |
+          uv run ruff check \
+            src/helix_support_intelligence/retrieval \
+            scripts/materialize_retrieval_benchmark.py \
+            benchmarks/retrieval/evaluate_b0.py \
+            tests/test_phase3_retrieval_benchmark.py \
+            tests/test_phase3_bm25.py
+          uv run ruff format --check \
+            src/helix_support_intelligence/retrieval \
+            scripts/materialize_retrieval_benchmark.py \
+            benchmarks/retrieval/evaluate_b0.py \
+            tests/test_phase3_retrieval_benchmark.py \
+            tests/test_phase3_bm25.py
+          uv run pytest tests/test_phase3_retrieval_benchmark.py tests/test_phase3_bm25.py
+
+      - name: Reproduce frozen development benchmark surface
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/phase3-retrieval/benchmark
+          uv run python scripts/materialize_retrieval_benchmark.py \
+            --output artifacts/phase3-retrieval/benchmark \
+            | tee artifacts/phase3-retrieval/benchmark/run-output.txt
+          test ! -f artifacts/phase3-retrieval/benchmark/confirmatory_queries.jsonl
+          test ! -f artifacts/phase3-retrieval/benchmark/confirmatory_qrels.jsonl
+
+      - name: Run frozen B0 development evaluation
+        run: |
+          set -o pipefail
+          uv run python benchmarks/retrieval/evaluate_b0.py \
+            --input-dir artifacts/phase3-retrieval/benchmark \
+            --output-dir artifacts/phase3-retrieval/b0 \
+            | tee artifacts/phase3-retrieval/b0/run-output.txt
+
+      - name: Publish B0 summary
+        run: cat artifacts/phase3-retrieval/b0/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload B0 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-retrieval-b0-${{ github.sha }}
+          path: artifacts/phase3-retrieval/b0/
+          if-no-files-found: error
+          retention-days: 90
