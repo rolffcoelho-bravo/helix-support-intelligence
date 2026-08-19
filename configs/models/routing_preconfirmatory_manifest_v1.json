@@ -2,7 +2,7 @@
   "version": "routing-preconfirmatory-freeze-v1",
   "phase": 2,
   "status": "frozen_before_confirmatory_test_open",
-  "frozen_parent_commit_sha": "1c99adf99c15165266fcd65608b3bb9521469bd5",
+  "frozen_parent_commit_sha": "d60194f14a70b995225667eb67e74dabf572f65e",
   "test_set_opened": false,
   "hash_semantics": "Git blob SHA-1: sha1(b'blob ' + decimal_byte_length + b'\\0' + file_bytes)",
   "purpose": "Machine-checkable freeze of the selection-critical Phase 2 scientific and execution surface before the one registered BANKING77 confirmatory evaluation.",
@@ -17,7 +17,7 @@
     "configs/models/routing_operations.json": "0462584f010a296dd3d7f9b097410efe02b85fd3",
     "configs/models/routing_cost_matrix.json": "7d0ec154fb091d4727d4a0c702e5c8f01d07c246",
     "configs/models/routing_selected_v1.json": "0b1ebe4be964afe35ebbf5604c24e090776e42c9",
-    "configs/models/routing_confirmatory_v1.json": "23561dcf55a20d5b2600a767d72647722fd8f5ec",
+    "configs/models/routing_confirmatory_v1.json": "d73c98c04380409ba7b33555757bb1a173118f43",
     "data/oos/routing_oos_v1.json": "816e89d1cff8e3d54757b43a84b3689a90671250",
     "benchmarks/routing/evaluate_a2.py.lock": "113a8b8a693d3b8014d1c93f7fef96b76b96ccc4",
     "benchmarks/routing/evaluate_calibration.py": "0b88f65ae41af62b19b4f494ffbdce1c6cf2d679",
@@ -37,11 +37,12 @@
     "src/helix_support_intelligence/domain/routing.py": "5bcd9b7f6e88fef4fe6fb9a19a321c8e1f482561",
     "docs/routing-evaluation-protocol.md": "efa4937f8fc4b6dd91c5471a0706f24b8c007a44",
     "docs/routing-model-card.md": "a003c92b62375da76383275ea9c09718b8c21f10",
-    "docs/phase2-confirmatory-protocol.md": "a6ad7d83485967d82a114fe8affed79ab57232dc",
+    "docs/phase2-confirmatory-protocol.md": "7d99ab6552447f8b94f6e7c4650914bf7da22e88",
     ".github/workflows/ci.yml": "3247e53c92605767919c65293f63b5fa0b3ab02d",
     ".github/workflows/phase2-routing-confirmatory.yml": "e31e6b807d88b3e3f7838060e8dd1d8e6293d2e2",
     ".github/workflows/phase2-routing-confirmatory-preflight.yml": "fe9a9bf16692aa1c4aaaa7a3347855cb2583a582",
-    "tests/test_phase2_confirmatory_protocol.py": "b6136f2270f2429b8f69fee1368ca1da1b3c2728"
+    ".github/workflows/phase2-routing-confirmatory-approval-bridge.yml": "2ccb726ded479fb51c68647f2b344a95393cd878",
+    "tests/test_phase2_confirmatory_protocol.py": "11280365824f0a411174eb497904c7dd43b8d642"
   },
   "governance": {
     "manifest_may_be_changed_after_confirmatory_result": false,
@@ -49,6 +50,7 @@
     "confirmatory_test_may_change_frozen_artifacts": false,
     "phase3_may_start_before_phase2_close": false,
     "oos_benchmark_is_independent_confirmatory_evidence": false,
-    "H3_full_mixed_endpoint_has_independent_confirmatory_sample": false
+    "H3_full_mixed_endpoint_has_independent_confirmatory_sample": false,
+    "approval_bridge_is_authorization_transport_only": true
   }
 }
