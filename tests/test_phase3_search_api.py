@@ -64,9 +64,7 @@ def test_search_excludes_every_archived_document_before_ranking() -> None:
     client = TestClient(create_app())
     bundle = generate_bundle()
     archived_ids = {
-        str(record["document_id"])
-        for record in bundle.documents
-        if record["status"] == "archived"
+        str(record["document_id"]) for record in bundle.documents if record["status"] == "archived"
     }
 
     response = client.post(

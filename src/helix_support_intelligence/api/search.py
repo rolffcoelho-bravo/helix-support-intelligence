@@ -70,9 +70,7 @@ class SelectedRetrievalSearch:
         )
         eligible_documents = filter_eligible_documents(documents, policy)
         if len(eligible_documents) != EXPECTED_ELIGIBLE_DOCUMENTS:
-            raise SearchBackendError(
-                "eligible document count does not match retrieval-selected-v1"
-            )
+            raise SearchBackendError("eligible document count does not match retrieval-selected-v1")
 
         records_by_id: dict[str, dict[str, object]] = {}
         eligible_ids = {document.document_id for document in eligible_documents}
