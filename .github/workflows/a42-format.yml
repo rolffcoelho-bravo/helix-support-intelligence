@@ -1,0 +1,60 @@
+name: A4.2 format repair
+
+on:
+  push:
+    branches:
+      - phase4-a42-development-execution
+    paths:
+      - ".github/workflows/a42-format.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase4-a42-development-execution
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.33"
+      - run: uv sync --locked --group dev
+      - name: Apply repository formatter to A4.2 Python files
+        run: |
+          uv run ruff check --fix \
+            benchmarks/assistance/evaluate_a42.py \
+            benchmarks/assistance/nli_batching_a42.py \
+            benchmarks/assistance/run_a42.py \
+            benchmarks/assistance/run_verify_a42.py \
+            benchmarks/assistance/verify_a42.py \
+            scripts/preflight_phase4_a42.py \
+            tests/test_phase4_assistance_a42_registration.py
+          uv run ruff format \
+            benchmarks/assistance/evaluate_a42.py \
+            benchmarks/assistance/nli_batching_a42.py \
+            benchmarks/assistance/run_a42.py \
+            benchmarks/assistance/run_verify_a42.py \
+            benchmarks/assistance/verify_a42.py \
+            scripts/preflight_phase4_a42.py \
+            tests/test_phase4_assistance_a42_registration.py
+      - name: Commit formatting-only repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            benchmarks/assistance/evaluate_a42.py \
+            benchmarks/assistance/nli_batching_a42.py \
+            benchmarks/assistance/run_a42.py \
+            benchmarks/assistance/run_verify_a42.py \
+            benchmarks/assistance/verify_a42.py \
+            scripts/preflight_phase4_a42.py \
+            tests/test_phase4_assistance_a42_registration.py
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Apply canonical formatting to A4.2 implementation"
+          git push origin HEAD:phase4-a42-development-execution
+
+# Temporary pre-score formatter. Removed before merge.
