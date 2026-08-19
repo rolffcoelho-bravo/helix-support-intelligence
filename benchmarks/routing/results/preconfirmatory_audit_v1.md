@@ -1,20 +1,20 @@
-# Phase 2 Final Pre-Confirmatory Audit
+# Phase 2 Final Pre-Confirmatory Integrity Verification
 
-> Gate status: **passed**. The official BANKING77 confirmatory test remains unopened. Phase 3 retrieval remains forbidden.
+> Status: **passed**. The official BANKING77 confirmatory test remained unopened at this checkpoint.
 
 ## Results
 
-| Audit surface | Result |
+| Verification surface | Result |
 |---|---|
 | Release CI | **passed** |
 | Ruff lint / format | passed |
 | Strict mypy | passed |
 | Pytest | **77 passed** |
 | Phase 1 offline data contracts | passed |
-| Publication audit | passed |
+| Publication boundary check | passed |
 | Pre-confirmatory integrity manifest | **35 artifacts verified** |
-| Locked scientific no-test preflight | **passed** |
-| Confirmatory workflow | manual-only, read-only |
+| Scientific no-test preflight | **passed** |
+| Confirmatory execution mode | manual, read-only |
 | Selected model | A2 |
 | Temperature | `0.457974` |
 | Selected threshold | `0.892704` |
@@ -22,53 +22,52 @@
 | Registered bootstrap | 5,000 paired replicates, seed `20260819` |
 | H3 confirmatory scope | independent BANKING77 in-domain component only |
 | Confirmatory test opened | **false** |
-| Phase 3 started | **false** |
 
 Release CI evidence: workflow run `32197909626`. No-test scientific preflight evidence: workflow run `32197909434`.
 
-## What the gate establishes
+## What this verification establishes
 
-The complete Phase 2 development and implementation surface is now frozen before the one-shot confirmatory test. A machine-readable Git-blob manifest pins 35 selection-critical scientific and execution artifacts, including the data contract, A2 configuration, calibration and cost contracts, OOS benchmark, selected router, authoritative development results, route schemas, confirmatory protocol, evaluator, workflow, and relevant tests.
+The Phase 2 development and implementation surface was frozen before confirmatory evaluation. A machine-readable Git-blob manifest pins 35 selection-critical scientific and execution artifacts, including the data contract, A2 configuration, calibration and cost contracts, OOS benchmark, selected router, authoritative development results, route schemas, confirmatory protocol, evaluator, workflow, and relevant tests.
 
-The manual confirmatory workflow verifies this manifest before executing a no-test preflight. Only after those checks pass can an explicitly authorized test-access step run. The workflow has read-only repository permissions and no pull-request or push trigger.
+The confirmatory workflow verifies this manifest before executing a no-test preflight. Repository permissions are read-only and there is no automatic pull-request or push test-opening path.
 
-The separate preflight workflow loads the confirmatory evaluator inside the already-audited CPU-only A2 scientific environment while remaining incapable of authorizing test access. Its final successful run reported `preflight_passed` and `test_set_opened=false`.
+The separate preflight loads the confirmatory evaluator inside the CPU-only A2 scientific environment without opening the test set. Its final successful run reported `preflight_passed` and `test_set_opened=false`.
 
-## Hostile-audit findings
+## Integrity findings
 
-### 1. H3 independence scope was too broad
+### 1. H3 independence scope required narrowing
 
-The most important finding was methodological. Development expected routing cost mixes BANKING77 in-domain cases with the 160-query synthetic OOS benchmark. That OOS benchmark was legitimately frozen before development scoring, but it was later inspected and used during operating-policy selection. It therefore cannot be reused as unseen confirmatory evidence.
+Development expected routing cost mixes BANKING77 in-domain cases with the 160-query synthetic OOS benchmark. That OOS benchmark was frozen before development scoring, but it was later inspected and used during operating-policy selection. It therefore cannot be reused as unseen confirmatory evidence.
 
-The repair was made **before the test was opened**. H3's registered confirmatory estimand is now explicitly the independent BANKING77-test **in-domain cost component**: frozen calibrated A2 policy minus frozen raw-A2 comparator. The original mixed in-domain/OOS development endpoint cannot be declared fully confirmed by the BANKING77 test alone because Phase 2 has no unseen OOS confirmatory sample.
+The correction was made **before the test was opened**. H3's confirmatory estimand is explicitly the independent BANKING77-test **in-domain cost component**: frozen calibrated A2 policy minus frozen raw-A2 comparator. The original mixed in-domain/OOS development endpoint cannot be declared fully confirmed by the BANKING77 test alone because Phase 2 has no unseen OOS confirmatory sample.
 
-This correction does not change the development H3 result. H3 remains unsupported on the registered development mixed-cost endpoint. It prevents a favorable future BANKING77 test result from creating an overstated publication claim.
+This correction does not change the development H3 result. H3 remains unsupported on the registered development mixed-cost endpoint.
 
-### 2. Confirmatory execution needed a hard freeze
+### 2. Confirmatory execution required an executable freeze
 
-Prose saying that a configuration is frozen is weaker than an executable guarantee. The audit therefore added `routing-preconfirmatory-freeze-v1`, a Git-blob integrity manifest, plus a stdlib-only verifier. Any listed artifact drift blocks the confirmatory workflow before test access.
+A narrative freeze is weaker than an executable guarantee. `routing-preconfirmatory-freeze-v1` therefore records Git-blob identities for the frozen scientific surface, and a standard-library verifier blocks confirmatory execution if a listed artifact drifts.
 
 The final preflight verified all **35** registered artifacts successfully.
 
-### 3. Root-package and scientific-runtime boundaries were mixed
+### 3. Root-package and scientific-runtime boundaries were separated
 
 The root Helix package intentionally has no NumPy, scikit-learn, PyTorch, or sentence-transformers runtime dependency. Early protocol tests attempted to import the scientific evaluator from generic root pytest, which would have blurred that architecture boundary.
 
-The repair keeps generic tests dependency-free and moves executable scientific preflight into its own locked workflow. This preserves the production-shaped domain boundary while still exercising the evaluator under its real scientific dependency graph.
+Generic tests remain dependency-free and executable scientific preflight runs in its own locked environment. This preserves the production-shaped domain boundary while still exercising the evaluator under its real scientific dependency graph.
 
-### 4. Preflight found a real BANKING77 contract-path bug
+### 4. Preflight found a BANKING77 contract-path defect
 
 The first executable preflight failed before test access because the evaluator looked for derived hashes under `data["split"]["expected"]`. The frozen Phase 1 contract stores `expected` at the top level. The path was corrected to `data["expected"]`.
 
-This is a substantive code correction even though no scientific result had yet been generated. The preflight exists precisely to catch this class of defect before the one-shot test is consumed.
+This was a substantive code correction even though no confirmatory scientific result had yet been generated.
 
 ### 5. Mechanical CI defects were corrected
 
-The audit also corrected Ruff formatting/line-length issues and removed a self-referential workflow assertion that searched the preflight workflow for a forbidden authorization string and then matched the string inside its own search command. None of these repairs changed the model, calibration, OOS benchmark, costs, thresholds, hypotheses, or development results.
+The verification also corrected Ruff formatting/line-length issues and removed a self-referential workflow assertion. None of these repairs changed the model, calibration, OOS benchmark, costs, thresholds, hypotheses, or development results.
 
-## Scientific position before test open
+## Scientific position before confirmatory evaluation
 
-Nothing in this gate changes the frozen development evidence:
+Nothing in this verification changes the frozen development evidence:
 
 - A2 remains the selected model;
 - A3 remains a registered negative result;
@@ -81,30 +80,26 @@ Nothing in this gate changes the frozen development evidence:
 
 The confirmatory test cannot alter any of those selections.
 
-## Methodological and publicability value
+## Reproducibility value
 
-This gate materially improves the credibility of the final Phase 2 result. It prevents three common weaknesses in applied-ML research: silently changing artifacts between development and test, treating reused benchmark data as independent confirmation, and running a one-shot test through code that has never executed in its real dependency environment.
+This verification strengthens the credibility of the final result by preventing three common applied-ML weaknesses: changing selection-critical artifacts between development and test, treating reused benchmark data as independent confirmation, and running confirmatory evaluation through code that has not executed in its declared dependency environment.
 
-The explicit H3 scope limitation is particularly valuable for publication. It makes the paper or technical report slightly less sweeping, but substantially more defensible. A narrower claim with a demonstrably independent estimand is stronger than a broader claim whose OOS component has already participated in selection.
+The explicit H3 scope limitation is intentionally conservative. A narrower independently estimable claim is more defensible than a broader mixed endpoint whose OOS component has already participated in development selection.
 
-The manifest also gives reviewers a concrete reproducibility object: the eventual confirmatory result can be tied to an exact frozen scientific surface rather than to a narrative description of what supposedly did not change.
+The integrity manifest also gives external reviewers a concrete reproducibility object: the confirmatory result can be tied to an exact frozen scientific surface.
 
 ## Remaining limitations
 
-Phase 2 still lacks an independent unseen OOS confirmatory sample, so the original mixed in-domain/OOS H3 endpoint cannot receive a fully independent confirmatory verdict in this version. The synthetic routing costs also remain scenario assumptions, not estimates of real-bank economics or customer harm.
+Phase 2 lacks an independent unseen OOS confirmatory sample, so the original mixed in-domain/OOS H3 endpoint cannot receive a fully independent confirmatory verdict in this version. The synthetic routing costs remain scenario assumptions rather than estimates of real-bank economics or customer harm.
 
-The confirmatory test will establish performance only for the frozen BANKING77 domain. It will not prove live serving latency, production drift resistance, real traffic OOS prevalence, or deployment impact.
-
-These are limitations to publish, not reasons to reopen Phase 2 model selection after test access.
+The confirmatory test evaluates the frozen BANKING77 domain. It does not establish live serving latency, production drift resistance, real traffic OOS prevalence, or deployment impact.
 
 ## Decision
 
-**Final pre-confirmatory audit: PASSED.**
+**Final pre-confirmatory integrity verification: PASSED.**
 
-The one-shot confirmatory evaluation is technically and methodologically ready for an explicit authorization decision. The test remains sealed at this checkpoint.
+The frozen routing configuration was technically and methodologically ready for its registered BANKING77 confirmatory evaluation. The test remained sealed at this checkpoint.
 
-## Next locked action
+## Subsequent evaluation
 
-After explicit approval, run the **manual one-shot registered BANKING77 confirmatory evaluation** using the exact authorization token. Then permanently record the result, perform the mandatory post-result hostile audit, close the Phase 2 exit report, and make the Phase 2 merge decision.
-
-**Phase 3 retrieval remains forbidden until Phase 2 is formally closed.**
+The registered confirmatory evaluation was executed against this frozen configuration and is reported separately in `confirmatory_test_v1.md`, with an independent post-result verification in `confirmatory_post_audit_v1.md`.
