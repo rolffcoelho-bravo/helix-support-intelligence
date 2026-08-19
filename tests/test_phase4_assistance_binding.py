@@ -34,9 +34,7 @@ def _sha256(path: Path) -> str:
 def _development_intents() -> set[str]:
     bundle = generate_bundle()
     conflicts = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflicts = set(INTENTS) - conflicts
 
@@ -127,9 +125,7 @@ def test_a41_diagnostic_subsets_are_deterministic_and_development_only() -> None
     assert set(repeatability["query_ids"]) <= set(latency["query_ids"])
 
     development = _development_intents()
-    query_intent = {
-        str(row["query_id"]): str(row["intent"]) for row in generate_bundle().queries
-    }
+    query_intent = {str(row["query_id"]): str(row["intent"]) for row in generate_bundle().queries}
     assert all(query_intent[qid] in development for qid in latency["query_ids"])
 
 
