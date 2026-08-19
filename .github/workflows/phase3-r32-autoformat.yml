@@ -28,7 +28,7 @@ jobs:
 
       - name: Apply repository Ruff rules
         run: |
-          uv run ruff check --fix benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
+          uv run ruff check --fix benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py || true
           uv run ruff format benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
           uv run ruff check benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
           uv run ruff format --check benchmarks/retrieval tests/test_phase3_retrieval_execution_plan.py
