@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import tempfile
 import urllib.request
@@ -10,10 +11,12 @@ from pathlib import Path
 
 from helix_support_intelligence.data.banking77 import (
     Banking77Spec,
-    canonical_jsonl_bytes as banking_jsonl_bytes,
     load_csv,
     sha256_file,
     split_training_examples,
+)
+from helix_support_intelligence.data.banking77 import (
+    canonical_jsonl_bytes as banking_jsonl_bytes,
 )
 from helix_support_intelligence.data.helixbank import generate_bundle
 from helix_support_intelligence.retrieval.benchmark import (
@@ -67,7 +70,7 @@ def materialize(
     if len(quarantined) != banking.expected_counts["quarantine"]:
         raise ValueError("frozen quarantine count drifted")
 
-    fit_train_hash = __import__("hashlib").sha256(
+    fit_train_hash = hashlib.sha256(
         banking_jsonl_bytes(fit_train, banking.source_revision)
     ).hexdigest()
     if fit_train_hash != banking.expected_hashes["train"]:
