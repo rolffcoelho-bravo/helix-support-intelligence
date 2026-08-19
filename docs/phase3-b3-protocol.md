@@ -121,4 +121,4 @@ Only this one B3 candidate is authorized. Once the first valid B3 development re
 - preserve positive, negative, or inconclusive evidence;
 - do not change model family, revision, depth, input format, batch semantics, activation,
   tie breaking, metric definitions, or the selection rule to improve the result;
-- perform the standard hostile audit before any next Phase 3 action.
+- perform the standard public quality and integrity review before any next Phase 3 action.
