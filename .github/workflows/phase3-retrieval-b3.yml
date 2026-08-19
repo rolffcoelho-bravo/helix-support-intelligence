@@ -1,24 +1,6 @@
 name: Phase 3 Retrieval B3
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - ".github/workflows/phase3-retrieval-b3.yml"
-      - "configs/data/banking77.json"
-      - "configs/retrieval/phase3_benchmark_v1.json"
-      - "configs/retrieval/b1_dense_v1.json"
-      - "configs/retrieval/b3_cross_encoder_v1.json"
-      - "benchmarks/routing/evaluate_a2.py.lock"
-      - "benchmarks/retrieval/results/b1_development_v1.json"
-      - "benchmarks/retrieval/evaluate_b3.py"
-      - "docs/phase3-b3-protocol.md"
-      - "src/helix_support_intelligence/data/banking77.py"
-      - "src/helix_support_intelligence/data/helixbank.py"
-      - "src/helix_support_intelligence/retrieval/**"
-      - "scripts/materialize_retrieval_benchmark.py"
-      - "tests/test_phase3_retrieval_benchmark.py"
-      - "tests/test_phase3_b3_contract.py"
   workflow_dispatch:
 
 permissions:
