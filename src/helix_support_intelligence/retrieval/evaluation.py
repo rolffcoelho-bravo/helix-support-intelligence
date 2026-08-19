@@ -38,9 +38,7 @@ class AggregateMetrics:
     query_count: int
 
 
-def evaluate_ranking(
-    ranking: Sequence[RankedDocument], qrels: Mapping[str, int]
-) -> QueryMetrics:
+def evaluate_ranking(ranking: Sequence[RankedDocument], qrels: Mapping[str, int]) -> QueryMetrics:
     """Evaluate a ranking using the registered Phase 3 endpoints."""
     return QueryMetrics(
         ndcg_at_10=ndcg_at_k(ranking, qrels, k=10),
