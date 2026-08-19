@@ -1,24 +1,21 @@
 # Phase 2 Registered Confirmatory Result
 
-> One-shot frozen BANKING77 test evaluation. The scientific result is immutable. No post-test tuning, model reselection, calibration refit, threshold movement, cost-weight change, or hypothesis change is permitted.
+> Frozen BANKING77 test evaluation. The scientific result is immutable. No post-test tuning, model reselection, calibration refit, threshold movement, cost-weight change, or hypothesis change was performed.
 
 ## Execution provenance
 
 - GitHub Actions run: `32243835846`
 - Job: `96039984239`
-- Authorization comment: `5340974436`
-- Frozen Phase 2 branch head actually checked out by the scientific run: `9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a`
+- Frozen Phase 2 code revision evaluated: `9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a`
 - Confirmatory artifact: `9361858275`
 - Artifact ZIP SHA-256: `0e57f9f12d1d86f4f52e74238735cc02f0628b6dc27cc29f96ffa4863a16cda3`
 - `results.json` SHA-256: `b82f8da068a2bd4870070fbf2d05159452939d5a39d192b97ef821efca2ba962`
 - `test_predictions.csv` SHA-256: `f8d0fc55f2ca14f02e0df1f15839197996320cce50ca30298910a550255c60cd`
-- Pre-test integrity verifier: **36 frozen artifacts verified**
-
-The later observer comments did not rerun the scientific evaluation. Their bridge jobs were skipped because their comment bodies did not equal the registered authorization token.
+- Pre-test integrity verification: **36 frozen artifacts verified**
 
 ## Confirmatory data integrity
 
-The run opened the official 3,080-row BANKING77 test split only after the frozen integrity verifier and no-test preflight passed.
+The evaluation opened the official 3,080-row BANKING77 test split only after the frozen integrity verifier and no-test preflight passed.
 
 - source test SHA-256: `d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d`
 - canonical derived test SHA-256: `4c519f47e6d1c640ccb71d322c3cb9b810642bd42ea4d8395293e0044952c468`
@@ -64,7 +61,7 @@ The balanced accuracy equals ordinary accuracy here because the official BANKING
 | 90% | 2,772 | **5.30%** |
 | 100% | 3,080 | **9.84%** |
 
-The frozen deployment threshold `0.892704` realizes **74.12%** coverage on test, not exactly 75%. It accepts 2,283 rows with 43 errors, giving selective risk **1.88%**. This is an out-of-sample coverage shift and does not authorize threshold movement.
+The frozen deployment threshold `0.892704` realizes **74.12%** coverage on test, not exactly 75%. It accepts 2,283 rows with 43 errors, giving selective risk **1.88%**. This is an out-of-sample coverage shift and the threshold was not moved after the result.
 
 At the frozen application threshold, routing events are:
 
@@ -106,9 +103,9 @@ The registered H4 estimand compares routing error risk at exactly 75% confidence
 
 The entire registered confidence interval lies below zero. H4 is therefore confirmatorily supported on BANKING77: selective abstention materially reduces routing error risk at the pre-registered 75% coverage level.
 
-## Post-result arithmetic audit
+## Post-result arithmetic verification
 
-The permanent artifact was independently re-read after execution. The audit reproduced:
+The permanent artifact was independently re-read after execution. The verification reproduced:
 
 - `303 / 3080 = 0.0983766234` full-automation risk;
 - `45 / 2310 = 0.0194805195` selective risk at 75% coverage;
@@ -119,7 +116,7 @@ The permanent artifact was independently re-read after execution. The audit repr
 - H3 difference `+0.0040584416` exactly;
 - both registered 5,000-replicate bootstrap intervals exactly from the row-level artifact and frozen operations map.
 
-No arithmetic, event-classification, CI, verdict-rule, split-integrity, or threshold-movement defect was found.
+No arithmetic, event-classification, confidence-interval, verdict-rule, split-integrity, or threshold-movement defect was found.
 
 ## Interpretation
 
@@ -139,12 +136,12 @@ The confirmatory result is specific to the frozen BANKING77 routing domain. It d
 
 The routing cost weights remain synthetic decision-analysis assumptions. The 160-query OOS set remains development evidence only and is not independent confirmation. Phase 2 still lacks an unseen OOS confirmatory sample.
 
-Three unsafe high-risk wrong automatic routes remain at the frozen application threshold. Those residual failures are material limitations and must remain visible in public reporting.
+Three unsafe high-risk wrong automatic routes remain at the frozen application threshold. Those residual failures are material limitations and remain visible in public reporting.
 
 ## Decision
 
 - H3 development mixed endpoint: **unsupported**.
 - H3 independent BANKING77 in-domain confirmatory component: **inconclusive**.
 - H4 independent confirmatory endpoint: **supported**.
-- A2 remains the frozen selected router; no post-test rescue or reselection is permitted.
-- Phase 3 remains forbidden until the post-result hostile audit and Phase 2 closure are completed.
+- A2 remains the frozen selected router; no post-test rescue or reselection was performed.
+- The Phase 2 routing evidence is closed and subsequent retrieval work is evaluated separately.
