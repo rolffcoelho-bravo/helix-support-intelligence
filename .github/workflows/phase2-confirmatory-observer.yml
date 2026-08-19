@@ -1,8 +1,10 @@
 name: Phase 2 Confirmatory Observer
 
 on:
-  issue_comment:
-    types: [created]
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase2-confirmatory-observer.yml"
 
 permissions:
   actions: read
@@ -12,10 +14,6 @@ permissions:
 jobs:
   observe:
     name: Recover one-shot confirmatory evidence
-    if: >-
-      github.event.issue.pull_request &&
-      github.event.issue.number == 6 &&
-      github.event.comment.body == 'OBSERVE_CONFIRMATORY_RUN_ONCE'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -25,9 +23,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?event=issue_comment&per_page=50" > runs.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?event=issue_comment&per_page=100" > runs.json
           jq -r '.workflow_runs[] | [.id, .path, .name, .created_at, .status, (.conclusion // "pending")] | @tsv' runs.json \
-            | head -n 20 > runs-summary.txt
+            | head -n 30 > runs-summary.txt
           RUN_ID=$(jq -r '[.workflow_runs[] | select(.path == ".github/workflows/phase2-routing-confirmatory-approval-bridge.yml")][0].id // empty' runs.json)
           if [ -z "$RUN_ID" ]; then
             echo "run_id=" >> "$GITHUB_OUTPUT"
