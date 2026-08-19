@@ -1,0 +1,97 @@
+{
+  "version": "retrieval-b3-development-v1",
+  "phase": 3,
+  "status": "audited_development_only",
+  "date": "2026-08-19",
+  "model": {
+    "id": "B3",
+    "configuration": "retrieval-b3-cross-encoder-v1",
+    "family": "cross_encoder_reranker",
+    "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "revision": "fbf9045f293a58fa68636213c5e0cb8a2de5d45e",
+    "license": "Apache-2.0",
+    "model_safetensors_sha256": "821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae",
+    "candidate_depth": 50,
+    "batch_size": 32,
+    "max_length": 512,
+    "device": "cpu",
+    "fine_tuning": false
+  },
+  "benchmark": {
+    "version": "retrieval-benchmark-v1",
+    "candidate_documents": 147,
+    "development_queries": 1386,
+    "development_qrels": 2646,
+    "scored_pairs": 69300,
+    "confirmatory_partition_opened": false,
+    "official_banking77_test_accessed": false
+  },
+  "parent": {
+    "id": "B1",
+    "accepted_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "observed_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "model_safetensors_sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad"
+  },
+  "metrics": {
+    "ndcg_at_10": 0.6068420855292853,
+    "mrr_at_10": 0.6462945784374355,
+    "recall_at_20": 0.9148629148629148,
+    "recall_at_50": 0.9880952380952381,
+    "success_at_1": 0.5678210678210678,
+    "citation_eligible_recall_at_20": 0.9098124098124099
+  },
+  "comparison_to_b1": {
+    "ndcg_at_10": -0.04683833650516278,
+    "mrr_at_10": -0.054247692342930476,
+    "recall_at_20": -0.017676767676767735,
+    "recall_at_50": 0.0,
+    "success_at_1": -0.05699855699855705,
+    "citation_eligible_recall_at_20": -0.012987012987012991
+  },
+  "selection": {
+    "verdict": "rejected",
+    "registered_checks": {
+      "material_ndcg_gain": false,
+      "mrr_non_decrease": false,
+      "success1_non_decrease": false,
+      "recall20_non_decrease": false,
+      "policy_recall20_non_decrease": false,
+      "recall50_equal_parent": true
+    },
+    "post_result_rescue_permitted": false
+  },
+  "per_intent_comparison_counts_vs_b1": {
+    "ndcg_at_10": {"wins": 30, "ties": 0, "losses": 47},
+    "mrr_at_10": {"wins": 27, "ties": 1, "losses": 49},
+    "recall_at_20": {"wins": 12, "ties": 34, "losses": 31},
+    "recall_at_50": {"wins": 0, "ties": 77, "losses": 0},
+    "success_at_1": {"wins": 20, "ties": 13, "losses": 44},
+    "citation_eligible_recall_at_20": {"wins": 12, "ties": 41, "losses": 24}
+  },
+  "timing": {
+    "cross_encoder_model_load_seconds": 0.6507664230000216,
+    "reranking_total_seconds": 2336.0056116060005,
+    "reranking_pairs_per_second": 29.666024625838272,
+    "reranking_seconds_per_query": 1.6854297342034634,
+    "interpretation": "descriptive_github_hosted_cpu_only_not_production_sla"
+  },
+  "ranking_sha256": "6986cce96e2fbac1be3fd33a4e24f1049d1faa5411d9fa8bb98486f383f156a5",
+  "evidence": {
+    "workflow_run": 32269695969,
+    "workflow_conclusion": "cancelled_after_evaluator_output_finalized",
+    "artifact_id": 9373122220,
+    "artifact_zip_sha256": "7e52f12e0fd1b5d78be7027f1b96c00dcb019fd1bfec69bc227af1e26387f848",
+    "raw_results_json_sha256": "f9b0851c3abcd3b7a61735b3d6eda45073b85e5c66542ba7d3fb9f62cc1d1548",
+    "raw_report_md_sha256": "aefbbd45a05da7c172f0b482cbe1f27ba3d0dc07af471982f69d0e2ceb6324c3",
+    "run_output_sha256": "d6c7de91719f3a6f41f03d64293eaeecd7dc288e54d4476186ce00a84ab73bfc",
+    "evaluated_merge_sha": "249d5767689c38c86632eb40a46b5aaaa320c208"
+  },
+  "limitations": [
+    "This is development evidence; the 616-query retrieval confirmatory partition remains unopened.",
+    "The benchmark maps natural BANKING77 utterances to a fictional HelixBank policy corpus and is not live enterprise-search traffic.",
+    "The reranker is a fixed off-the-shelf MS-MARCO cross-encoder and was not domain-adapted or fine-tuned.",
+    "GitHub-hosted CPU timing is descriptive only and is not a deployment latency claim.",
+    "The workflow was cancelled after the evaluator had finalized and emitted complete output artifacts; the scientific result is therefore preserved with the workflow-state caveat recorded explicitly."
+  ],
+  "decision": "B3 is rejected as the selected retrieval reference. It fails five of six registered selection checks and materially underperforms B1 on all top-rank aggregate metrics while adding substantial CPU reranking cost. B1 remains the leading Phase 3 retrieval reference. No rescue tuning is authorized."
+}
