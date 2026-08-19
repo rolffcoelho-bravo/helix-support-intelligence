@@ -69,9 +69,9 @@ A3 improves some A2 confusion pairs, including `declined_transfer → failed_tra
 
 The aggregate deterioration dominates the local improvements.
 
-## Audit
+## Integrity review
 
-The hostile checkpoint audit found no execution defect that invalidates the negative result:
+The independent checkpoint review found no execution defect that invalidates the negative result:
 
 - frozen train and validation hashes were revalidated;
 - the confirmatory test was never downloaded;
@@ -81,7 +81,7 @@ The hostile checkpoint audit found no execution defect that invalidates the nega
 - two independent GitHub-hosted CPU replicas produced exactly identical predictions, top-3 sets, selective-risk values, ECE, Brier, and confidence values;
 - the code uses validation only diagnostically because epoch 3 is fixed in advance.
 
-The audit did identify **underfitting as the correct interpretation**. Because the training budget and learning rate were frozen before evaluation, changing them now would be post-result model shopping. A3 is therefore rejected as registered rather than remediated.
+The review identified **underfitting as the correct interpretation**. Because the training budget and learning rate were frozen before evaluation, changing them now would be post-result model shopping. A3 is therefore rejected as registered rather than remediated.
 
 ## Decision
 
@@ -89,6 +89,6 @@ The audit did identify **underfitting as the correct interpretation**. Because t
 
 The A0–A3 model ladder is now complete. Phase 2 remains open because calibration, OOS evaluation, routing cost, the final risk-coverage operating point, model card, route contract tests, and the confirmatory evaluation are still pending.
 
-## Next locked action
+## Next evaluation step
 
-Freeze and execute the **calibration comparison** for A2, with A1 retained as the simpler reference. Calibration-method evaluation must use leakage-safe cross-fitted validation predictions rather than fitting and scoring a calibrator on the same observations. Rejected A3 is not eligible for calibration-based resurrection. The confirmatory test remains sealed.
+Freeze and execute the **calibration comparison** for A2, with A1 retained as the simpler reference. Calibration-method evaluation uses leakage-safe cross-fitted validation predictions rather than fitting and scoring a calibrator on the same observations. Rejected A3 is not eligible for calibration-based resurrection. The confirmatory test remains sealed.
