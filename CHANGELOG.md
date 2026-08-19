@@ -39,7 +39,16 @@ All notable public changes are documented here. The project follows semantic ver
 - Confirmatory in-domain calibration-cost comparison recorded as inconclusive; the development mixed in-domain/OOS cost result remains unsupported and the reused development OOS set is not relabeled as independent confirmation.
 - Independent post-result verification reproducing event counts, routing costs, thresholds, bootstrap intervals, split integrity, and registered verdicts without post-test tuning.
 - Public/private boundary audit strengthened so internal research bibliographies, findings notes, planning language, workstation paths, and private artifacts are rejected from the public repository.
+- Frozen Phase 3 retrieval protocol covering B0 BM25, B1 dense retrieval, B2 hybrid RRF, and B3 hybrid plus cross-encoder reranking, with registered relevance, inference, latency, and complexity-adoption rules.
+- Repository-owned deterministic retrieval implementations and typed model-adapter boundaries completed before opening the frozen retrieval benchmark.
+- Registered R3.2 retrieval execution over 308 queries and 147 eligible HelixBank documents, with raw rankings, per-query metrics, five-pass latency samples, exact model revisions, input hashes, and permanent GitHub Actions provenance.
+- Independent automated reconstruction of aggregate metrics, per-query metrics, bootstrap intervals, latency summaries, diagnostic slices, and the registered complexity-selection decision.
+- Additional manual code/result audit confirming ranking shape, deterministic tie behavior, RRF composition, reranker scope, latency stability, and checksum integrity, with an audit-only intent-cluster bootstrap sensitivity check.
+- Frozen `retrieval-selected-v1` configuration selecting deterministic B0 BM25 after no more-complex candidate satisfied the predeclared adoption rule.
+- FastAPI `POST /v1/search` integration bound to `retrieval-selected-v1`, with strict input validation, pre-ranking evidence eligibility, deterministic response serialization, bounded top-50 retrieval, and a stable non-leaking backend-failure response.
+- R3.3 integration tests covering selected-configuration alignment, archived-document exclusion, zero-score tie breaking, deterministic HTTP output, invalid input, OpenAPI surface, and search-backend failure behavior.
 
 ### Changed
 
 - Public documentation now focuses on technical methods, reproducibility, measured results, limitations, and product boundaries rather than internal project-management or publication-strategy material.
+- Retrieval documentation now distinguishes the evaluated B0-B3 ladder from the selected runtime configuration: B3 improved graded ranking relevance but failed its registered P95 latency budget, so the deployed Phase 3 search path remains deterministic B0 BM25.
