@@ -1,0 +1,50 @@
+name: A4.2 run status probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/a42-status-probe.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Discover registered A4.2 push run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: fec8c5c63978ccae858257e1a078029c2103943c
+        run: |
+          mkdir -p benchmarks/assistance/results
+          for attempt in $(seq 1 12); do
+            payload=$(curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/workflows/phase4-assistance-a42.yml/runs?event=push&per_page=20")
+            match=$(printf '%s' "$payload" | jq -c --arg sha "$TARGET_SHA" \
+              '[.workflow_runs[] | select(.head_sha == $sha)] | first // empty')
+            if test -n "$match"; then
+              printf '%s\n' "$match" | jq '{id,run_number,run_attempt,status,conclusion,head_sha,event,created_at,updated_at,html_url}' \
+                > benchmarks/assistance/results/a42_runtime_probe.json
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Registered A4.2 run was not discovered." >&2
+          exit 1
+      - name: Commit probe result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- benchmarks/assistance/results/a42_runtime_probe.json
+          git commit -m "Record A4.2 workflow run identifier"
+          git push origin HEAD:main
+
+# Temporary operational probe. Removed after run discovery.
