@@ -60,9 +60,7 @@ def evaluate_query(
         return len(relevant & retrieved) / len(relevant)
 
     success_at_1 = float(bool(ranked_relevance) and ranked_relevance[0] > 0)
-    citation_eligible = {
-        document_id for document_id, relevance in qrels.items() if relevance >= 3
-    }
+    citation_eligible = {document_id for document_id, relevance in qrels.items() if relevance >= 3}
     if not citation_eligible:
         raise ValueError("retrieval query must identify a governing grade-3 policy")
     citation_recall = float(bool(citation_eligible & set(ranked_document_ids[:20])))
@@ -90,6 +88,4 @@ def mean_metrics(metrics: Sequence[QueryMetrics]) -> dict[str, float]:
         "success_at_1",
         "citation_eligible_recall_at_20",
     )
-    return {
-        field: sum(getattr(item, field) for item in metrics) / len(metrics) for field in fields
-    }
+    return {field: sum(getattr(item, field) for item in metrics) / len(metrics) for field in fields}
