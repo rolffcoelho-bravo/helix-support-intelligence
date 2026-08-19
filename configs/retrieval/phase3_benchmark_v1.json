@@ -12,13 +12,14 @@
   },
   "selection": {
     "salt": "helix-phase3-retrieval-benchmark-2026-08-19",
-    "development_per_intent": 20,
-    "confirmatory_per_intent": 10,
+    "development_per_intent": 18,
+    "confirmatory_per_intent": 8,
     "intent_count": 77,
     "expected_counts": {
-      "development_queries": 1540,
-      "confirmatory_queries": 770
-    }
+      "development_queries": 1386,
+      "confirmatory_queries": 616
+    },
+    "feasibility_note": "The first pre-scoring materialization attempt showed that the smallest frozen fit_train intent has 27 rows. The balanced allocation was therefore reduced from 20+10 to 18+8 before any retrieval score or hash freeze, leaving at least one unused row per intent."
   },
   "documents": {
     "corpus_version": "helixbank-policy-v1.0.0",
