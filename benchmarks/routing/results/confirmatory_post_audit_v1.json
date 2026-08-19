@@ -1,0 +1,99 @@
+{
+  "version": "phase2-confirmatory-post-audit-v1",
+  "phase": 2,
+  "status": "passed",
+  "source_result": "benchmarks/routing/results/confirmatory_test_v1.json",
+  "source_workflow_run_id": 32243835846,
+  "source_artifact_id": 9361858275,
+  "audit": {
+    "one_shot_execution": {
+      "passed": true,
+      "scientific_run_count": 1,
+      "original_bridge_run": 32243835846,
+      "later_bridge_runs": [32244378353, 32244567993],
+      "later_bridge_conclusions": ["skipped", "skipped"],
+      "reason": "Later observer comments did not match the registered OPEN_FROZEN_TEST_ONCE authorization token."
+    },
+    "pretest_freeze": {
+      "passed": true,
+      "artifacts_verified": 36,
+      "frozen_branch_head_at_execution": "9f69bfc8d8e7f5520bee49cb6e9c8770fa20595a",
+      "test_opened_before_preflight": false
+    },
+    "data_integrity": {
+      "passed": true,
+      "test_rows": 3080,
+      "unique_sample_ids": 3080,
+      "intent_count": 77,
+      "rows_per_intent_min": 40,
+      "rows_per_intent_max": 40,
+      "source_test_sha256_matches_contract": true,
+      "derived_test_sha256_matches_contract": true
+    },
+    "selection_integrity": {
+      "passed": true,
+      "model_changed_after_test": false,
+      "calibration_changed_after_test": false,
+      "temperature_refit_on_test": false,
+      "threshold_changed_after_test": false,
+      "cost_matrix_changed_after_test": false,
+      "hypothesis_changed_after_test": false,
+      "oos_reused_as_independent_confirmatory_evidence": false
+    },
+    "classification_arithmetic": {
+      "passed": true,
+      "errors_recomputed": 303,
+      "accuracy_recomputed": 0.9016233766233767,
+      "reported_accuracy": 0.9016233766233767
+    },
+    "frozen_threshold_arithmetic": {
+      "passed": true,
+      "accepted_recomputed": 2283,
+      "errors_recomputed": 43,
+      "coverage_recomputed": 0.7412337662337662,
+      "selective_risk_recomputed": 0.018834866403854577
+    },
+    "H3_arithmetic": {
+      "passed": true,
+      "raw_event_counts_reproduced": true,
+      "calibrated_event_counts_reproduced": true,
+      "raw_mean_cost_recomputed": 0.3112012987012987,
+      "calibrated_mean_cost_recomputed": 0.31525974025974024,
+      "difference_recomputed": 0.004058441558441558,
+      "bootstrap_ci_recomputed": [-0.025974025974025976, 0.030036525974025913],
+      "verdict_rule_recomputed": "inconclusive",
+      "full_mixed_H3_confirmed": false
+    },
+    "H4_arithmetic": {
+      "passed": true,
+      "full_errors_recomputed": 303,
+      "accepted_at_75pct_recomputed": 2310,
+      "accepted_errors_recomputed": 45,
+      "full_risk_recomputed": 0.09837662337662338,
+      "selective_risk_recomputed": 0.01948051948051948,
+      "difference_recomputed": -0.07889610389610391,
+      "bootstrap_ci_recomputed": [-0.08777326839826838, -0.06958874458874459],
+      "verdict_rule_recomputed": "supported"
+    },
+    "residual_risk": {
+      "unsafe_high_risk_auto_routes_at_frozen_threshold": 3,
+      "raw_comparator_unsafe_high_risk_auto_routes": 6,
+      "must_remain_public_limitation": true
+    },
+    "artifact_integrity": {
+      "artifact_zip_sha256": "0e57f9f12d1d86f4f52e74238735cc02f0628b6dc27cc29f96ffa4863a16cda3",
+      "results_json_sha256": "b82f8da068a2bd4870070fbf2d05159452939d5a39d192b97ef821efca2ba962",
+      "report_md_sha256": "643a96188b343fd298a00d9f535348c7d11b3b0e94d40fc7e67e944973b892fd",
+      "predictions_csv_sha256": "f8d0fc55f2ca14f02e0df1f15839197996320cce50ca30298910a550255c60cd"
+    },
+    "public_claim_discipline": {
+      "passed": true,
+      "H3_claim": "Development mixed endpoint unsupported; independent in-domain component inconclusive.",
+      "H4_claim": "Supported on independent BANKING77 test at registered 75% confidence-ranked coverage.",
+      "production_claim_allowed": false,
+      "real_bank_economics_claim_allowed": false,
+      "independent_oos_claim_allowed": false
+    }
+  },
+  "final_verdict": "The registered one-shot confirmatory result is internally consistent and methodologically admissible under the frozen protocol. No post-test scientific repair is required."
+}
