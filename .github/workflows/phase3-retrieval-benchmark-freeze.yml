@@ -50,6 +50,7 @@ jobs:
 
       - name: Materialize benchmark hashes without confirmatory query export
         run: |
+          set -o pipefail
           mkdir -p artifacts/phase3-retrieval/benchmark-freeze
           uv run python scripts/materialize_retrieval_benchmark.py \
             --output artifacts/phase3-retrieval/benchmark-freeze \
