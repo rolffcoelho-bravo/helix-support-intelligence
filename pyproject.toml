@@ -43,7 +43,7 @@ helix = "helix_support_intelligence.__main__:main"
 [dependency-groups]
 dev = [
   "httpx>=0.28,<1",
-  "mypy>=1.18,<2",
+  "mypy>=1.18,<3",
   "pytest>=8.4,<10",
   "ruff>=0.14,<1",
 ]
