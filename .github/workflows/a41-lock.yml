@@ -7,6 +7,12 @@ on:
     paths:
       - benchmarks/assistance/runtime_a41.py
       - .github/workflows/a41-lock.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - benchmarks/assistance/runtime_a41.py
+      - .github/workflows/a41-lock.yml
 
 permissions:
   contents: write
