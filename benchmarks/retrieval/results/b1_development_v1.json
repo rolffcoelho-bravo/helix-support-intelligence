@@ -42,41 +42,28 @@
     "citation_eligible_recall_at_20": 0.27056277056277056
   },
   "deterministic_evidence": {
-    "ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
-    "successful_independent_runs": 2,
-    "ranking_hash_reproduced_exactly": true,
-    "aggregate_metrics_reproduced_exactly": true,
-    "per_intent_metrics_reproduced_exactly": true,
-    "similarity_diagnostics_reproduced_exactly": true,
+    "accepted_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "accepted_run": 32257841759,
+    "replication_run": 32256394681,
+    "accepted_and_replication_ranking_hash_match": true,
+    "accepted_and_replication_aggregate_metrics_match": true,
+    "accepted_and_replication_per_intent_metrics_match": true,
+    "later_standalone_run": 32266247568,
+    "later_standalone_job": 96113632455,
+    "later_standalone_ranking_hash_match": true,
+    "later_standalone_aggregate_metrics_match": true,
+    "universal_cross_runner_bitwise_full_ranking_reproducibility_claim": false,
     "timing_expected_to_vary_across_ci_runs": true
   },
-  "accepted_run": {
-    "workflow_run": 32257841759,
-    "evaluated_merge_sha": "0ee2486dfb02df1e73e5f4cd67b85fde5d836eac",
-    "artifact_id": 9367047605,
-    "artifact_zip_sha256": "9f66f6e366151e0f39e559e8ec16bb77f1a2f9e8bd6aa143d832800ef82675e0",
-    "results_json_sha256": "611f091095dd50d716c2cbc8f391a49c3dbc59fb83b93df29f144fc284e57e0e",
-    "report_md_sha256": "9b1453f4c2ae3fbec9182001fac648b1bc0fe7cbad92b761746054f2e0dfaed5",
-    "timing_seconds": {
-      "model_load": 1.6358797930000009,
-      "document_encoding": 8.659601244999998,
-      "query_encoding": 20.94828054,
-      "similarity_and_ranking": 0.12413023300000248
-    }
-  },
-  "replication_run": {
-    "workflow_run": 32256394681,
-    "evaluated_merge_sha": "7d2b842d268b4d18492b2359b318fb84f0daf1ce",
-    "artifact_id": 9366499179,
-    "artifact_zip_sha256": "1083c4b9e2a5e2560216040f0f0bd6ef897711bbe07aa4bcabcb14656435f9f5",
-    "results_json_sha256": "71a4e0839650937773d3fc85c7aa8a7ef5faa4eebc414482fea5027eb854a472",
-    "report_md_sha256": "9b1453f4c2ae3fbec9182001fac648b1bc0fe7cbad92b761746054f2e0dfaed5",
-    "timing_seconds": {
-      "model_load": 0.8302130340000033,
-      "document_encoding": 10.299932698000006,
-      "query_encoding": 24.838334054,
-      "similarity_and_ranking": 0.11627115899999296
-    }
+  "later_reproducibility_audit": {
+    "context": "Phase 3 B2 strict parent reconstruction",
+    "workflow_run": 32266247648,
+    "job_id": 96112253707,
+    "expected_B1_full_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "observed_B1_full_ranking_sha256": "4161dc01a108f067678ae116ce11a59f21704d81ea7f6933c545a6cabb78964d",
+    "B2_fusion_blocked": true,
+    "B1_metrics_emitted_in_that_reconstruction": false,
+    "interpretation": "Multiple standalone B1 runs reproduce the accepted ranking and metrics exactly, including a fresh run after this event. However, one nested reconstruction produced a different complete-ranking hash, so the earlier universal bitwise cross-run wording is withdrawn."
   },
   "per_intent_comparison_counts": {
     "ndcg_at_10": {"wins": 74, "ties": 0, "losses": 3},
@@ -114,8 +101,9 @@
     "This is development evidence; the sealed retrieval confirmatory partition remains unopened.",
     "The benchmark maps BANKING77 intent labels deterministically to a fictional policy corpus and does not estimate production search traffic.",
     "GitHub-hosted CPU timing is descriptive only and varies materially across runners.",
+    "Bitwise identity of the complete floating-point ranking is not claimed across every heterogeneous hosted CPU execution context; one later B2 parent reconstruction produced a different full-ranking hash and failed closed.",
     "Dense retrieval remains weak on several closely related card-lifecycle intents, especially physical-card ordering, arrival, linking, and acceptance.",
-    "B1 is not uniformly superior to BM25 at the intent level, leaving a measurable complementarity target for hybrid fusion."
+    "B1 is not uniformly superior to BM25 at the intent level."
   ],
-  "decision": "B1 is accepted as the frozen dense development reference. It materially exceeds B0 on every aggregate relevance metric while preserving exact ranking and metric reproducibility across two independent CPU runs. The next evaluation step is the registered B2 reciprocal-rank fusion of B0 and B1 on the same frozen development benchmark."
+  "decision": "B1 remains the leading frozen dense development reference because it materially exceeds B0 on all six aggregate relevance metrics and its standalone evaluations repeatedly reproduce the accepted metrics and ranking hash. The stronger earlier claim of universal bitwise full-ranking reproducibility across heterogeneous hosted CPU execution contexts is withdrawn after a later B2 parent-reconstruction counterexample."
 }
