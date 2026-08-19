@@ -79,6 +79,7 @@ jobs:
             benchmarks/assistance/verify_a42.py \
             benchmarks/assistance/run_verify_a42.py \
             benchmarks/assistance/run_verify_a42.py.lock \
+            benchmarks/assistance/finalize_a42_evidence.py \
             scripts/preflight_phase4_a42.py \
             .github/workflows/phase4-assistance-a42.yml \
             > artifacts/phase4-assistance/a42/registered_inputs.sha256
@@ -94,6 +95,11 @@ jobs:
       - name: Independently reconstruct and audit A4.2 evidence
         run: >-
           uv run --locked benchmarks/assistance/run_verify_a42.py
+          --output-dir artifacts/phase4-assistance/a42
+
+      - name: Finalize non-scientific evidence labels
+        run: >-
+          python3 benchmarks/assistance/finalize_a42_evidence.py
           --output-dir artifacts/phase4-assistance/a42
 
       - name: Freeze artifact checksums
