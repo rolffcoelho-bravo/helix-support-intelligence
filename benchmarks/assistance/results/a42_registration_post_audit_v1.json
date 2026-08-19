@@ -1,0 +1,140 @@
+{
+  "audit_id": "phase4-assistance-a4.2-registration-post-audit-v1",
+  "execution_id": "phase4-assistance-a4.2-development-v1",
+  "protocol_id": "phase4-assistance-a4.0-v1",
+  "binding_id": "phase4-assistance-a4.1-v1",
+  "status": "PASSED_PRE_EXECUTION_NO_RESULTS",
+  "tested_head_sha": "9ea63e39925d15fc865f05dcdbe74afc051ee06f",
+  "github": {
+    "pull_request": 16,
+    "ci_run_id": 32314875083,
+    "ci_job_id": 96264970064,
+    "ci_conclusion": "success"
+  },
+  "quality_gate": {
+    "ruff_check": "PASSED",
+    "ruff_format_check": {
+      "status": "PASSED",
+      "files_formatted": 108
+    },
+    "mypy": {
+      "status": "PASSED",
+      "source_files": 47
+    },
+    "pytest": {
+      "status": "PASSED",
+      "passed": 131,
+      "failed": 0,
+      "warnings": 1
+    },
+    "phase1_data_contracts": "PASSED",
+    "phase3_retrieval_preflight": "PASSED",
+    "phase4_a41_preflight": "PASSED",
+    "phase4_a42_preflight": {
+      "status": "PASSED",
+      "development_intents": 60,
+      "development_queries": 240,
+      "confirmatory_intents_opened": 0,
+      "confirmatory_queries_opened": 0,
+      "adversarial_development_counts": {
+        "direct_injection": 60,
+        "citation_spoof": 60,
+        "indirect_injection": 16,
+        "archived_distractor": 7
+      },
+      "generator_calls_made": 0,
+      "nli_calls_made": 0,
+      "performance_scores_computed": 0
+    },
+    "publication_audit": "PASSED"
+  },
+  "manual_code_and_scope_audit": {
+    "expected_changed_files_only": true,
+    "changed_file_count_before_audit_artifacts": 11,
+    "phase2_scientific_files_modified": false,
+    "phase3_scientific_files_modified": false,
+    "r32_evidence_modified": false,
+    "retrieval_selected_v1_modified": false,
+    "a40_protocol_modified": false,
+    "a41_binding_modified": false,
+    "helixbank_records_modified": false,
+    "temporary_formatter_workflow_present": false,
+    "workflow_scores_on_pull_request": false,
+    "workflow_trigger_is_main_path_change_only": true,
+    "provider_credential_checked_before_model_runtime": true,
+    "exact_a41_dependency_lock_reused": true,
+    "scientific_inputs_hashed_before_first_provider_call": true,
+    "scientific_inputs_reverified_after_execution": true,
+    "independent_result_reconstruction_present": true,
+    "confirmatory_queries_in_execution_surface": 0,
+    "development_performance_results_present": false,
+    "confirmatory_performance_results_present": false,
+    "verdict": "PASSED"
+  },
+  "registered_execution_surface": {
+    "quality_records_expected": 720,
+    "adversarial_records_expected": 429,
+    "repeatability_records_expected": 270,
+    "timed_latency_records_expected": 540,
+    "repeatability_cases": 30,
+    "repeatability_repetitions": 3,
+    "latency_cases": 60,
+    "latency_warmups_per_candidate": 10,
+    "latency_timed_passes": 3,
+    "bootstrap_replicates": 5000,
+    "bootstrap_seed": 20260819,
+    "provider_automatic_retries": 0,
+    "runtime_verifier_batch_size": 8,
+    "evaluation_verifier_batch_size": 8
+  },
+  "pre_score_defects_caught_and_repaired": [
+    {
+      "category": "NLI batching",
+      "description": "The first execution implementation evaluated NLI sentence pairs one at a time even though A4.1 froze batch_size=8.",
+      "repair": "Added a batched ONNX adapter that executes sentence pairs in groups of up to eight, with a final partial batch allowed.",
+      "performance_results_seen_before_repair": false,
+      "scientific_binding_changed": false
+    },
+    {
+      "category": "G0 citation placement",
+      "description": "The first deterministic G0 rendering placed inline citations after terminal punctuation, causing the frozen sentence segmenter to separate a factual claim from its citations.",
+      "repair": "Moved the same citation set before the terminal period so the claim and its citations remain one segmented sentence.",
+      "performance_results_seen_before_repair": false,
+      "scientific_binding_changed": false
+    },
+    {
+      "category": "static code hygiene",
+      "description": "The first PR quality gate found unused imports/directives, import ordering, formatting differences, and three over-length literals in new A4.2 code.",
+      "repair": "Applied canonical Ruff fixes/formatting and split the three long literals without changing evaluation behavior.",
+      "performance_results_seen_before_repair": false,
+      "scientific_binding_changed": false
+    },
+    {
+      "category": "cost reporting scope",
+      "description": "The verifier initially labeled a subtotal from quality, adversarial, repeatability, and timed-latency records as the cost of all A4.2 calls even though compatibility and latency-warmup calls were not included.",
+      "repair": "Added a pre-registered evidence finalizer that renames the subtotal to its exact scope and appends the exclusion note before checksums and publication.",
+      "performance_results_seen_before_repair": false,
+      "scientific_binding_changed": false,
+      "adoption_cost_rule_changed": false
+    }
+  ],
+  "operational_interpretations_frozen_before_scoring": [
+    "Citation completeness is applicable only to registered ANSWER_WITH_EVIDENCE cases; correct clarification/escalation control responses use null completeness.",
+    "Citation aggregate precision/completeness are micro rates and citation F1 is their harmonic mean.",
+    "A4.1 NLI batch_size=8 is executed as batches of up to eight sentence pairs per ONNX call.",
+    "Latency quantiles use the linear empirical convention over 180 timed observations per candidate.",
+    "The adoption cost ceiling uses maximum estimated provider cost among the 240 quality-pass requests for each candidate.",
+    "A4.2 adversarial scoring is development-intent only; the full 77-intent adversarial surface is deferred rather than opening confirmatory intents."
+  ],
+  "boundaries": [
+    "This audit is pre-execution registration evidence, not model-performance evidence.",
+    "No OpenAI generation request or NLI inference request was made by the A4.2 preflight or PR CI.",
+    "The first provider and NLI compatibility probe occurs only after the audited workflow is merged to main.",
+    "If provider credentials or pinned model runtimes are unavailable, the execution must fail before the first development performance score is opened.",
+    "The 68-query confirmatory assistance partition remains unopened."
+  ],
+  "generator_calls_made": 0,
+  "nli_calls_made": 0,
+  "assistance_performance_scores_computed": 0,
+  "checkpoint_verdict": "A4.2_REGISTERED_READY_FOR_ONE_SHOT_DEVELOPMENT_EXECUTION_AFTER_FINAL_ARTIFACT_CI"
+}

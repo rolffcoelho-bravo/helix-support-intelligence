@@ -1,0 +1,132 @@
+name: Phase 4 Assistance A4.2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase4-assistance-a42.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase4-assistance-a42-development-v1
+  cancel-in-progress: false
+
+jobs:
+  registered-development-execution:
+    name: Registered G0-G2 development execution and audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      - name: Check out immutable execution commit
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install repository quality environment
+        run: uv sync --locked --group dev
+
+      - name: Verify registered pre-execution state
+        run: uv run python scripts/preflight_phase4_a42.py
+
+      - name: Require provider credential before any model runtime
+        run: |
+          if test -z "$OPENAI_API_KEY"; then
+            echo "OPENAI_API_KEY repository secret is required for A4.2." >&2
+            exit 1
+          fi
+
+      - name: Reuse the exact frozen A4.1 benchmark dependency lock
+        run: |
+          cp benchmarks/assistance/runtime_a41.py.lock benchmarks/assistance/run_a42.py.lock
+          cp benchmarks/assistance/runtime_a41.py.lock benchmarks/assistance/run_verify_a42.py.lock
+          cmp benchmarks/assistance/runtime_a41.py.lock benchmarks/assistance/run_a42.py.lock
+          cmp benchmarks/assistance/runtime_a41.py.lock benchmarks/assistance/run_verify_a42.py.lock
+
+      - name: Freeze registered scientific inputs before first provider call
+        run: |
+          mkdir -p artifacts/phase4-assistance/a42
+          sha256sum \
+            configs/data/helixbank_policy_v1.json \
+            configs/models/assistance_protocol_v1.json \
+            configs/models/assistance_binding_a41_v1.json \
+            configs/models/assistance_a41_subsets_v1.json \
+            configs/models/assistance_execution_a42_v1.json \
+            prompts/assistance/system_v1.txt \
+            prompts/assistance/request_template_v1.txt \
+            data/contracts/phase4/assistance_candidate_output.schema.json \
+            data/contracts/phase4/assistance_evaluation_record.schema.json \
+            src/helix_support_intelligence/data/helixbank.py \
+            benchmarks/assistance/runtime_a41.py \
+            benchmarks/assistance/runtime_a41.py.lock \
+            benchmarks/assistance/evaluate_a42.py \
+            benchmarks/assistance/nli_batching_a42.py \
+            benchmarks/assistance/run_a42.py \
+            benchmarks/assistance/run_a42.py.lock \
+            benchmarks/assistance/verify_a42.py \
+            benchmarks/assistance/run_verify_a42.py \
+            benchmarks/assistance/run_verify_a42.py.lock \
+            benchmarks/assistance/finalize_a42_evidence.py \
+            scripts/preflight_phase4_a42.py \
+            .github/workflows/phase4-assistance-a42.yml \
+            > artifacts/phase4-assistance/a42/registered_inputs.sha256
+
+      - name: Execute registered A4.2 development benchmark
+        run: >-
+          uv run --locked benchmarks/assistance/run_a42.py
+          --output-dir artifacts/phase4-assistance/a42
+
+      - name: Reverify frozen scientific inputs after execution
+        run: sha256sum -c artifacts/phase4-assistance/a42/registered_inputs.sha256
+
+      - name: Independently reconstruct and audit A4.2 evidence
+        run: >-
+          uv run --locked benchmarks/assistance/run_verify_a42.py
+          --output-dir artifacts/phase4-assistance/a42
+
+      - name: Finalize non-scientific evidence labels
+        run: >-
+          python3 benchmarks/assistance/finalize_a42_evidence.py
+          --output-dir artifacts/phase4-assistance/a42
+
+      - name: Freeze artifact checksums
+        run: |
+          find artifacts/phase4-assistance/a42 -maxdepth 1 -type f \
+            ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > artifacts/phase4-assistance/a42/checksums.sha256
+          sha256sum -c artifacts/phase4-assistance/a42/checksums.sha256
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          if test -f artifacts/phase4-assistance/a42/report.md; then
+            cat artifacts/phase4-assistance/a42/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f artifacts/phase4-assistance/a42/post_audit.md; then
+            printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+            cat artifacts/phase4-assistance/a42/post_audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload immutable A4.2 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a42-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: artifacts/phase4-assistance/a42/
+          if-no-files-found: warn
+          retention-days: 90
