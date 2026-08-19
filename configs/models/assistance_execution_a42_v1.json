@@ -26,8 +26,12 @@
   },
   "operational_interpretations_frozen_before_scoring": {
     "citation_completeness_applicability": "Only queries whose registered expected decision is ANSWER_WITH_EVIDENCE have applicable citation completeness. Correct clarification and escalation control responses are citation-free and receive citation_completeness=null.",
+    "citation_aggregate_rule": "Report citation precision as micro valid-citations/all-citations, citation completeness as micro recovered-gold/gold over applicable ANSWER_WITH_EVIDENCE queries, and citation F1 as the harmonic mean of those two aggregate rates.",
     "sentence_segmentation": "Split on whitespace following terminal punctuation . ! ? after trimming; retain inline citations with their sentence.",
     "factual_sentence_rule": "A segmented sentence is factual if the candidate decision is ANSWER_WITH_EVIDENCE, or the sentence contains an inline document citation, or it contains the token HelixBank. Otherwise clarification/escalation control language is treated as non-factual.",
+    "nli_batching": "The A4.1 batch_size=8 is executed as batches of up to eight sentence-pairs per ONNX call; a final partial batch is allowed.",
+    "latency_quantile_rule": "Use the linear empirical quantile convention over the 180 timed latency observations per candidate.",
+    "cost_budget_check": "Use the maximum estimated provider cost among the 240 registered quality-pass requests for each candidate; diagnostic and adversarial call costs are reported separately and do not redefine the adoption ceiling.",
     "G0_conflict_detection": "Detect the literal controlled conflict fixture sentence in candidate-visible evidence text; do not inspect hidden conflict_fixture labels.",
     "G0_ambiguity_detection": "Detect the literal phrase 'not specific enough' in candidate-visible query text.",
     "G0_missing_evidence_detection": "Empty direct-evidence pack maps to ESCALATE_LOW_CONFIDENCE.",
