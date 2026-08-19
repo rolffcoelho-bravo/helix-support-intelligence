@@ -1,4 +1,4 @@
-"""Materialize and hash the frozen Phase 3 natural-language retrieval benchmark."""
+"""Materialize and verify the frozen Phase 3 natural-language retrieval benchmark."""
 
 from __future__ import annotations
 
@@ -7,7 +7,9 @@ import hashlib
 import json
 import tempfile
 import urllib.request
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any, cast
 
 from helix_support_intelligence.data.banking77 import (
     Banking77Spec,
@@ -38,6 +40,57 @@ def _download_train_only(url: str, destination: Path) -> None:
     request = urllib.request.Request(url, headers={"User-Agent": "helix-support-intelligence/0.1"})
     with urllib.request.urlopen(request, timeout=60) as response:
         destination.write_bytes(response.read())
+
+
+def _mapping(mapping: Mapping[str, Any], key: str) -> Mapping[str, Any]:
+    value = mapping.get(key)
+    if not isinstance(value, dict):
+        raise TypeError(f"{key} must be an object")
+    return cast(Mapping[str, Any], value)
+
+
+def verify_frozen_manifest(manifest: Mapping[str, object], retrieval_config: Path) -> None:
+    """Fail when regenerated benchmark bytes differ from the registered freeze."""
+
+    payload = cast(dict[str, Any], json.loads(retrieval_config.read_text(encoding="utf-8")))
+    if payload.get("status") != "frozen_before_retrieval_scoring":
+        return
+
+    selection = _mapping(payload, "selection")
+    expected_counts = _mapping(selection, "expected_counts")
+    frozen = _mapping(payload, "hash_manifest")
+    hashes = manifest.get("sha256")
+    if not isinstance(hashes, dict):
+        raise TypeError("generated retrieval manifest sha256 must be an object")
+
+    count_pairs = {
+        "candidate_documents": "candidate_documents",
+        "development_queries": "development_queries",
+        "confirmatory_queries": "confirmatory_queries",
+        "development_qrels": "development_qrels",
+        "confirmatory_qrels": "confirmatory_qrels",
+    }
+    for observed_key, expected_key in count_pairs.items():
+        if manifest.get(observed_key) != expected_counts.get(expected_key):
+            raise ValueError(f"frozen retrieval count drifted: {observed_key}")
+
+    hash_pairs = {
+        "candidate_documents": "candidate_documents_sha256",
+        "development_queries": "development_queries_sha256",
+        "confirmatory_queries": "confirmatory_queries_sha256",
+        "development_qrels": "development_qrels_sha256",
+        "confirmatory_qrels": "confirmatory_qrels_sha256",
+    }
+    for observed_key, expected_key in hash_pairs.items():
+        if hashes.get(observed_key) != frozen.get(expected_key):
+            raise ValueError(f"frozen retrieval hash drifted: {observed_key}")
+
+    if manifest.get("source_train_sha256") != frozen.get("source_train_sha256"):
+        raise ValueError("frozen retrieval source-train hash drifted")
+    if manifest.get("fit_train_sha256") != frozen.get("fit_train_sha256"):
+        raise ValueError("frozen retrieval fit-train hash drifted")
+    if manifest.get("official_test_accessed") is not False:
+        raise ValueError("Phase 3 development must not access official BANKING77 test")
 
 
 def materialize(
@@ -92,6 +145,7 @@ def materialize(
     manifest["source_train_sha256"] = banking.train_sha256
     manifest["fit_train_sha256"] = fit_train_hash
     manifest["official_test_accessed"] = False
+    verify_frozen_manifest(manifest, retrieval_config)
 
     if output_dir is not None:
         output_dir.mkdir(parents=True, exist_ok=True)
