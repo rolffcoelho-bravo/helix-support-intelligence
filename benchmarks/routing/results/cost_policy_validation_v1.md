@@ -68,6 +68,6 @@ The frozen development configuration therefore uses **temperature `0.457974` and
 
 The official BANKING77 test remains sealed. These results do not populate the README release benchmark table and do not constitute the confirmatory H3/H4 verdict.
 
-## Next locked action
+## Next evaluation step
 
-Create the router model card and implement `/v1/tickets/route` contract tests against `routing-selected-v1`. The confirmatory test must remain unopened until those implementation contracts are closed.
+Create the router model card and implement `/v1/tickets/route` contract tests against `routing-selected-v1`. The confirmatory test remains separate until those implementation contracts are complete.
