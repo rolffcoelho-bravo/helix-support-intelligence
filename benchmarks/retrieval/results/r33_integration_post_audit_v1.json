@@ -1,0 +1,97 @@
+{
+  "audit_id": "phase3-retrieval-r3.3-integration-post-audit-v1",
+  "integration_id": "phase3-retrieval-r3.3-v1",
+  "retrieval_version": "retrieval-selected-v1",
+  "status": "PASSED",
+  "tested_head_sha": "fc623b639ef347b5ee8fcb13eefa9beb2418dddc",
+  "github": {
+    "pull_request": 13,
+    "ci_run_id": 32306778332,
+    "ci_job_id": 96241129523,
+    "ci_conclusion": "success"
+  },
+  "quality_gate": {
+    "ruff_check": "PASSED",
+    "ruff_format_check": "PASSED",
+    "mypy": "PASSED",
+    "pytest": {
+      "status": "PASSED",
+      "passed": 108,
+      "failed": 0
+    },
+    "phase1_data_contracts": "PASSED",
+    "phase3_retrieval_preflight": {
+      "status": "PASSED",
+      "eligible_documents": 147,
+      "frozen_query_scores_computed_by_preflight": 0,
+      "retrieval_results_generated_by_preflight": false
+    },
+    "publication_audit": "PASSED"
+  },
+  "integration_reconstruction": {
+    "registered_queries_replayed_through_http": 308,
+    "results_per_query": 50,
+    "frozen_ranked_tuples_compared": 15400,
+    "tuple_fields": [
+      "document_id",
+      "rank",
+      "score"
+    ],
+    "reference": "benchmarks/retrieval/results/r32/raw/rankings.jsonl B0 evidence",
+    "verdict": "EXACT_MATCH_ALL_REGISTERED_QUERIES"
+  },
+  "manual_code_result_audit": {
+    "selected_candidate_bound_to_runtime": "B0",
+    "bm25_k1": 1.2,
+    "bm25_b": 0.75,
+    "maximum_results": 50,
+    "tie_break": "document_id ascending",
+    "eligibility_applied_before_ranking": true,
+    "expected_eligible_documents": 147,
+    "benchmark_metadata_accepted_by_request": false,
+    "archived_documents_rankable": false,
+    "identical_request_serialization_deterministic": true,
+    "known_backend_failure_status": 503,
+    "known_backend_failure_code": "SEARCH_UNAVAILABLE",
+    "internal_backend_exception_text_returned": false,
+    "phase2_scientific_files_modified": false,
+    "r32_scientific_evidence_modified": false,
+    "retrieval_selected_v1_modified": false,
+    "post_result_retrieval_retuning": false,
+    "runtime_model_substitution": false,
+    "verdict": "PASSED"
+  },
+  "defects_caught_and_repaired_before_closure": [
+    {
+      "category": "stale regression test",
+      "description": "The Phase 1 registry regression test incorrectly required the public experiment registry to remain permanently empty after validated R3.2 evidence was intentionally published.",
+      "repair": "The invariant now requires every public experiment entry to carry a validated status while preserving the private-public boundary rule.",
+      "scientific_behavior_changed": false
+    },
+    {
+      "category": "test parser defect",
+      "description": "The replacement registry test initially failed to recognize YAML list entries prefixed with '- '.",
+      "repair": "The parser now removes the list prefix before matching experiment_id entries.",
+      "scientific_behavior_changed": false
+    },
+    {
+      "category": "formatting",
+      "description": "The strengthened all-query replay assertion initially failed the repository Ruff format check.",
+      "repair": "Applied the exact formatter-prescribed layout without weakening or changing the replay criterion.",
+      "scientific_behavior_changed": false
+    }
+  ],
+  "non_blocking_warnings": [
+    "The current FastAPI/Starlette TestClient stack emits a deprecation warning that httpx-backed starlette.testclient usage is deprecated in favor of a future test-client dependency. The locked stack passes all tests; this is a dependency-maintenance item, not an R3.3 functional failure.",
+    "GitHub Actions reports Node 20 deprecation compatibility warnings for upstream actions that are currently forced to Node 24. These do not affect the R3.3 application result."
+  ],
+  "boundaries": [
+    "The search corpus remains fictional and frozen at the Phase 3 evaluation date 2026-08-19.",
+    "R3.3 integrates retrieval only; it does not implement generation, answerability policy, routing integration, authentication, rate limiting, or production observability.",
+    "Untrusted-content fixtures are returned as evidence data by search and must not be interpreted as executable instructions by later assistance components.",
+    "The R3.2 CPU latency evidence is benchmark-environment evidence and is not relabeled as HTTP production latency."
+  ],
+  "rerun_r32_required": false,
+  "r33_integration_rework_required": false,
+  "checkpoint_verdict": "R3.3_READY_TO_CLOSE_AFTER_FINAL_ARTIFACT_CI"
+}
