@@ -78,7 +78,7 @@ These weaknesses are not repaired by tuning B0. They become the registered lexic
 
 The harder natural-language benchmark behaves as intended: it does **not** make lexical retrieval look artificially excellent. B0 retrieves at least one relevant item reasonably often at deeper ranks (`Recall@50 ≈ 0.869`), but its first-result usefulness (`Success@1 ≈ 0.338`) and governing-policy recall at the citation-relevant depth (`≈ 0.652`) leave substantial headroom.
 
-This is useful evidence for the blueprint hypothesis that semantic retrieval and hybridization may add value. It is not evidence that H1 is supported; H1 requires the registered B2-vs-B0/B1 confirmatory comparison later in Phase 3.
+This is useful evidence for the registered scientific question of whether semantic retrieval and hybridization add value. It is not evidence that H1 is supported; H1 requires the registered B2-vs-B0/B1 confirmatory comparison later in Phase 3.
 
 ## Audit findings corrected during this checkpoint
 
@@ -89,4 +89,4 @@ This is useful evidence for the blueprint hypothesis that semantic retrieval and
 
 ## Decision
 
-B0 is accepted and frozen as the Phase 3 lexical development reference. The next blueprint action is to register the exact B1 dense bi-encoder model, immutable revision, licence, query/document formatting, normalization, and dependency/hardware contract **before B1 receives any development score**.
+B0 is accepted and frozen as the Phase 3 lexical development reference. The next evaluation step is to register the exact B1 dense bi-encoder model, immutable revision, licence, query/document formatting, normalization, and dependency/hardware contract **before B1 receives any development score**.
