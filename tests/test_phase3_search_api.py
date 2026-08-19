@@ -173,30 +173,37 @@ def test_runtime_constants_match_frozen_selected_and_integration_configuration()
     assert integration["failure_contract"]["known_backend_failure_status"] == 503
 
 
-def test_http_ranking_reproduces_frozen_r32_b0_evidence() -> None:
+def test_http_rankings_reproduce_all_frozen_r32_b0_evidence() -> None:
     bundle = generate_bundle()
-    query = next(row for row in bundle.queries if row["query_id"] == "Q-001-1")
-    expected_results: list[dict[str, Any]] | None = None
+    queries_by_id = {str(row["query_id"]): str(row["text"]) for row in bundle.queries}
+    expected_by_query: dict[str, list[dict[str, Any]]] = {}
     rankings_path = ROOT / "benchmarks/retrieval/results/r32/raw/rankings.jsonl"
     with rankings_path.open("r", encoding="utf-8") as handle:
         for line in handle:
             row = json.loads(line)
-            if row["candidate"] == "B0" and row["query_id"] == "Q-001-1":
-                expected_results = row["results"]
-                break
+            if row["candidate"] == "B0":
+                expected_by_query[str(row["query_id"])] = row["results"]
 
-    assert expected_results is not None
+    assert len(queries_by_id) == 308
+    assert len(expected_by_query) == 308
+    assert set(expected_by_query) == set(queries_by_id)
+
     client = TestClient(create_app())
-    response = client.post(
-        "/v1/search",
-        json={"query": str(query["text"]), "limit": MAX_RESULTS},
-    )
-
-    assert response.status_code == 200
-    actual = response.json()["results"]
-    assert [(row["document_id"], row["rank"], row["score"]) for row in actual] == [
-        (row["document_id"], row["rank"], row["score"]) for row in expected_results
-    ]
+    for query_id in sorted(queries_by_id):
+        response = client.post(
+            "/v1/search",
+            json={"query": queries_by_id[query_id], "limit": MAX_RESULTS},
+        )
+        assert response.status_code == 200, query_id
+        actual = response.json()["results"]
+        expected = expected_by_query[query_id]
+        assert [
+            (row["document_id"], row["rank"], row["score"])
+            for row in actual
+        ] == [
+            (row["document_id"], row["rank"], row["score"])
+            for row in expected
+        ], query_id
 
 
 def test_openapi_exposes_only_the_bounded_search_method_at_search_path() -> None:
