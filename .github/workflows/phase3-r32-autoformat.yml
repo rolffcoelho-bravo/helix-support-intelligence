@@ -1,8 +1,8 @@
 name: Phase 3 R3.2 Autoformat
 
 on:
-  push:
-    branches: [phase3-r32-retrieval-execution]
+  pull_request:
+    branches: [main]
     paths:
       - ".github/workflows/phase3-r32-autoformat.yml"
 
