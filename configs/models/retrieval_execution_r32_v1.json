@@ -89,6 +89,7 @@
   },
   "evidence": {
     "output_files": [
+      "registered_inputs.sha256",
       "results.json",
       "report.md",
       "rankings.jsonl",
@@ -102,6 +103,8 @@
       "post_audit.json",
       "post_audit.md"
     ],
+    "registered_input_manifest_created_before_first_ranking": true,
+    "registered_input_manifest_reverified_after_execution": true,
     "independent_post_execution_reconstruction_required": true,
     "run_is_provisional_until_post_audit_passes": true
   },
