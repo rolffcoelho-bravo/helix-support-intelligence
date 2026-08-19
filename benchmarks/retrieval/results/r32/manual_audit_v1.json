@@ -1,0 +1,98 @@
+{
+  "audit_id": "phase3-retrieval-r3.2-manual-audit-v1",
+  "execution_id": "phase3-retrieval-r3.2-v1",
+  "verdict": "PASSED_WITH_INTERPRETATION_LIMITATIONS",
+  "invalidation_required": false,
+  "rerun_required": false,
+  "scientific_configuration_changed": false,
+  "artifact_integrity": {
+    "artifact_zip_sha256": "7e0b8106b4e44ffcf6046996a06cef6360013f0d2ac424830bf6a2784d88c6c3",
+    "internal_checksum_files_verified": 12,
+    "internal_checksums_all_passed": true
+  },
+  "ranking_structure": {
+    "queries": 308,
+    "candidates": 4,
+    "ranking_records": 1232,
+    "ranked_rows": 61600,
+    "all_rankings_have_50_documents": true,
+    "all_ranks_are_exactly_1_through_50": true,
+    "all_documents_unique_within_ranking": true,
+    "all_scores_finite": true,
+    "deterministic_tie_order_violations": 0
+  },
+  "candidate_mechanics": {
+    "B2_rrf_exactly_reconstructed_from_B0_B1": true,
+    "B2_top50_subset_of_B0_B1_union": true,
+    "B3_top20_set_equals_B2_top20_set": true,
+    "B3_positions_21_50_exactly_equal_B2_positions_21_50": true,
+    "B3_top20_sorted_by_stored_reranker_score_with_document_id_ties": true
+  },
+  "difference_concentration": {
+    "H1_B2_minus_B0_ndcg_at_10": {
+      "improved_queries": 8,
+      "worsened_queries": 29,
+      "unchanged_queries": 271,
+      "nonzero_intents": 18,
+      "improved_intents": 5,
+      "worsened_intents": 13
+    },
+    "H2_B3_minus_B2_mrr_at_10": {
+      "improved_queries": 1,
+      "worsened_queries": 0,
+      "unchanged_queries": 307,
+      "nonzero_intents": 1
+    },
+    "B3_minus_B0_ndcg_at_10": {
+      "improved_queries": 78,
+      "worsened_queries": 19,
+      "unchanged_queries": 211
+    }
+  },
+  "mrr_rank1_counts": {
+    "B0": {"rank1_directly_relevant": 238, "no_directly_relevant_item": 70},
+    "B1": {"rank1_directly_relevant": 235, "rank2": 1, "rank3": 2, "no_directly_relevant_item": 70},
+    "B2": {"rank1_directly_relevant": 237, "rank2": 1, "no_directly_relevant_item": 70},
+    "B3": {"rank1_directly_relevant": 238, "no_directly_relevant_item": 70}
+  },
+  "latency": {
+    "samples_per_candidate": 1540,
+    "all_samples_positive_and_finite": true,
+    "B3_p95_ms": 838.7849377,
+    "B3_budget_ms": 500.0,
+    "B3_over_budget_ms": 338.7849377,
+    "B3_percent_over_budget": 67.75698754,
+    "B3_pass_level_p95_min_ms": 837.58960535,
+    "B3_pass_level_p95_max_ms": 840.19954995,
+    "B3_over_budget_in_every_timed_pass": true
+  },
+  "post_hoc_cluster_sensitivity": {
+    "status": "AUDIT_DIAGNOSTIC_ONLY_NOT_REGISTERED_INFERENCE",
+    "clusters": 77,
+    "variants_per_cluster": 4,
+    "replicates": 5000,
+    "seed": 20260819,
+    "H1_B2_minus_B0_ndcg_at_10": {
+      "point_estimate": -0.013092665462505565,
+      "ci_95": [-0.0223859609138851, -0.004495135393258234],
+      "qualitative_conclusion": "ADVERSE"
+    },
+    "H2_B3_minus_B2_mrr_at_10": {
+      "point_estimate": 0.0016233766233766235,
+      "ci_95": [0.0, 0.00487012987012987],
+      "qualitative_conclusion": "INCONCLUSIVE"
+    },
+    "B3_minus_B0_ndcg_at_10": {
+      "point_estimate": 0.03156499012351846,
+      "ci_95": [0.019580473509453824, 0.043257252141597],
+      "qualitative_conclusion": "POSITIVE_DIAGNOSTIC"
+    }
+  },
+  "interpretation_limitations": [
+    "The registered bootstrap unit is query, while the corpus contains four query variants for each of 77 intents. The post-hoc clustered sensitivity did not alter the qualitative conclusions and is not used to replace the registered inference.",
+    "Recall@20 and Recall@50 are saturated on the 238 queries with eligible relevance >= 2 evidence and therefore do not discriminate among the four candidates in this benchmark.",
+    "The 70 missing-evidence queries have no eligible relevance >= 2 item, so MRR@10 is zero and recall is not applicable, while relevance-1 partial evidence can still produce positive or high nDCG@10.",
+    "The fictional 147-document corpus is small and controlled; the result is retrieval-benchmark evidence rather than a production-effectiveness claim.",
+    "Latency evidence is environment-specific single-thread CPU evidence from one GitHub-hosted runner."
+  ]
+}
