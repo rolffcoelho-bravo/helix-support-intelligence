@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shockbridge-pulse.example/helix/contracts/phase4/assistance_candidate_output.schema.json",
+  "title": "Phase 4 Assistance Candidate Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "answer",
+    "citations",
+    "escalation_reason"
+  ],
+  "properties": {
+    "decision": {
+      "enum": [
+        "ANSWER_WITH_EVIDENCE",
+        "AUTO_ROUTE",
+        "RECOMMEND_TO_AGENT",
+        "ASK_FOR_CLARIFICATION",
+        "ESCALATE_LOW_CONFIDENCE",
+        "ESCALATE_OUT_OF_SCOPE",
+        "ESCALATE_CONFLICTING_EVIDENCE",
+        "ESCALATE_SAFETY_RISK",
+        "ESCALATE_SYSTEM_FAILURE"
+      ]
+    },
+    "answer": {
+      "type": "string",
+      "maxLength": 8000
+    },
+    "citations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(POLICY|FAQ)-[0-9]{3}$"
+      }
+    },
+    "escalation_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 1000
+    }
+  }
+}

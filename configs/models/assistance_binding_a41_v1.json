@@ -1,0 +1,167 @@
+{
+  "binding_id": "phase4-assistance-a4.1-v1",
+  "protocol_id": "phase4-assistance-a4.0-v1",
+  "status": "implemented_preflight_no_results",
+  "phase": 4,
+  "checkpoint": "A4.1",
+  "bound_on": "2026-08-19",
+  "source_main_sha": "0e0747c30b2bf307dc94ad0e0fd4ebcda7358d9c",
+  "purpose": "Bind exact assistance runtime identities, prompt bytes, verifier/evaluator settings, diagnostic subsets, latency budgets, and cost budgets before any assistance performance scoring.",
+  "generator": {
+    "provider": "OpenAI",
+    "api": "Responses API",
+    "model": "gpt-5.4-mini-2026-03-17",
+    "immutable_identifier": "gpt-5.4-mini-2026-03-17",
+    "reasoning_effort": "none",
+    "temperature": 0.0,
+    "max_output_tokens": 512,
+    "tools": [],
+    "store": false,
+    "automatic_quality_call_retries": 0,
+    "timeout_seconds": 30,
+    "structured_output": {
+      "type": "json_schema",
+      "name": "helix_assistance",
+      "strict": true,
+      "provider_schema_canonical_sha256": "6883857e264f42aab585a46147364db153436d86f228b116ef0e0cadcae6e715",
+      "post_parse_schema_path": "data/contracts/phase4/assistance_candidate_output.schema.json",
+      "post_parse_schema_sha256": "3c0ec9a6864b0ac316197be48e399264ce841ac0ac48399bd975d858f36a963f"
+    }
+  },
+  "prompts": {
+    "system": {
+      "version": "assistance-system-v1",
+      "path": "prompts/assistance/system_v1.txt",
+      "encoding": "UTF-8",
+      "newline": "LF",
+      "final_newline": true,
+      "bytes": 2089,
+      "sha256": "ab0a472476fbf023a154f1f1c6fa29c3c06da8590ac05b248aba209cadca878b"
+    },
+    "request_template": {
+      "version": "assistance-request-template-v1",
+      "path": "prompts/assistance/request_template_v1.txt",
+      "encoding": "UTF-8",
+      "newline": "LF",
+      "final_newline": true,
+      "bytes": 62,
+      "sha256": "433fdd0b2374b55cdea1bbda6e22fa93628648bb07a7468ab0a520b4fc00fd15"
+    },
+    "evidence_rendering": {
+      "candidate_fields": [
+        "document_id",
+        "title",
+        "body",
+        "kind",
+        "status",
+        "valid_from",
+        "valid_to",
+        "permission",
+        "resolution_type"
+      ],
+      "document_order": "document_id ascending",
+      "json_serialization": "json.dumps(..., ensure_ascii=False, sort_keys=True, separators=(',', ':'))",
+      "query_fields": [
+        "text"
+      ],
+      "forbidden_label_fields": [
+        "query_id",
+        "intent",
+        "queue",
+        "case_type",
+        "expected_decision",
+        "gold_citations",
+        "allowed_resolution_types",
+        "relevance",
+        "relevance_judgments",
+        "conflict_fixture",
+        "untrusted_content_fixture"
+      ]
+    }
+  },
+  "runtime_verifier": {
+    "role": "G2 fail-closed sentence-support gate",
+    "provider": "local ONNX Runtime",
+    "model_id": "cross-encoder/nli-deberta-v3-small",
+    "revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+    "architecture_family": "deberta-v3",
+    "onnx_path": "onnx/model_quint8_avx2.onnx",
+    "device": "CPU",
+    "entailment_label": 1,
+    "entailment_threshold": 0.8,
+    "max_length": 512,
+    "batch_size": 8,
+    "repair_or_regeneration": false,
+    "unsupported_or_missing_citation_failure_decision": "ESCALATE_LOW_CONFIDENCE",
+    "runtime_exception_decision": "ESCALATE_SYSTEM_FAILURE",
+    "provider_cost_usd": 0.0,
+    "hardware_energy_cost_included": false
+  },
+  "evaluation_verifier": {
+    "role": "independent registered sentence-level grounding evaluator",
+    "provider": "local ONNX Runtime",
+    "model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+    "revision": "b95119ce93d3e065de6214e38cd4a97b0f2f2c6d",
+    "architecture_family": "minilm2-roberta",
+    "onnx_path": "onnx/model_quint8_avx2.onnx",
+    "device": "CPU",
+    "entailment_label": 1,
+    "entailment_threshold": 0.8,
+    "max_length": 512,
+    "batch_size": 8,
+    "provider_cost_usd": 0.0,
+    "hardware_energy_cost_included": false,
+    "independence_guard": {
+      "must_differ_from_runtime_verifier_family": true,
+      "must_differ_from_generator": true
+    }
+  },
+  "pricing_snapshot": {
+    "currency": "USD",
+    "snapshot_date": "2026-08-19",
+    "billing_mode": "OpenAI standard API pricing",
+    "openai_standard_usd_per_1m_tokens": {
+      "input": 0.75,
+      "cached_input": 0.075,
+      "output": 4.5
+    },
+    "adoption_cost_rule": "Use uncached input rate for selection regardless of cache hits; report provider-reported usage separately when available.",
+    "local_verifier_provider_cost_usd": 0.0,
+    "local_hardware_energy_cost_included": false
+  },
+  "budgets": {
+    "p95_latency_ms": {
+      "G0": 100,
+      "G1": 6000,
+      "G2": 8000
+    },
+    "maximum_estimated_cost_usd_per_request": {
+      "G0": 0.0,
+      "G1": 0.005,
+      "G2": 0.005
+    },
+    "cannot_relax_after_results": true
+  },
+  "diagnostic_subsets": {
+    "path": "configs/models/assistance_a41_subsets_v1.json",
+    "sha256": "60f8a4ec2be040410d355a06dfc7d36608d3fa990962179c9d99da29193f2c1e",
+    "repeatability_cases": 30,
+    "latency_cases": 60
+  },
+  "benchmark_runtime": {
+    "script": "benchmarks/assistance/runtime_a41.py",
+    "script_sha256": "fae0a81512f99219f243a29284db2cc1d28118a9a87247d16785616f131817d8",
+    "lock": "benchmarks/assistance/runtime_a41.py.lock",
+    "lock_sha256": "f094583ce93b48eeac5ed70fba71390c163779a73e782e797742b5501b8ea796",
+    "heavy_dependencies_scoped_to_benchmark": true,
+    "normal_package_dependencies_modified": false
+  },
+  "results_guard": {
+    "development_scores_computed": 0,
+    "confirmatory_scores_computed": 0,
+    "generator_calls_made_by_a41_preflight": 0,
+    "nli_calls_made_by_a41_preflight": 0,
+    "assistance_performance_results_generated": false,
+    "scoring_allowed_only_after_this_binding_is_merged": true
+  }
+}
