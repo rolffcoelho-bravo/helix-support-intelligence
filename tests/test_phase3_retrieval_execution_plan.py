@@ -95,8 +95,11 @@ def test_r32_requires_post_execution_reconstruction_before_closure() -> None:
     evidence = execution["evidence"]
     immutability = execution["immutability"]
 
+    assert evidence["registered_input_manifest_created_before_first_ranking"] is True
+    assert evidence["registered_input_manifest_reverified_after_execution"] is True
     assert evidence["independent_post_execution_reconstruction_required"] is True
     assert evidence["run_is_provisional_until_post_audit_passes"] is True
+    assert "registered_inputs.sha256" in evidence["output_files"]
     assert "diagnostic_slices.json" in evidence["output_files"]
     assert "diagnostic_audit.json" in evidence["output_files"]
     assert "post_audit.json" in evidence["output_files"]
