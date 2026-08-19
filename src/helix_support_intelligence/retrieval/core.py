@@ -297,9 +297,7 @@ def reciprocal_rank_fusion(
             if item.document_id in seen:
                 raise ValueError("a source ranking cannot contain duplicate document ids")
             seen.add(item.document_id)
-            scores[item.document_id] = scores.get(item.document_id, 0.0) + 1.0 / (
-                rrf_k + item.rank
-            )
+            scores[item.document_id] = scores.get(item.document_id, 0.0) + 1.0 / (rrf_k + item.rank)
 
     ordered = sorted(scores.items(), key=lambda item: (-item[1], item[0]))[:retrieve_k]
     return tuple(
