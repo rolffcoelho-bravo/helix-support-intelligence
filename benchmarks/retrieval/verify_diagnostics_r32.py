@@ -50,7 +50,15 @@ def _eligible_metadata() -> dict[str, dict[str, object]]:
         valid_from_ok = str(row["valid_from"]) <= "2026-08-19"
         valid_to = row["valid_to"]
         valid_to_ok = valid_to is None or str(valid_to) >= "2026-08-19"
-        if all((status_ok, permission_ok, audience_ok, jurisdiction_ok, valid_from_ok, valid_to_ok)):
+        eligibility = (
+            status_ok,
+            permission_ok,
+            audience_ok,
+            jurisdiction_ok,
+            valid_from_ok,
+            valid_to_ok,
+        )
+        if all(eligibility):
             metadata[str(row["document_id"])] = row
     return metadata
 
@@ -96,9 +104,14 @@ def _groups() -> dict[str, dict[str, list[str]]]:
         for kind in ("POLICY", "FAQ"):
             if kind in kinds:
                 result["document_kind"][kind].append(query_id)
-        if any(bool(metadata[document_id]["conflict_fixture"]) for document_id in documents):
+        if any(
+            bool(metadata[document_id]["conflict_fixture"]) for document_id in documents
+        ):
             result["conflict_fixture"]["associated"].append(query_id)
-        if any(bool(metadata[document_id]["untrusted_content_fixture"]) for document_id in documents):
+        if any(
+            bool(metadata[document_id]["untrusted_content_fixture"])
+            for document_id in documents
+        ):
             result["untrusted_content_fixture"]["associated"].append(query_id)
     return result
 
@@ -122,7 +135,9 @@ def verify(output_dir: Path) -> dict[str, object]:
         sorted(FAMILIES)
     )
     if not family_keys_ok:
-        failures.append("diagnostic slice families do not exactly match the registered four families")
+        failures.append(
+            "diagnostic slice families do not exactly match the registered four families"
+        )
 
     groups = _groups()
     group_membership_ok = True
@@ -154,9 +169,13 @@ def verify(output_dir: Path) -> dict[str, object]:
                     "candidates": candidate_payload,
                 }
                 stored_candidates = stored_group.get("candidates")
-                if not isinstance(stored_candidates, dict) or set(stored_candidates) != set(CANDIDATES):
+                candidate_set_ok = isinstance(stored_candidates, dict) and set(
+                    stored_candidates
+                ) == set(CANDIDATES)
+                if not candidate_set_ok:
                     metric_reconstruction_ok = False
                     continue
+                assert isinstance(stored_candidates, dict)
                 for candidate in CANDIDATES:
                     rows = [metric_map[(candidate, query_id)] for query_id in query_ids]
                     aggregate = _aggregate(rows)
@@ -165,7 +184,12 @@ def verify(output_dir: Path) -> dict[str, object]:
                     if not isinstance(recorded, dict):
                         metric_reconstruction_ok = False
                         continue
-                    for key in ("ndcg_at_10", "mrr_at_10", "recall_at_20", "recall_at_50"):
+                    for key in (
+                        "ndcg_at_10",
+                        "mrr_at_10",
+                        "recall_at_20",
+                        "recall_at_50",
+                    ):
                         if not _close(float(recorded[key]), float(aggregate[key])):
                             metric_reconstruction_ok = False
                     for key in (
