@@ -1,5 +1,5 @@
 schema_version: 1
-status: phase-3-retrieval-validated
+status: phase-3-retrieval-integrated
 publication_rule: >-
   Public entries are added only after publication review. Unpublished hypotheses,
   private acceptance thresholds, cost weights, and remediation logic remain outside
