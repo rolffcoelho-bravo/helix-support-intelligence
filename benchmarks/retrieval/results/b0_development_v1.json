@@ -1,0 +1,81 @@
+{
+  "version": "retrieval-b0-development-v1",
+  "phase": 3,
+  "status": "audited_development_only",
+  "date": "2026-08-19",
+  "model": {
+    "id": "B0",
+    "configuration": "retrieval-b0-bm25-v1",
+    "family": "okapi_bm25",
+    "k1": 1.2,
+    "b": 0.75
+  },
+  "benchmark": {
+    "version": "retrieval-benchmark-v1",
+    "candidate_documents": 147,
+    "development_queries": 1386,
+    "development_qrels": 2646,
+    "confirmatory_partition_opened": false,
+    "official_banking77_test_accessed": false
+  },
+  "metrics": {
+    "ndcg_at_10": 0.38320363730799945,
+    "mrr_at_10": 0.4208213083213083,
+    "recall_at_20": 0.7225829725829725,
+    "recall_at_50": 0.8686868686868687,
+    "success_at_1": 0.3383838383838384,
+    "citation_eligible_recall_at_20": 0.6522366522366523
+  },
+  "deterministic_evidence": {
+    "ranking_sha256": "e82372d60779f211b4692709db623f3e7ad2a17922e450582ea7487c92b7e41b",
+    "independent_reconstruction_max_absolute_metric_difference": 0.0,
+    "independent_reconstruction_ranking_hash_match": true
+  },
+  "accepted_run": {
+    "workflow_run": 32251150616,
+    "artifact_id": 9364444799,
+    "artifact_zip_sha256": "e1c0955b8ebcb7c690e18e148d6589b826025e3af1db574e6e7207bdef35327e",
+    "results_json_sha256": "4885096e9d48e9e74d3bc67abbaac99195b2c5d4679e252f46735a70dd048d37",
+    "report_md_sha256": "88eef37badd81e509a541804c6c1329851f3898fbf86963b2c89815f9d9c3a39",
+    "descriptive_ci_latency_ms": {
+      "p50": 0.3602085,
+      "p95": 0.65302625,
+      "mean": 0.3849763932178932
+    },
+    "index": {
+      "vocabulary_size": 185,
+      "average_document_length": 64.59863945578232,
+      "build_ms": 3.508745
+    }
+  },
+  "reproducibility": {
+    "earlier_scientific_computation_workflow": 32251072682,
+    "earlier_workflow_conclusion": "failed_after_scoring_due_to_tee_output_directory_transport_error",
+    "earlier_ranking_sha256": "e82372d60779f211b4692709db623f3e7ad2a17922e450582ea7487c92b7e41b",
+    "relevance_metrics_reproduced_exactly": true,
+    "latency_expected_to_vary_across_ci_runs": true
+  },
+  "weakest_intents_by_ndcg_at_10": [
+    ["getting_spare_card", 0.01188909558068839],
+    ["compromised_card", 0.04406569308390691],
+    ["card_arrival", 0.05555555555555555],
+    ["get_physical_card", 0.06397729291504899],
+    ["declined_cash_withdrawal", 0.07682964318922515],
+    ["card_swallowed", 0.08551433144777049],
+    ["card_linking", 0.09236425323651286],
+    ["card_acceptance", 0.092772297834598],
+    ["transfer_timing", 0.0973812063742896],
+    ["topping_up_by_card", 0.11703301064587904]
+  ],
+  "audit_findings": [
+    {
+      "finding": "The first B0 workflow reached the scientific computation but tee could not create run-output.txt because the B0 artifact directory did not yet exist.",
+      "repair": "Create the B0 artifact directory before starting the pipe. No BM25 parameter, benchmark byte, qrel, or metric definition changed."
+    },
+    {
+      "finding": "Two earlier B0 attempts were blocked by static Ruff/formatter defects before scoring.",
+      "repair": "Apply source-format corrections only; no scientific configuration changed."
+    }
+  ],
+  "decision": "B0 is accepted as the frozen lexical development reference. Its confirmatory performance remains unknown. The next evaluation step is to register B1 before its first development score."
+}

@@ -1,0 +1,53 @@
+{
+  "version": "retrieval-benchmark-freeze-v1",
+  "phase": 3,
+  "status": "passed",
+  "date": "2026-08-19",
+  "workflow": {
+    "run_id": 32250295522,
+    "artifact_id": 9364137851,
+    "artifact_zip_sha256": "00ca1f4cc24ea7fc9311b92811e8b91cda6c50b5a68728ae2bb4ac28f6e3cd49"
+  },
+  "source": {
+    "banking77_raw_split": "train",
+    "source_train_sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+    "fit_train_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "official_test_accessed": false
+  },
+  "counts": {
+    "candidate_documents": 147,
+    "development_queries": 1386,
+    "confirmatory_queries": 616,
+    "development_qrels": 2646,
+    "confirmatory_qrels": 1176,
+    "intents": 77
+  },
+  "sha256": {
+    "candidate_documents": "4149646be5507c1f2aeeef2ea19249b26f03db017cdabe9b3b891c52be3b0637",
+    "development_queries": "96ef219af4cb3b20b231fc6453119950f84beef7262d7ac6d98cb3604032992a",
+    "confirmatory_queries": "876c50f177b5f426904ee1662ce72643adddd90d5527577286348eed613c41a2",
+    "development_qrels": "d13e7af883e9185a701703f8090773a2774e791bff4d7fd302fba0d3d3d90aae",
+    "confirmatory_qrels": "2e10dec72cb84f4bca09a5117d0ee78824e7168d7310a38984ee3c023fcd57d0"
+  },
+  "isolation": {
+    "confirmatory_content_exported": false,
+    "confirmatory_query_file_present_in_artifact": false,
+    "confirmatory_qrel_file_present_in_artifact": false,
+    "retrieval_score_produced_before_freeze": false
+  },
+  "pre_scoring_audit_findings": [
+    {
+      "finding": "Original 308 generated HelixBank queries have direct lexical coupling to intent-derived document wording.",
+      "repair": "Retain them as contract/edge-case evidence; use natural BANKING77 fit-train utterances as the primary retrieval-quality benchmark."
+    },
+    {
+      "finding": "Initial balanced allocation 20 development + 10 confirmatory per intent was infeasible because the smallest fit_train intent had 27 rows.",
+      "repair": "Reduce to 18 development + 8 confirmatory per intent before any score or hash freeze."
+    },
+    {
+      "finding": "Workflow materializer pipeline lacked pipefail and could mislabel a failed Python command as a successful step when piped through tee.",
+      "repair": "Enable set -o pipefail before scientific materialization pipelines."
+    }
+  ],
+  "decision": "Benchmark bytes and sealed confirmatory hashes are frozen. B0 development scoring may begin only after the repository verifies the frozen manifest reproducibly and the release quality gate passes."
+}

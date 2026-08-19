@@ -1,0 +1,46 @@
+{
+  "version": "retrieval-b1-dense-v1",
+  "phase": 3,
+  "status": "frozen_before_first_score",
+  "benchmark_version": "retrieval-benchmark-v1",
+  "model": {
+    "family": "dense_bi_encoder",
+    "model_id": "BAAI/bge-small-en-v1.5",
+    "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "license": "MIT",
+    "model_safetensors_sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+    "embedding_dimension": 384,
+    "max_sequence_length": 512,
+    "query_instruction": "Represent this sentence for searching relevant passages: ",
+    "passage_instruction": "",
+    "document_text_field": "title_newline_body",
+    "normalize_embeddings": true,
+    "similarity": "normalized_dot_product_cosine",
+    "batch_size": 64,
+    "device": "cpu",
+    "trust_remote_code": false,
+    "fine_tuning": false,
+    "tie_break": "document_id_ascending"
+  },
+  "environment": {
+    "python": ">=3.12,<3.13",
+    "reuse_lock": "benchmarks/routing/evaluate_a2.py.lock",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.13.0+cpu",
+    "numpy": "2.3.5",
+    "cpu_only": true,
+    "threads": 1
+  },
+  "evaluation": {
+    "partition": "development",
+    "rank_depth": 147,
+    "metrics_contract": "configs/retrieval/b0_bm25_v1.json#evaluation",
+    "latency": {
+      "document_encoding_scope": "reported_separately",
+      "query_encoding_scope": "batch_encode_all_development_queries",
+      "ranking_scope": "matrix_similarity_and_stable_sort",
+      "interpretation": "descriptive_ci_hardware_only"
+    }
+  },
+  "selection_rule": "B1 is one fixed retrieval-native dense candidate. Query instruction, model revision, normalization, and all inference settings are frozen before the first development score; no instructed/uninstructed or model-family shopping is permitted afterward."
+}

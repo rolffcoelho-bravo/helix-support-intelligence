@@ -1,0 +1,38 @@
+{
+  "version": "retrieval-b2-rrf-v1",
+  "phase": 3,
+  "status": "frozen_before_first_score",
+  "benchmark_version": "retrieval-benchmark-v1",
+  "parents": {
+    "B0": {
+      "configuration": "retrieval-b0-bm25-v1",
+      "accepted_ranking_sha256": "e82372d60779f211b4692709db623f3e7ad2a17922e450582ea7487c92b7e41b",
+      "weight": 1.0
+    },
+    "B1": {
+      "configuration": "retrieval-b1-dense-v1",
+      "accepted_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+      "weight": 1.0
+    }
+  },
+  "fusion": {
+    "family": "reciprocal_rank_fusion",
+    "k": 60,
+    "rank_origin": 1,
+    "rank_depth": 147,
+    "score_normalization": "none_rank_only",
+    "learned_weights": false,
+    "tie_break": "document_id_ascending"
+  },
+  "evaluation": {
+    "partition": "development",
+    "metrics_contract": "configs/retrieval/b0_bm25_v1.json#evaluation",
+    "parent_ranking_drift_policy": "fail_closed",
+    "latency": {
+      "parent_reconstruction": "reported_separately",
+      "fusion_overhead": "reported_separately",
+      "interpretation": "descriptive_ci_hardware_only"
+    }
+  },
+  "selection_rule": "B2 is one fixed equal-weight Reciprocal Rank Fusion candidate over the already-frozen B0 and B1 complete rankings. k=60, one-based ranks, full 147-document depth, equal weights, no score normalization, and document-ID tie breaking are frozen before the first B2 development score. No k search, learned fusion weight, truncation search, or post-result rescue is permitted."
+}

@@ -1,0 +1,110 @@
+{
+  "version": "retrieval-b1-development-v1",
+  "phase": 3,
+  "status": "audited_development_only",
+  "date": "2026-08-19",
+  "model": {
+    "id": "B1",
+    "configuration": "retrieval-b1-dense-v1",
+    "family": "dense_bi_encoder",
+    "model_id": "BAAI/bge-small-en-v1.5",
+    "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "license": "MIT",
+    "model_safetensors_sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+    "embedding_dimension": 384,
+    "max_sequence_length": 512,
+    "normalized_embeddings": true,
+    "device": "cpu",
+    "fine_tuning": false
+  },
+  "benchmark": {
+    "version": "retrieval-benchmark-v1",
+    "candidate_documents": 147,
+    "development_queries": 1386,
+    "development_qrels": 2646,
+    "confirmatory_partition_opened": false,
+    "official_banking77_test_accessed": false
+  },
+  "metrics": {
+    "ndcg_at_10": 0.6536804220344481,
+    "mrr_at_10": 0.700542270780366,
+    "recall_at_20": 0.9325396825396826,
+    "recall_at_50": 0.9880952380952381,
+    "success_at_1": 0.6248196248196248,
+    "citation_eligible_recall_at_20": 0.9227994227994228
+  },
+  "comparison_to_b0": {
+    "ndcg_at_10": 0.27047678472644865,
+    "mrr_at_10": 0.2797209624590577,
+    "recall_at_20": 0.20995670995671,
+    "recall_at_50": 0.11940836940836941,
+    "success_at_1": 0.28643578643578643,
+    "citation_eligible_recall_at_20": 0.27056277056277056
+  },
+  "deterministic_evidence": {
+    "ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "accepted_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "accepted_run": 32257841759,
+    "replication_run": 32256394681,
+    "accepted_and_replication_ranking_hash_match": true,
+    "accepted_and_replication_aggregate_metrics_match": true,
+    "accepted_and_replication_per_intent_metrics_match": true,
+    "later_standalone_run": 32266247568,
+    "later_standalone_job": 96113632455,
+    "later_standalone_ranking_hash_match": true,
+    "later_standalone_aggregate_metrics_match": true,
+    "universal_cross_runner_bitwise_full_ranking_reproducibility_claim": false,
+    "timing_expected_to_vary_across_ci_runs": true
+  },
+  "later_reproducibility_audit": {
+    "context": "Phase 3 B2 strict parent reconstruction",
+    "workflow_run": 32266247648,
+    "job_id": 96112253707,
+    "expected_B1_full_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "observed_B1_full_ranking_sha256": "4161dc01a108f067678ae116ce11a59f21704d81ea7f6933c545a6cabb78964d",
+    "B2_fusion_blocked": true,
+    "B1_metrics_emitted_in_that_reconstruction": false,
+    "interpretation": "Multiple standalone B1 runs reproduce the accepted ranking and metrics exactly, including a fresh run after this event. However, one nested reconstruction produced a different complete-ranking hash, so the earlier universal bitwise cross-run wording is withdrawn."
+  },
+  "per_intent_comparison_counts": {
+    "ndcg_at_10": {"wins": 74, "ties": 0, "losses": 3},
+    "mrr_at_10": {"wins": 73, "ties": 0, "losses": 4},
+    "recall_at_20": {"wins": 68, "ties": 7, "losses": 2},
+    "recall_at_50": {"wins": 58, "ties": 16, "losses": 3},
+    "success_at_1": {"wins": 68, "ties": 5, "losses": 4},
+    "citation_eligible_recall_at_20": {"wins": 70, "ties": 6, "losses": 1}
+  },
+  "weakest_intents_by_ndcg_at_10": [
+    ["get_physical_card", 0.11297397173754892],
+    ["supported_cards_and_currencies", 0.19420646917467224],
+    ["card_linking", 0.27799707746604957],
+    ["card_arrival", 0.2920809383481717],
+    ["card_delivery_estimate", 0.3230090631365401],
+    ["order_physical_card", 0.34568289555470544],
+    ["card_acceptance", 0.3667159770417898],
+    ["transfer_timing", 0.37643550154398725],
+    ["card_swallowed", 0.3887321379524092],
+    ["getting_spare_card", 0.4026462801649403]
+  ],
+  "b1_ndcg_regressions_vs_b0": [
+    ["supported_cards_and_currencies", 0.3333333333333333, 0.19420646917467224],
+    ["apple_pay_or_google_pay", 0.6156789119836097, 0.5309547270002379],
+    ["exchange_rate", 0.8383441409408898, 0.8106748531933311]
+  ],
+  "citation_eligible_recall_regression_vs_b0": [
+    ["declined_transfer", 0.9444444444444444, 0.8888888888888888]
+  ],
+  "taxonomy_fidelity": {
+    "source_labels_preserved": true,
+    "note": "BANKING77 source labels are preserved exactly, including source casing and punctuation such as Refund_not_showing_up and reverted_card_payment?."
+  },
+  "limitations": [
+    "This is development evidence; the sealed retrieval confirmatory partition remains unopened.",
+    "The benchmark maps BANKING77 intent labels deterministically to a fictional policy corpus and does not estimate production search traffic.",
+    "GitHub-hosted CPU timing is descriptive only and varies materially across runners.",
+    "Bitwise identity of the complete floating-point ranking is not claimed across every heterogeneous hosted CPU execution context; one later B2 parent reconstruction produced a different full-ranking hash and failed closed.",
+    "Dense retrieval remains weak on several closely related card-lifecycle intents, especially physical-card ordering, arrival, linking, and acceptance.",
+    "B1 is not uniformly superior to BM25 at the intent level."
+  ],
+  "decision": "B1 remains the leading frozen dense development reference because it materially exceeds B0 on all six aggregate relevance metrics and its standalone evaluations repeatedly reproduce the accepted metrics and ranking hash. The stronger earlier claim of universal bitwise full-ranking reproducibility across heterogeneous hosted CPU execution contexts is withdrawn after a later B2 parent-reconstruction counterexample."
+}

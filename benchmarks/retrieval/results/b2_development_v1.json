@@ -1,0 +1,131 @@
+{
+  "version": "retrieval-b2-development-v1",
+  "phase": 3,
+  "status": "audited_development_negative",
+  "date": "2026-08-19",
+  "model": {
+    "id": "B2",
+    "configuration": "retrieval-b2-rrf-v1",
+    "family": "reciprocal_rank_fusion",
+    "k": 60,
+    "rank_origin": 1,
+    "rank_depth": 147,
+    "weights": {
+      "B0": 1.0,
+      "B1": 1.0
+    },
+    "score_normalization": "none_rank_only",
+    "learned_weights": false,
+    "tie_break": "document_id_ascending"
+  },
+  "benchmark": {
+    "version": "retrieval-benchmark-v1",
+    "candidate_documents": 147,
+    "development_queries": 1386,
+    "development_qrels": 2646,
+    "confirmatory_partition_opened": false,
+    "official_banking77_test_accessed": false
+  },
+  "parent_rankings": {
+    "B0_expected_sha256": "e82372d60779f211b4692709db623f3e7ad2a17922e450582ea7487c92b7e41b",
+    "B1_expected_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "first_valid_run_B0_match": true,
+    "first_valid_run_B1_match": true
+  },
+  "metrics": {
+    "ndcg_at_10": 0.5171840035644113,
+    "mrr_at_10": 0.5975692297120869,
+    "recall_at_20": 0.8813131313131313,
+    "recall_at_50": 0.974025974025974,
+    "success_at_1": 0.4898989898989899,
+    "citation_eligible_recall_at_20": 0.8347763347763347
+  },
+  "comparison_to_b0": {
+    "ndcg_at_10": 0.13398036625641185,
+    "mrr_at_10": 0.1767479213907786,
+    "recall_at_20": 0.15873015873015872,
+    "recall_at_50": 0.10533910533910529,
+    "success_at_1": 0.1515151515151515,
+    "citation_eligible_recall_at_20": 0.18253968253968245
+  },
+  "comparison_to_b1": {
+    "ndcg_at_10": -0.1364964184700368,
+    "mrr_at_10": -0.10297304106827909,
+    "recall_at_20": -0.05122655122655129,
+    "recall_at_50": -0.01406926406926412,
+    "success_at_1": -0.13492063492063494,
+    "citation_eligible_recall_at_20": -0.08802308802308811
+  },
+  "per_intent_comparison_counts_vs_b1": {
+    "ndcg_at_10": {"wins": 4, "ties": 0, "losses": 73},
+    "mrr_at_10": {"wins": 15, "ties": 2, "losses": 60},
+    "recall_at_20": {"wins": 5, "ties": 18, "losses": 54},
+    "recall_at_50": {"wins": 2, "ties": 54, "losses": 21},
+    "success_at_1": {"wins": 9, "ties": 16, "losses": 52},
+    "citation_eligible_recall_at_20": {"wins": 2, "ties": 23, "losses": 52}
+  },
+  "notable_local_recoveries_vs_b1": {
+    "ndcg_at_10": [
+      ["exchange_rate", 0.8106748531933311, 0.8928045537752455],
+      ["apple_pay_or_google_pay", 0.5309547270002379, 0.6082393733155804],
+      ["declined_card_payment", 0.4056874879432651, 0.4761779186279333],
+      ["supported_cards_and_currencies", 0.19420646917467224, 0.2572738751984143]
+    ],
+    "citation_eligible_recall_at_20": [
+      ["card_acceptance", 0.6666666666666666, 0.7222222222222222],
+      ["declined_transfer", 0.8888888888888888, 0.9444444444444444]
+    ]
+  },
+  "first_valid_run": {
+    "workflow_run": 32266247648,
+    "job_id": 96111343774,
+    "evaluated_head_sha": "d14d84845313a30a632cfbe077e369465b09fb62",
+    "evaluated_merge_sha": "e18f682c21f9be0b2daa7b93857ae9e5dcf2cf99",
+    "artifact_id": 9370336043,
+    "artifact_zip_sha256": "d85624c12623e0bc94ebc623737797aa582920b8b5ec5c9a3ad385aeb7b6e3ca",
+    "results_json_sha256": "0b1e4376cb89abacefe3a11471b5d69872e156ebf09a9badf6eb9fcfe71df477",
+    "report_md_sha256": "cf877498a89998db34afe329fbbe33f4a3c414bc93f688630647f1a93285265b",
+    "ranking_sha256": "e02f4ccf4358a18cea75c0ee0b26da1cd83e51aab9903ba3554a9154585ece51"
+  },
+  "replication_audit": {
+    "workflow_run": 32266247648,
+    "job_id": 96112253707,
+    "status": "aborted_fail_closed_before_fusion",
+    "reason": "B1 parent full-ranking hash drifted on a fresh hosted CPU reconstruction.",
+    "expected_B1_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "observed_B1_ranking_sha256": "4161dc01a108f067678ae116ce11a59f21704d81ea7f6933c545a6cabb78964d",
+    "B2_metric_replication_emitted": false,
+    "benchmark_reconstructed_exactly": true,
+    "sealed_confirmatory_partition_opened": false,
+    "interpretation": "The strict parent-integrity gate prevented a second B2 score. This is recorded as a reproducibility limitation, not retried until a preferred hash appears."
+  },
+  "B1_follow_up": {
+    "workflow_run": 32266247568,
+    "job_id": 96113632455,
+    "standalone_B1_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "standalone_B1_metrics_reproduced_exactly": true,
+    "interpretation": "B1 remains the leading measured retrieval reference, but universal bitwise full-ranking reproducibility across heterogeneous hosted CPU execution contexts is not claimed."
+  },
+  "audit_findings": [
+    {
+      "finding": "Two pre-score attempts failed static Ruff/format gates.",
+      "repair": "Formatting-only changes were applied before the first B2 score; k, weights, rank depth, benchmark bytes, parent hashes, and metric definitions did not change."
+    },
+    {
+      "finding": "The first valid B2 run improved every aggregate metric over B0 but degraded every aggregate metric relative to B1.",
+      "repair": "None. The negative result is preserved; no post-result search over k, weights, truncation, or score normalization was performed."
+    },
+    {
+      "finding": "A strict replication attempt observed a different B1 full-ranking hash and aborted before fusion.",
+      "repair": "None to the frozen B2 candidate. The failure is preserved as an additional reason not to select B2 and as a correction to over-broad bitwise reproducibility wording."
+    }
+  ],
+  "limitations": [
+    "This is development evidence; the sealed retrieval confirmatory partition remains unopened.",
+    "Only one valid B2 score was emitted because the strict replication attempt failed closed on B1 parent full-ranking drift.",
+    "The benchmark uses deterministic intent-based relevance against the fictional HelixBank corpus rather than live enterprise-search traffic.",
+    "GitHub-hosted CPU timing is descriptive only and is not a production latency claim.",
+    "This result does not imply that Reciprocal Rank Fusion generally underperforms dense retrieval; it applies to the frozen equal-weight B0+B1 Helix configuration."
+  ],
+  "decision": "B2 is rejected as the selected retrieval reference. It materially outperforms B0 but underperforms B1 on all six aggregate development metrics, and its strict full-ranking replication gate did not pass. B1 remains the leading Phase 3 retrieval reference. No post-result B2 tuning is authorized or performed."
+}

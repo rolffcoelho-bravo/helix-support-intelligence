@@ -1,0 +1,61 @@
+{
+  "version": "retrieval-b3-cross-encoder-v1",
+  "phase": 3,
+  "status": "frozen_before_first_score",
+  "benchmark_version": "retrieval-benchmark-v1",
+  "parent": {
+    "system": "B1",
+    "configuration": "retrieval-b1-dense-v1",
+    "accepted_full_ranking_sha256": "b51d2649453e2ddedfde7d76525f11d41f37fe364077d840c048378d4a33fe20",
+    "candidate_depth": 50
+  },
+  "model": {
+    "family": "cross_encoder_reranker",
+    "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "revision": "fbf9045f293a58fa68636213c5e0cb8a2de5d45e",
+    "license": "Apache-2.0",
+    "model_safetensors_sha256": "821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae",
+    "max_length": 512,
+    "document_text_field": "title_newline_body",
+    "query_text_field": "raw_query_text",
+    "score": "raw_sequence_classification_logit",
+    "activation": "identity",
+    "batch_size": 32,
+    "device": "cpu",
+    "trust_remote_code": false,
+    "fine_tuning": false,
+    "tie_break": "parent_rank_then_document_id"
+  },
+  "environment": {
+    "python": ">=3.12,<3.13",
+    "reuse_lock": "benchmarks/routing/evaluate_a2.py.lock",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.13.0+cpu",
+    "numpy": "2.3.5",
+    "cpu_only": true,
+    "threads": 1
+  },
+  "evaluation": {
+    "partition": "development",
+    "rerank_depth": 50,
+    "output_rank_depth": 147,
+    "metrics_contract": "configs/retrieval/b0_bm25_v1.json#evaluation",
+    "primary_metric": "ndcg_at_10",
+    "minimum_material_ndcg_gain": 0.02,
+    "guardrails": {
+      "mrr_at_10_delta_min": 0.0,
+      "success_at_1_delta_min": 0.0,
+      "recall_at_20_delta_min": 0.0,
+      "citation_eligible_recall_at_20_delta_min": 0.0,
+      "recall_at_50_must_equal_parent": true
+    },
+    "latency": {
+      "parent_reconstruction": "reported_separately",
+      "cross_encoder_model_load": "reported_separately",
+      "reranking_total": "reported_separately",
+      "pair_count": 69300,
+      "interpretation": "descriptive_ci_hardware_only_not_production_sla"
+    }
+  },
+  "selection_rule": "B3 is one fixed cross-encoder reranking candidate over the frozen B1 top-50 ranking. It replaces B1 only if development nDCG@10 improves by at least 0.020 absolute, MRR@10 and Success@1 do not decrease, Recall@20 and governing-policy recall@20 do not decrease, and Recall@50 remains exactly equal to B1 by construction. Hosted-CI latency is reported but is not treated as a production SLA. No model-family, candidate-depth, activation, input-format, or threshold search is permitted after the first B3 score."
+}

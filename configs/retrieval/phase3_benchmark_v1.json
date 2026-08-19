@@ -1,0 +1,68 @@
+{
+  "version": "retrieval-benchmark-v1",
+  "phase": 3,
+  "status": "frozen_before_retrieval_scoring",
+  "purpose": "Primary natural-language retrieval benchmark for B0-B3 model selection and one-shot confirmatory evaluation.",
+  "source": {
+    "banking77_config": "configs/data/banking77.json",
+    "raw_split": "train",
+    "derived_partition": "fit_train_only",
+    "official_test_access_allowed": false,
+    "selection_note": "Phase 3 query selection uses only the already-pinned BANKING77 source train after the frozen Phase 1 quarantine and validation assignment. The official BANKING77 test URL is not accessed by this benchmark materializer."
+  },
+  "selection": {
+    "salt": "helix-phase3-retrieval-benchmark-2026-08-19",
+    "development_per_intent": 18,
+    "confirmatory_per_intent": 8,
+    "intent_count": 77,
+    "expected_counts": {
+      "candidate_documents": 147,
+      "development_queries": 1386,
+      "confirmatory_queries": 616,
+      "development_qrels": 2646,
+      "confirmatory_qrels": 1176
+    },
+    "feasibility_note": "The first pre-scoring materialization attempt showed that the smallest frozen fit_train intent has 27 rows. The balanced allocation was therefore reduced from 20+10 to 18+8 before any retrieval score or hash freeze, leaving at least one unused row per intent."
+  },
+  "documents": {
+    "corpus_version": "helixbank-policy-v1.0.0",
+    "eligibility": {
+      "status": "current",
+      "permission": "public_support"
+    }
+  },
+  "qrels": {
+    "governing_policy_relevance": 3,
+    "current_faq_relevance": 2,
+    "archived_faq_is_candidate": false,
+    "unjudged_document_relevance": 0
+  },
+  "evaluation": {
+    "primary_metric": "ndcg_at_10",
+    "secondary_metrics": [
+      "mrr_at_10",
+      "recall_at_20",
+      "recall_at_50",
+      "success_at_1",
+      "citation_eligible_recall_at_20"
+    ],
+    "selection_partition": "development",
+    "confirmatory_partition": "confirmatory",
+    "confirmatory_open_policy": "Open once after B0-B3 selection, configuration freeze, and pre-confirmatory audit."
+  },
+  "hash_manifest": {
+    "status": "frozen_before_retrieval_scoring",
+    "workflow_run": 32250295522,
+    "artifact_id": 9364137851,
+    "artifact_zip_sha256": "00ca1f4cc24ea7fc9311b92811e8b91cda6c50b5a68728ae2bb4ac28f6e3cd49",
+    "source_train_sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+    "fit_train_sha256": "bfea6d5e5144b22d2eb67c770ba4891bb69d3f71e64e815ea895bb5dbf6810b3",
+    "candidate_documents_sha256": "4149646be5507c1f2aeeef2ea19249b26f03db017cdabe9b3b891c52be3b0637",
+    "development_queries_sha256": "96ef219af4cb3b20b231fc6453119950f84beef7262d7ac6d98cb3604032992a",
+    "confirmatory_queries_sha256": "876c50f177b5f426904ee1662ce72643adddd90d5527577286348eed613c41a2",
+    "development_qrels_sha256": "d13e7af883e9185a701703f8090773a2774e791bff4d7fd302fba0d3d3d90aae",
+    "confirmatory_qrels_sha256": "2e10dec72cb84f4bca09a5117d0ee78824e7168d7310a38984ee3c023fcd57d0",
+    "confirmatory_content_exported": false,
+    "official_test_accessed": false
+  }
+}
