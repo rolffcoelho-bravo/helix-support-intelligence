@@ -112,7 +112,7 @@ B1 remains difficult to improve with generic retrieval components. B1 already ca
 
 A plausible explanation is domain and objective mismatch: B3 was trained for generic MS-MARCO passage ranking, whereas the Helix benchmark asks a reranker to distinguish closely related support-policy documents and preserve governing-policy evidence. That is an interpretation of the observed pattern, not a claim that has been independently proven by this checkpoint.
 
-The industrial implication is useful: adding a reranker because it is a standard modern search component would make this system slower and worse under the registered development test. The evidence therefore supports keeping the simpler B1 retrieval path unless a later blueprint-approved method has a genuinely different scientific rationale.
+The industrial implication is useful: adding a reranker because it is a standard modern search component would make this system slower and worse under the registered development test. The evidence therefore supports keeping the simpler B1 retrieval path unless a later method with a genuinely different scientific rationale is explicitly registered and evaluated.
 
 ## Limitations
 
