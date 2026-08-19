@@ -412,7 +412,10 @@ def evaluate(input_dir: Path, output_dir: Path) -> dict[str, object]:
         (
             "# Phase 3 B2 Reciprocal Rank Fusion Development Result",
             "",
-            "> Development evidence only. The sealed Phase 3 confirmatory partition was not opened.",
+            (
+                "> Development evidence only. The sealed Phase 3 confirmatory "
+                "partition was not opened."
+            ),
             "",
             "| Metric | B0 | B1 | B2 | B2 - B1 |",
             "|---|---:|---:|---:|---:|",
