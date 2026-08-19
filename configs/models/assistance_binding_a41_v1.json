@@ -1,7 +1,7 @@
 {
   "binding_id": "phase4-assistance-a4.1-v1",
   "protocol_id": "phase4-assistance-a4.0-v1",
-  "status": "binding_pending_dependency_lock",
+  "status": "implemented_preflight_no_results",
   "phase": 4,
   "checkpoint": "A4.1",
   "bound_on": "2026-08-19",
@@ -152,7 +152,7 @@
     "script": "benchmarks/assistance/runtime_a41.py",
     "script_sha256": "fae0a81512f99219f243a29284db2cc1d28118a9a87247d16785616f131817d8",
     "lock": "benchmarks/assistance/runtime_a41.py.lock",
-    "lock_sha256": "PENDING_PRE_SCORE_LOCK_GENERATION",
+    "lock_sha256": "f094583ce93b48eeac5ed70fba71390c163779a73e782e797742b5501b8ea796",
     "heavy_dependencies_scoped_to_benchmark": true,
     "normal_package_dependencies_modified": false
   },
