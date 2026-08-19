@@ -34,9 +34,18 @@ SECRET_PATTERNS = {
 }
 
 PRIVATE_PROCESS_PATTERNS = {
-    "private blueprint reference": re.compile(r"\b(?:next |internal )?blueprint(?: action| objective)?\b", re.I),
-    "approval-gate language": re.compile(r"\b(?:approval gate|explicit authorization|authorized next phase)\b", re.I),
-    "internal phase-lock language": re.compile(r"\b(?:phase lock|next locked action)\b", re.I),
+    "private blueprint reference": re.compile(
+        r"\b(?:next |internal )?blueprint(?: action| objective)?\b",
+        re.I,
+    ),
+    "approval-gate language": re.compile(
+        r"\b(?:approval gate|explicit authorization|authorized next phase)\b",
+        re.I,
+    ),
+    "internal phase-lock language": re.compile(
+        r"\b(?:phase lock|next locked action)\b",
+        re.I,
+    ),
     "internal audit phrasing": re.compile(r"\bhostile audit\b", re.I),
     "private research repository": re.compile(r"\bhelix-support-intelligence-core\b", re.I),
     "private workspace": re.compile(r"\bproject_helix_support_intelligence_private\b", re.I),
