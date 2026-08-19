@@ -97,4 +97,4 @@ The README release benchmark therefore remains `pending`.
 
 **A1 survives as the classical Phase 2 baseline.** Its classification quality is high enough that A2 and A3 must earn their additional complexity. Its raw probability calibration is poor enough that calibration and selective routing remain essential parts of the phase.
 
-**Next locked action:** implement the bounded **A2 sentence-embedding + linear-classifier candidate** in the same train/validation protocol, while preserving the A1 probability outputs for the later calibration comparison. Do not open the confirmatory test split and do not introduce another classifier family.
+**Next evaluation step:** implement the bounded **A2 sentence-embedding + linear-classifier candidate** in the same train/validation protocol, while preserving the A1 probability outputs for the later calibration comparison. The confirmatory test split remains separate and no additional classifier family is introduced.
