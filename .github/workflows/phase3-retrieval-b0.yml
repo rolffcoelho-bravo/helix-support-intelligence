@@ -72,6 +72,7 @@ jobs:
       - name: Run frozen B0 development evaluation
         run: |
           set -o pipefail
+          mkdir -p artifacts/phase3-retrieval/b0
           uv run python benchmarks/retrieval/evaluate_b0.py \
             --input-dir artifacts/phase3-retrieval/benchmark \
             --output-dir artifacts/phase3-retrieval/b0 \
