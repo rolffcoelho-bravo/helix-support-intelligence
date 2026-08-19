@@ -1,0 +1,117 @@
+name: Phase 3 Retrieval B2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase3-retrieval-b2.yml"
+      - "configs/data/banking77.json"
+      - "configs/retrieval/phase3_benchmark_v1.json"
+      - "configs/retrieval/b0_bm25_v1.json"
+      - "configs/retrieval/b1_dense_v1.json"
+      - "configs/retrieval/b2_rrf_v1.json"
+      - "benchmarks/routing/evaluate_a2.py.lock"
+      - "benchmarks/retrieval/results/b0_development_v1.json"
+      - "benchmarks/retrieval/results/b1_development_v1.json"
+      - "benchmarks/retrieval/evaluate_b2.py"
+      - "src/helix_support_intelligence/data/banking77.py"
+      - "src/helix_support_intelligence/data/helixbank.py"
+      - "src/helix_support_intelligence/retrieval/**"
+      - "scripts/materialize_retrieval_benchmark.py"
+      - "tests/test_phase3_retrieval_benchmark.py"
+      - "tests/test_phase3_b2_contract.py"
+      - "tests/test_phase3_fusion.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase3-retrieval-b2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  b2:
+    name: Frozen B2 reciprocal-rank-fusion development benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONPATH: src
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      CUDA_VISIBLE_DEVICES: ""
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install locked development environment
+        run: uv sync --locked --group dev
+
+      - name: Verify B2 source and frozen contract
+        run: |
+          uv run ruff check \
+            benchmarks/retrieval/evaluate_b2.py \
+            src/helix_support_intelligence/retrieval/fusion.py \
+            tests/test_phase3_b2_contract.py \
+            tests/test_phase3_fusion.py
+          uv run ruff format --check \
+            benchmarks/retrieval/evaluate_b2.py \
+            src/helix_support_intelligence/retrieval/fusion.py \
+            tests/test_phase3_b2_contract.py \
+            tests/test_phase3_fusion.py
+          uv run pytest \
+            tests/test_phase3_retrieval_benchmark.py \
+            tests/test_phase3_b2_contract.py \
+            tests/test_phase3_fusion.py
+
+      - name: Verify reused CPU-only scientific lock
+        run: |
+          test -f benchmarks/routing/evaluate_a2.py.lock
+          grep -q 'https://download.pytorch.org/whl/cpu' benchmarks/routing/evaluate_a2.py.lock
+          ! grep -Eiq 'name = "(nvidia|cuda|triton)' benchmarks/routing/evaluate_a2.py.lock
+          cp benchmarks/routing/evaluate_a2.py.lock benchmarks/retrieval/evaluate_b2.py.lock
+
+      - name: Reproduce frozen development benchmark surface
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/phase3-retrieval/benchmark
+          uv run python scripts/materialize_retrieval_benchmark.py \
+            --output artifacts/phase3-retrieval/benchmark \
+            | tee artifacts/phase3-retrieval/benchmark/run-output.txt
+          test ! -f artifacts/phase3-retrieval/benchmark/confirmatory_queries.jsonl
+          test ! -f artifacts/phase3-retrieval/benchmark/confirmatory_qrels.jsonl
+
+      - name: Run frozen B2 development evaluation
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/phase3-retrieval/b2
+          uv run --locked benchmarks/retrieval/evaluate_b2.py \
+            --input-dir artifacts/phase3-retrieval/benchmark \
+            --output-dir artifacts/phase3-retrieval/b2 \
+            | tee artifacts/phase3-retrieval/b2/run-output.txt
+
+      - name: Remove transient B2 lock copy
+        if: always()
+        run: rm -f benchmarks/retrieval/evaluate_b2.py.lock
+
+      - name: Publish B2 summary
+        if: success()
+        run: cat artifacts/phase3-retrieval/b2/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload B2 evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-retrieval-b2-${{ github.sha }}
+          path: artifacts/phase3-retrieval/b2/
+          if-no-files-found: error
+          retention-days: 90
