@@ -65,11 +65,11 @@ For calibrated A2, selective risk is approximately:
 
 These values do **not** define an operating threshold. Threshold selection remains downstream of the OOS and cost-aware evidence.
 
-## Hostile audit
+## Integrity review
 
-The first successful calibration implementation was not frozen immediately. The end-of-execution audit found that the original intent-stratified round-robin assignment always started each intent at fold zero, producing score-fold sizes of **430 / 411 / 392 / 380 / 363**. Every row was still scored once and every fold retained all intents, so the pre-audit result was methodologically usable, but the training-fold sizes were unnecessarily uneven.
+The first successful calibration implementation was not frozen immediately. The end-of-execution review found that the original intent-stratified round-robin assignment always started each intent at fold zero, producing score-fold sizes of **430 / 411 / 392 / 380 / 363**. Every row was still scored once and every fold retained all intents, so the earlier result was methodologically usable, but the training-fold sizes were unnecessarily uneven.
 
-The correction was defined without looking at candidate performance: each intent receives a deterministic start offset derived only from the already-frozen salt and intent name. A second audit then caught that an initial workflow-based source rewrite had failed to modify the script even though the configuration had changed. The workflow was hardened to verify the actual source expression, the corrected source was committed, and the calibration benchmark was rerun.
+The correction was defined without looking at candidate performance: each intent receives a deterministic start offset derived only from the already-frozen salt and intent name. A second review then caught that an initial workflow-based source rewrite had failed to modify the script even though the configuration had changed. The workflow was hardened to verify the actual source expression, the corrected source was committed, and the calibration benchmark was rerun.
 
 The final balanced-fold result retained the same winner: temperature scaling for both A1 and A2. The workflow was then restored to read-only permissions.
 
@@ -92,6 +92,6 @@ This checkpoint supports the statement that temperature scaling substantially im
 
 The README release benchmark remains `pending`.
 
-## Next locked action
+## Next evaluation step
 
 Freeze the **Phase 2 out-of-scope benchmark before inspecting any OOS model result**, then evaluate A1 and calibrated A2 on that frozen benchmark. The official BANKING77 test split remains sealed.
