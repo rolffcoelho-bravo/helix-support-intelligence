@@ -13,11 +13,7 @@ from helix_support_intelligence.domain.decisions import TerminalDecision
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_PATH = ROOT / "configs" / "models" / "assistance_protocol_v1.json"
 EVAL_SCHEMA_PATH = (
-    ROOT
-    / "data"
-    / "contracts"
-    / "phase4"
-    / "assistance_evaluation_record.schema.json"
+    ROOT / "data" / "contracts" / "phase4" / "assistance_evaluation_record.schema.json"
 )
 
 
@@ -30,18 +26,14 @@ def _load_json(path: Path) -> dict[str, Any]:
 def _intent_partition() -> tuple[set[str], set[str]]:
     bundle = generate_bundle()
     conflict_intents = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflict_intents = set(INTENTS) - conflict_intents
 
     def ordered(values: set[str]) -> list[str]:
         return sorted(
             values,
-            key=lambda intent: hashlib.sha256(
-                f"20260819:{intent}".encode()
-            ).hexdigest(),
+            key=lambda intent: hashlib.sha256(f"20260819:{intent}".encode()).hexdigest(),
         )
 
     development = set(ordered(conflict_intents)[:5]) | set(ordered(non_conflict_intents)[:55])
@@ -77,13 +69,17 @@ def test_a40_case_counts_match_frozen_query_semantics() -> None:
         key = str(row["case_type"])
         actual[key] = actual.get(key, 0) + 1
 
-    assert actual == expected == {
-        "answerable": 77,
-        "ambiguous": 77,
-        "outdated_evidence": 77,
-        "missing_evidence": 70,
-        "conflicting_evidence": 7,
-    }
+    assert (
+        actual
+        == expected
+        == {
+            "answerable": 77,
+            "ambiguous": 77,
+            "outdated_evidence": 77,
+            "missing_evidence": 70,
+            "conflicting_evidence": 7,
+        }
+    )
     current_untrusted = sum(
         bool(row["untrusted_content_fixture"]) and row["status"] == "current"
         for row in bundle.documents
