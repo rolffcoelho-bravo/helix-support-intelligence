@@ -55,7 +55,19 @@ def test_decision_enums_match_domain_vocabulary() -> None:
         assert _enum(_load(CONTRACT_ROOT / name), prop) == expected
 
 
-def test_public_experiment_registry_contains_no_unpublished_runs() -> None:
+def test_public_experiment_registry_contains_only_validated_published_runs() -> None:
     registry = (ROOT / "experiments" / "registry.yaml").read_text(encoding="utf-8")
-    assert "experiments: []" in registry
+    lines = registry.splitlines()
+    experiment_lines = [
+        index for index, line in enumerate(lines) if line.strip().startswith("experiment_id:")
+    ]
+
+    assert experiment_lines
+    for position, start in enumerate(experiment_lines):
+        end = experiment_lines[position + 1] if position + 1 < len(experiment_lines) else len(lines)
+        block = [line.strip() for line in lines[start:end]]
+        statuses = [line for line in block if line.startswith("status:")]
+        assert len(statuses) == 1
+        assert "validated" in statuses[0]
+
     assert "private acceptance thresholds" in registry
