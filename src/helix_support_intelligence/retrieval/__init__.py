@@ -24,19 +24,32 @@ from helix_support_intelligence.retrieval.core import (
     summarize_latency,
     tokenize,
 )
+from helix_support_intelligence.retrieval.evaluation import (
+    AggregateMetrics,
+    QueryMetrics,
+    aggregate_metrics,
+    evaluate_ranking,
+)
+from helix_support_intelligence.retrieval.ladder import CandidateId, RetrievalLadder
 
 __all__ = [
+    "AggregateMetrics",
     "BM25Retriever",
     "BootstrapInterval",
+    "CandidateId",
     "DenseRetriever",
     "Document",
     "EligibilityPolicy",
     "EmbeddingEncoder",
     "LatencySummary",
     "PairScorer",
+    "QueryMetrics",
     "RankedDocument",
+    "RetrievalLadder",
+    "aggregate_metrics",
     "candidate_earns_complexity",
     "document_from_record",
+    "evaluate_ranking",
     "filter_eligible_documents",
     "is_eligible",
     "macro_average",
