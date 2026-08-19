@@ -43,11 +43,13 @@ This is not treated as a Phase 1 defect requiring the closed phase to be reopene
 
 The construction replays the frozen Phase 1 train quarantine/split contract and then samples only `fit_train` utterances with a new deterministic Phase 3 salt:
 
-- 20 development queries per intent = 1,540;
-- 10 confirmatory queries per intent = 770;
+- 18 development queries per intent = 1,386;
+- 8 confirmatory queries per intent = 616;
 - 77 intents represented in both partitions;
 - development and confirmatory stable IDs are disjoint;
 - official BANKING77 test access is forbidden in the materializer.
+
+The first pre-scoring materialization attempt established that the smallest frozen `fit_train` intent, `contactless_not_working`, has only 27 eligible rows. The initially proposed allocation of 20 development plus 10 confirmatory rows per intent was therefore infeasible. It was reduced to 18+8 before any retrieval score or benchmark hash freeze. The final 26-row allocation leaves at least one unused eligible row in every intent.
 
 The query intent deterministically maps to the corresponding frozen HelixBank governing policy (relevance 3) and current FAQ where eligible (relevance 2).
 
@@ -61,10 +63,18 @@ Documents are filtered before scoring:
 
 The current deterministic corpus yields 147 eligible candidate documents because seven archived FAQ fixtures are excluded.
 
+## Workflow audit correction
+
+The first real-data feasibility failure also exposed a workflow defect: the materializer output was piped through `tee` without shell `pipefail`, so the Python exception did not propagate as the exit status of that individual step. The subsequent manifest-summary step still failed because no manifest existed, so the workflow remained red, but the intermediate step label was misleading.
+
+The benchmark-freeze workflow now enables `set -o pipefail` before the materializer pipeline. Any future materialization failure therefore terminates the scientific step directly rather than being masked by the logging command.
+
 ## Current evidence state
 
-No B0-B3 retrieval metric has been produced in Phase 3 yet. This is intentional: the benchmark hash manifest must be materialized, audited, and frozen before the first retrieval score.
+No B0-B3 retrieval metric has been produced in Phase 3 yet. No confirmatory retrieval query or qrel file has been exported. The official BANKING77 test source has not been accessed by Phase 3 development.
+
+This is intentional: the benchmark hash manifest must be materialized, audited, and frozen before the first retrieval score.
 
 ## Next locked action
 
-Run the dependency-light benchmark materializer in CI, inspect only the generated counts and hashes, freeze those values into the Phase 3 benchmark contract, and rerun the release quality gate. Only after that freeze may B0 BM25 development scoring begin.
+Run the corrected dependency-light benchmark-freeze workflow, inspect only the generated counts and hashes, freeze those values into the Phase 3 benchmark contract, and rerun the release quality gate. Only after that freeze may B0 BM25 development scoring begin.
