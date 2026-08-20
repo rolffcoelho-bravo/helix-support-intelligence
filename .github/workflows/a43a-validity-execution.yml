@@ -1,0 +1,125 @@
+name: A4.3a frozen grounding validity execution
+
+on:
+  push:
+    branches:
+      - phase4-a43a-validity-execution
+    paths:
+      - ".github/workflows/a43a-validity-execution.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  execute:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      SCIENTIFIC_SHA: 15ad4e92f0d73caf944ebdb7312d6366f933bd33
+      ANCHOR_SHA256: 145c3cbda7deea0b4befe8d471ecaa6689af524ad528fd851ef20eabe35688ac
+      OUT_DIR: artifacts/phase4-assistance/a43a-validity
+    steps:
+      - name: Check out immutable scientific SHA
+        uses: actions/checkout@v4
+        with:
+          ref: 15ad4e92f0d73caf944ebdb7312d6366f933bd33
+
+      - name: Verify immutable scientific checkout
+        run: |
+          test "$(git rev-parse HEAD)" = "$SCIENTIFIC_SHA"
+          test "$(git status --porcelain)" = ""
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.33"
+          enable-cache: true
+
+      - name: Verify frozen evaluator dependency lock
+        run: |
+          cmp benchmarks/assistance/evaluate_grounding_a43a.py.lock \
+            benchmarks/assistance/runtime_a41.py.lock
+          sha256sum benchmarks/assistance/evaluate_grounding_a43a.py.lock \
+            benchmarks/assistance/runtime_a41.py.lock
+
+      - name: Run frozen zero-call preflight
+        run: |
+          mkdir -p "$OUT_DIR"
+          uv run python scripts/preflight_phase4_a43a.py > "$OUT_DIR/preflight.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          row = json.loads(Path("artifacts/phase4-assistance/a43a-validity/preflight.json").read_text())
+          assert row["status"] == "passed"
+          assert row["anchor_rows"] == 372
+          assert row["anchor_calibration_rows"] == 248
+          assert row["anchor_validation_rows"] == 124
+          assert row["anchor_sha256"] == "145c3cbda7deea0b4befe8d471ecaa6689af524ad528fd851ef20eabe35688ac"
+          assert row["answer_queries_reclassified_to_conflict"] == 10
+          assert row["answer_with_unresolved_conflict_after_resolution"] == 0
+          assert row["candidate_calls_made"] == 0
+          assert row["openai_calls_made"] == 0
+          assert row["nli_calls_made"] == 0
+          assert row["confirmatory_queries_scored"] == 0
+          assert row["confirmatory_query_metrics_computed"] == 0
+          PY
+
+      - name: Execute frozen A4.3a local NLI validity study
+        run: >-
+          uv run --locked benchmarks/assistance/evaluate_grounding_a43a.py
+          --output-dir "$OUT_DIR"
+
+      - name: Verify execution boundaries and write provenance
+        env:
+          WRAPPER_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          out = Path("artifacts/phase4-assistance/a43a-validity")
+          result = json.loads((out / "results.json").read_text())
+          assert result["validity_id"] == "phase4-assistance-a4.3a-validity-v1"
+          assert result["anchor_suite"]["rows"] == 372
+          assert result["anchor_suite"]["calibration_rows"] == 248
+          assert result["anchor_suite"]["validation_rows"] == 124
+          assert result["anchor_suite"]["sha256"] == os.environ["ANCHOR_SHA256"]
+          assert result["candidate_calls"] == 0
+          assert result["openai_calls"] == 0
+          assert result["candidate_scores_computed"] == 0
+          assert result["confirmatory_queries_scored"] == 0
+          assert result["post_validation_threshold_adjustment"] is False
+          assert result["evaluator"]["model_id"] == "cross-encoder/nli-MiniLM2-L6-H768"
+          assert result["evaluator"]["revision"] == "b95119ce93d3e065de6214e38cd4a97b0f2f2c6d"
+
+          manifest = {
+              "execution_id": "phase4-assistance-a4.3a-validity-execution-v1",
+              "scientific_sha": os.environ["SCIENTIFIC_SHA"],
+              "wrapper_trigger_sha": os.environ["WRAPPER_SHA"],
+              "github_run_id": int(os.environ["RUN_ID"]),
+              "github_run_attempt": int(os.environ["RUN_ATTEMPT"]),
+              "anchor_sha256": os.environ["ANCHOR_SHA256"],
+              "candidate_calls": 0,
+              "openai_calls": 0,
+              "confirmatory_queries_scored": 0,
+          }
+          (out / "execution_manifest.json").write_text(
+              json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+          )
+          PY
+          find "$OUT_DIR" -maxdepth 1 -type f ! -name checksums.sha256 -print0 \
+            | sort -z | xargs -0 sha256sum > "$OUT_DIR/checksums.sha256"
+          sha256sum -c "$OUT_DIR/checksums.sha256"
+
+      - name: Upload immutable A4.3a artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a43a-${{ env.SCIENTIFIC_SHA }}-run-${{ github.run_id }}
+          path: artifacts/phase4-assistance/a43a-validity/
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 90
