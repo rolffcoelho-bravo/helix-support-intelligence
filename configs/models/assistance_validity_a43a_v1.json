@@ -1,0 +1,116 @@
+{
+  "validity_id": "phase4-assistance-a4.3a-validity-v1",
+  "phase": 4,
+  "checkpoint": "A4.3a",
+  "status": "frozen_pre_inference",
+  "frozen_on": "2026-08-20",
+  "source_main_sha": "7fd6fd7f4e54d8f95d14537a8494c36e0e9d145f",
+  "purpose": "Version the assistance evidence contract after the A4.2 no-selection audit and validate sentence-level grounding measurement before any new assistance candidate scoring.",
+  "a42_disposition": {
+    "status": "FAILED_SCIENTIFIC_VALIDITY_NO_SELECTION",
+    "candidate_winner_accepted": false,
+    "development_queries_previously_opened": 240,
+    "confirmatory_queries_opened": 0,
+    "candidate_results_may_not_be_used_for_a43a_evaluator_selection": true
+  },
+  "evidence_contract_v2": {
+    "contract_id": "phase4-assistance-evidence-v2",
+    "corpus_version_unchanged": "helixbank-policy-v1.0.0",
+    "corpus_mutation_permitted": false,
+    "direct_evidence_rule": "Eligible documents with registered relevance >= 2 remain in the oracle evidence pack; current conflict evidence is never silently filtered away.",
+    "decision_precedence": [
+      "ESCALATE_SAFETY_RISK",
+      "ESCALATE_SYSTEM_FAILURE",
+      "ASK_FOR_CLARIFICATION",
+      "ESCALATE_CONFLICTING_EVIDENCE",
+      "ESCALATE_LOW_CONFIDENCE",
+      "ANSWER_WITH_EVIDENCE"
+    ],
+    "answer_with_evidence_conflict_rule": "A query that would otherwise be ANSWER_WITH_EVIDENCE is reclassified to ESCALATE_CONFLICTING_EVIDENCE whenever its current eligible direct-evidence pack contains an unresolved conflict fixture.",
+    "explicit_conflict_rule": "Queries already registered as conflicting_evidence remain ESCALATE_CONFLICTING_EVIDENCE.",
+    "ambiguous_rule": "ASK_FOR_CLARIFICATION remains prior to evidence conflict resolution because missing request specificity prevents substantive policy interpretation.",
+    "missing_evidence_rule": "Grade-1-only context remains insufficient and maps to ESCALATE_LOW_CONFIDENCE.",
+    "citation_completeness_for_nonanswer_decisions": "not_applicable",
+    "known_development_reclassification_count_expected": 10,
+    "answer_with_evidence_packs_with_current_conflict_after_resolution_expected": 0,
+    "confirmatory_query_records_may_not_be_scored_or_inspected_by_a43a": true
+  },
+  "grounding_anchor_suite": {
+    "suite_id": "phase4-grounding-anchor-a43a-v1",
+    "candidate_independent": true,
+    "source": "frozen HelixBank documents from A4.0 development intents only",
+    "candidate_outputs_used": false,
+    "query_text_used": false,
+    "confirmatory_intents_used": false,
+    "partition": {
+      "unit": "intent",
+      "seed": 20260820,
+      "hash": "sha256(f'20260820:a43a:{intent}')",
+      "strata": {
+        "current_conflict_fixture": {"development_total": 5, "calibration": 3, "validation": 2},
+        "archived_faq": {"development_total": 7, "calibration": 5, "validation": 2},
+        "ordinary": {"development_total": 48, "calibration": 32, "validation": 16}
+      },
+      "calibration_intents": 40,
+      "validation_intents": 20
+    },
+    "anchor_categories": {
+      "literal_policy": {"expected_entailment": true, "per_intent": 1},
+      "paraphrase_queue": {"expected_entailment": true, "per_intent": 1},
+      "contradiction_queue": {"expected_entailment": false, "per_intent": 1},
+      "unsupported_approval": {"expected_entailment": false, "per_intent": 1},
+      "citation_mismatch": {"expected_entailment": false, "per_intent": 1},
+      "multi_document_conjunction": {"expected_entailment": true, "per_intent": 1},
+      "stale_current_claim": {"expected_entailment": false, "archived_intents_only": true},
+      "conflict_union_claim": {"expected_entailment": false, "conflict_intents_only": true}
+    },
+    "expected_counts": {
+      "total": 372,
+      "calibration": 248,
+      "validation": 124
+    }
+  },
+  "evaluator_validation": {
+    "model_binding_source": "configs/models/assistance_binding_a41_v1.json:evaluation_verifier",
+    "model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+    "revision": "b95119ce93d3e065de6214e38cd4a97b0f2f2c6d",
+    "architecture_family": "minilm2-roberta",
+    "entailment_label": 1,
+    "existing_threshold": 0.8,
+    "threshold_calibration": {
+      "always_run": true,
+      "calibration_split_only": true,
+      "grid_min": 0.05,
+      "grid_max": 0.95,
+      "grid_step": 0.01,
+      "objective": "maximize balanced_accuracy, then maximize minimum(positive_sensitivity, negative_specificity), then choose the higher threshold",
+      "validation_split_may_not_influence_threshold": true
+    },
+    "validation_pass_requirements": {
+      "overall_positive_sensitivity_min": 0.95,
+      "overall_negative_specificity_min": 0.95,
+      "balanced_accuracy_min": 0.95,
+      "literal_policy_sensitivity_min": 0.95,
+      "paraphrase_queue_sensitivity_min": 0.90,
+      "multi_document_conjunction_sensitivity_min": 0.85,
+      "contradiction_queue_specificity_min": 0.95,
+      "unsupported_approval_specificity_min": 0.95,
+      "citation_mismatch_specificity_min": 0.95,
+      "stale_current_claim_specificity_min": 0.90,
+      "conflict_union_claim_specificity_min": 0.90
+    },
+    "failure_rule": "If the calibrated frozen MiniLM2 evaluator fails any validation requirement, reject it for future candidate selection. Do not search another model family or use A4.2 candidate outcomes inside A4.3a.",
+    "success_rule": "If all validation requirements pass, freeze the calibrated threshold as the only eligible evaluation threshold for a separately versioned A4.3b candidate experiment.",
+    "no_post_validation_threshold_adjustment": true
+  },
+  "execution_guards": {
+    "generator_calls": 0,
+    "openai_calls": 0,
+    "candidate_calls": 0,
+    "candidate_scoring": 0,
+    "confirmatory_query_scoring": 0,
+    "nli_calls_allowed": true,
+    "nli_scope": "grounding_anchor_suite_only",
+    "a43b_not_authorized_by_this_gate": true
+  }
+}
