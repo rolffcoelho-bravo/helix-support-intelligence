@@ -1,0 +1,40 @@
+name: A4.2 audit Ruff formatter
+
+on:
+  push:
+    branches:
+      - phase4-a42-postresult-audit
+    paths:
+      - ".github/workflows/a42-audit-format.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase4-a42-postresult-audit
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.33"
+      - run: uv sync --locked --group dev
+      - name: Canonically format audit code only
+        run: |
+          uv run ruff format \
+            benchmarks/assistance/audit_a42_forensic_v1.py \
+            benchmarks/assistance/run_verify_a42_postresult_v1.py
+          uv run ruff check \
+            benchmarks/assistance/audit_a42_forensic_v1.py \
+            benchmarks/assistance/run_verify_a42_postresult_v1.py
+      - name: Commit formatting only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            benchmarks/assistance/audit_a42_forensic_v1.py \
+            benchmarks/assistance/run_verify_a42_postresult_v1.py
+          git commit -m "Format A4.2 audit code" || exit 0
+          git push origin HEAD:phase4-a42-postresult-audit
