@@ -15,6 +15,7 @@ from compositional_cases_a44a import (  # type: ignore[import-not-found]  # noqa
 from grounding_anchors_a43a import (  # type: ignore[import-not-found]  # noqa: E402
     development_intents,
 )
+
 from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402
 
 CONFIG_PATH = ROOT / "configs" / "models" / "assistance_grounding_a44a_v1.json"
