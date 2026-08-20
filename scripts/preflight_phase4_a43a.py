@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
-from grounding_anchors_a43a import (  # noqa: E402
+from grounding_anchors_a43a import (  # type: ignore[import-not-found]  # noqa: E402
     anchor_partition,
     development_intents,
     generate_anchors,
@@ -59,7 +59,7 @@ def _evidence_pack(
         str(row["document_id"])
         for row in judgments
         if row["query_id"] == query_id
-        and int(row["relevance"]) >= 2
+        and int(str(row["relevance"])) >= 2
         and _eligible(documents[str(row["document_id"])])
     }
     return [documents[document_id] for document_id in sorted(ids)]

@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
-from grounding_anchors_a43a import (  # noqa: E402
+from grounding_anchors_a43a import (  # type: ignore[import-not-found]  # noqa: E402
     anchor_partition,
     development_intents,
     generate_anchors,
