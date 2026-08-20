@@ -1,0 +1,63 @@
+name: A4.3a pre-inference semantic repair
+
+on:
+  push:
+    branches:
+      - phase4-a43a-validity-protocol
+    paths:
+      - ".github/workflows/a43a-semantic-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase4-a43a-validity-protocol
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.33"
+      - run: uv sync --locked --group dev
+      - name: Repair conflict-anchor construct before inference
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          anchor = Path("benchmarks/assistance/grounding_anchors_a43a.py")
+          text = anchor.read_text(encoding="utf-8")
+          old = 'hypothesis="Review is optional when unresolved uncertainty remains.",'
+          new = (
+              'hypothesis=(\n'
+              '                            "Both documents agree that review is optional when unresolved "\n'
+              '                            "uncertainty remains."\n'
+              '                        ),'
+          )
+          if old not in text:
+              raise SystemExit("Expected pre-inference conflict anchor not found")
+          anchor.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          doc = Path("docs/assistance-a43a-validity.md")
+          text = doc.read_text(encoding="utf-8")
+          text = text.replace(
+              "unresolved-conflict union negatives",
+              "false-consensus negatives over unresolved conflicting evidence",
+              1,
+          )
+          doc.write_text(text, encoding="utf-8")
+          PY
+          uv run ruff check --fix benchmarks/assistance/grounding_anchors_a43a.py
+          uv run ruff format benchmarks/assistance/grounding_anchors_a43a.py
+          uv run pytest tests/test_phase4_a43a_validity.py
+          uv run python scripts/preflight_phase4_a43a.py
+      - name: Commit pre-inference semantic repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            benchmarks/assistance/grounding_anchors_a43a.py \
+            docs/assistance-a43a-validity.md
+          git commit -m "Repair A4.3a conflict anchor semantics" || exit 0
+          git push origin HEAD:phase4-a43a-validity-protocol
