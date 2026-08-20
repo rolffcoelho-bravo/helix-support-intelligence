@@ -132,16 +132,18 @@ def test_a44a_conflict_metadata_is_not_an_atomic_negative_label() -> None:
 
     bundle = generate_bundle()
     documents = {str(row["document_id"]): dict(row) for row in bundle.documents}
-    conflict_cases = [row for row in generate_cases(bundle) if row["category"] == "unresolved_conflict"]
+    conflict_cases = [
+        row for row in generate_cases(bundle) if row["category"] == "unresolved_conflict"
+    ]
     assert len(conflict_cases) == 5
     for row in conflict_cases:
         assert row["expected_verdict"] == "CONFLICTING_EVIDENCE"
         atom = row["atoms"][0]
         assert set(atom["entailed_by"]) == set(row["cited_document_ids"])
         for document_id in row["cited_document_ids"]:
-            assert bool(documents[str(document_id)]["conflict_fixture"]) or str(document_id).startswith(
-                "POLICY-"
-            )
+            is_conflict = bool(documents[str(document_id)]["conflict_fixture"])
+            is_policy = str(document_id).startswith("POLICY-")
+            assert is_conflict or is_policy
 
 
 def test_a44a_atomic_relation_gold_exercises_all_three_classes_in_each_split() -> None:
