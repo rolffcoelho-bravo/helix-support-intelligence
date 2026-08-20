@@ -1,0 +1,72 @@
+{
+  "record_id": "phase4-assistance-a4.2-attempt3-blocked-v1",
+  "execution_id": "phase4-assistance-a4.2-development-v1",
+  "status": "BLOCKED_PRE_SCORE_MISSING_PROVIDER_CREDENTIAL",
+  "scientific_execution_sha": "fec8c5c63978ccae858257e1a078029c2103943c",
+  "github": {
+    "workflow": "Phase 4 Assistance A4.2",
+    "run_id": 32315032773,
+    "run_number": 1,
+    "run_attempt": 3,
+    "job_id": 96442880417,
+    "conclusion": "failure",
+    "rerun_requested_after_user_confirmed_repository_secret": true
+  },
+  "pre_score_boundary": {
+    "repository_checkout": "PASSED",
+    "uv_install": "PASSED",
+    "repository_environment_install": "PASSED",
+    "a42_preflight": {
+      "status": "PASSED",
+      "development_intents": 60,
+      "development_queries": 240,
+      "confirmatory_intents_opened": 0,
+      "confirmatory_queries_opened": 0,
+      "generator_calls_made": 0,
+      "nli_calls_made": 0,
+      "performance_scores_computed": 0
+    },
+    "provider_credential_check": "FAILED",
+    "provider_credential_observation": "OPENAI_API_KEY was still empty in the GitHub Actions job environment on rerun attempt 3. No secret value was exposed.",
+    "fresh_branch_scope_probe": {
+      "branch": "phase4-a42-secret-scope-probe",
+      "openai_api_key_present": false,
+      "interpretation": "A newly triggered same-repository push workflow also could not access secrets.OPENAI_API_KEY, so the blocker is repository secret availability/scope rather than historical rerun semantics."
+    },
+    "failure_message": "OPENAI_API_KEY repository secret is required for A4.2."
+  },
+  "skipped_after_failure": {
+    "reuse_exact_a41_dependency_lock": true,
+    "freeze_registered_scientific_inputs": true,
+    "openai_compatibility_probe": true,
+    "nli_model_download_or_inference": true,
+    "registered_development_quality_execution": true,
+    "independent_input_rehash": true,
+    "independent_result_reconstruction": true,
+    "evidence_label_finalization": true,
+    "artifact_checksum_freeze": true
+  },
+  "result_integrity": {
+    "openai_generation_calls_made": 0,
+    "nli_inference_calls_made": 0,
+    "development_quality_records_generated": 0,
+    "adversarial_records_generated": 0,
+    "repeatability_records_generated": 0,
+    "latency_records_generated": 0,
+    "hypothesis_results_generated": false,
+    "complexity_adoption_result_generated": false,
+    "confirmatory_queries_opened": 0,
+    "performance_artifact_uploaded": false,
+    "scientific_result_status": "NO_RESULT"
+  },
+  "interpretation": {
+    "negative_scientific_result": false,
+    "methodology_failure": false,
+    "credential_configuration_blocker": true,
+    "a40_rework_required": false,
+    "a41_rework_required": false,
+    "a42_method_rework_required": false,
+    "next_action": "Correct the GitHub Actions repository-secret availability for OPENAI_API_KEY. A fresh branch-only probe must report the secret as present before A4.2 is rerun again. Do not alter A4.0/A4.1/A4.2 scientific inputs."
+  },
+  "audit_verdict": "PASSED_FAIL_CLOSED_NO_RESULTS_OPENED"
+}
