@@ -84,18 +84,33 @@ def preflight() -> dict[str, Any]:
     if semantic["separate_future_approval_required"] is not True:
         raise RuntimeError("A4.4a future semantic binding must require separate approval.")
 
+    conflict_gate = config["component_boundaries"]["registered_conflict_metadata_gate"]
+    if conflict_gate["type"] != "deterministic_response_level_veto":
+        raise RuntimeError("A4.4a registered conflict must remain a response-level veto.")
+    if conflict_gate["semantic_negative_label"] is not False:
+        raise RuntimeError("A4.4a conflict metadata must not become an atomic semantic label.")
+
     if partition["calibration"] & partition["validation"]:
         raise RuntimeError("A4.4a calibration and validation intents overlap.")
     if partition["calibration"] | partition["validation"] != development:
         raise RuntimeError("A4.4a partitions must cover exactly the 60 development intents.")
 
-    expected_counts = config["validation_suite"]["expected_counts"]
+    suite = config["validation_suite"]
+    expected_counts = suite["expected_counts"]
     if summary["rows"] != int(expected_counts["total"]):
         raise RuntimeError("A4.4a validation-suite total mismatch.")
     if summary["split_counts"]["calibration"] != int(expected_counts["calibration"]):
         raise RuntimeError("A4.4a calibration row count mismatch.")
     if summary["split_counts"]["validation"] != int(expected_counts["validation"]):
         raise RuntimeError("A4.4a validation row count mismatch.")
+    if summary["sha256"] != suite["sha256"]:
+        raise RuntimeError("A4.4a validation-suite SHA-256 mismatch.")
+
+    conflict_category = suite["case_categories"]["unresolved_conflict"]
+    if conflict_category["semantic_negative_label"] is not False:
+        raise RuntimeError("A4.4a conflict cases must not be semantic-negative labels.")
+    if conflict_category["construct"] != "response_level_conflict_veto_on_otherwise_supported_atom":
+        raise RuntimeError("A4.4a conflict case construct changed after registration.")
 
     case_ids = [str(row["case_id"]) for row in cases]
     if len(case_ids) != len(set(case_ids)):
@@ -106,6 +121,7 @@ def preflight() -> dict[str, Any]:
             raise RuntimeError("A4.4a cases must not carry query or candidate records.")
 
     documents = {str(row["document_id"]): dict(row) for row in bundle.documents}
+    relation_counts = {"ENTAILED": 0, "CONTRADICTED": 0, "UNKNOWN": 0}
     for row in cases:
         presented = {str(value) for value in row["presented_document_ids"]}
         cited = {str(value) for value in row["cited_document_ids"]}
@@ -117,8 +133,22 @@ def preflight() -> dict[str, Any]:
                 raise RuntimeError("A4.4a citation-invalid cases must contain an invalid citation.")
             if verdict != "CITATION_INVALID":
                 raise RuntimeError("A4.4a citation-invalid verdict mismatch.")
-        elif not cited <= presented:
+            continue
+        if not cited <= presented:
             raise RuntimeError("Only A4.4a citation-invalid cases may cite absent documents.")
+
+        for atom in row["atoms"]:
+            entailed = {str(value) for value in atom["entailed_by"]}
+            contradicted = {str(value) for value in atom["contradicted_by"]}
+            if entailed & contradicted:
+                raise RuntimeError("A4.4a gold atom relation cannot be both entailed and contradicted.")
+            for document_id in cited:
+                if document_id in entailed:
+                    relation_counts["ENTAILED"] += 1
+                elif document_id in contradicted:
+                    relation_counts["CONTRADICTED"] += 1
+                else:
+                    relation_counts["UNKNOWN"] += 1
 
         if category == "stale_current_evidence":
             if verdict != "STALE_EVIDENCE":
@@ -131,6 +161,54 @@ def preflight() -> dict[str, Any]:
                 raise RuntimeError("A4.4a conflict verdict mismatch.")
             if not any(bool(documents[doc_id]["conflict_fixture"]) for doc_id in presented):
                 raise RuntimeError("A4.4a conflict cases must retain a conflict fixture.")
+            if not any(atom["entailed_by"] for atom in row["atoms"]):
+                raise RuntimeError("A4.4a conflict veto must be tested on otherwise supportable content.")
+
+    if any(count <= 0 for count in relation_counts.values()):
+        raise RuntimeError("A4.4a atomic relation suite must exercise all three relation classes.")
+
+    metrics = config["metric_definitions"]
+    required_metric_definitions = {
+        "gold_atomic_relation",
+        "semantic_pair_scope",
+        "registered_conflict_scope",
+        "atomic_relation_macro_f1",
+        "atomic_entailment_recall",
+        "atomic_contradiction_recall",
+        "atomic_unknown_recall",
+        "macro_case_category_accuracy",
+        "supported_precision",
+        "supported_recall",
+        "category_accuracy",
+    }
+    if set(metrics) != required_metric_definitions:
+        raise RuntimeError("A4.4a metric definitions changed after registration.")
+
+    requirements = config["future_validation_requirements"]
+    for metric in (
+        "macro_case_category_accuracy_min",
+        "supported_precision_min",
+        "supported_recall_min",
+        "atomic_relation_macro_f1_min",
+        "atomic_entailment_recall_min",
+        "atomic_contradiction_recall_min",
+        "atomic_unknown_recall_min",
+    ):
+        if float(requirements[metric]) < 0.95:
+            raise RuntimeError(f"A4.4a future validity floor for {metric} is below 0.95.")
+    if float(requirements["supported_precision_min"]) < 0.98:
+        raise RuntimeError("A4.4a SUPPORTED precision floor must remain at least 0.98.")
+    for metric in (
+        "citation_invalid_accuracy",
+        "stale_current_evidence_accuracy",
+        "unresolved_conflict_accuracy",
+    ):
+        if float(requirements[metric]) != 1.0:
+            raise RuntimeError(f"A4.4a deterministic veto accuracy {metric} must remain 1.0.")
+    if int(requirements["false_supported_on_citation_stale_or_conflict_cases"]) != 0:
+        raise RuntimeError("A4.4a deterministic veto cases permit no false SUPPORTED verdicts.")
+    if requirements["all_requirements_must_pass"] is not True:
+        raise RuntimeError("A4.4a future validity requires every registered check to pass.")
 
     future = config["future_binding_rules"]
     if future["semantic_verifier_model_search_allowed_in_a44a"] is not False:
@@ -150,6 +228,7 @@ def preflight() -> dict[str, Any]:
         "validation_rows": summary["split_counts"]["validation"],
         "suite_sha256": summary["sha256"],
         "category_counts": summary["category_counts"],
+        "atomic_relation_gold_counts": relation_counts,
         "candidate_outputs_used": False,
         "candidate_calls_made": 0,
         "openai_calls_made": 0,
