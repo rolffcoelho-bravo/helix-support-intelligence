@@ -1,0 +1,23 @@
+{
+  "anchor_suite_sha256": "145c3cbda7deea0b4befe8d471ecaa6689af524ad528fd851ef20eabe35688ac",
+  "artifact_file_sha256": {
+    "anchor_scores.jsonl": "91ede71ffe91cca1509ec5439cdf64fd3202390be8271353b65e4f3e36603746",
+    "execution_manifest.json": "c09c75c37a7354083a5abbf415408a628b4ea073b93f927416b19208188b0993",
+    "preflight.json": "5bac3c41fe4401dda6cb4af41a4b740e6311708a6daea28f663fc83f6d045dc2",
+    "report.md": "835f6eb562633b626f4d0052964d8d8985d9b00e4ed9dedeeb043d6c21a8b8e9",
+    "results.json": "5197af56b95ff4c8ebb02259e53769f2ffc18f2a2f580ae4ad6caff3d0089350"
+  },
+  "artifact_id": 9419102659,
+  "artifact_name": "phase4-assistance-a43a-15ad4e92f0d73caf944ebdb7312d6366f933bd33-run-32402729510",
+  "artifact_retention_days_at_execution": 90,
+  "artifact_zip_sha256": "56909955e28f05e44b6c86d88a79739678e58afd741daed02fd3844fe7804c8e",
+  "artifact_zip_size_bytes": 14841,
+  "benchmark_rerun_for_closure": false,
+  "evidence_id": "phase4-assistance-a4.3a-postresult-v1",
+  "github_job_id": 96534504574,
+  "github_run_attempt": 1,
+  "github_run_id": 32402729510,
+  "nli_rerun_for_closure": false,
+  "scientific_sha": "15ad4e92f0d73caf944ebdb7312d6366f933bd33",
+  "wrapper_trigger_sha": "34884d2ae2d64a73503d26e36576a19571aa0b67"
+}

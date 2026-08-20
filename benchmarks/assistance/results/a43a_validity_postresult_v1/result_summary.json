@@ -1,0 +1,148 @@
+{
+  "anchor_suite": {
+    "calibration_rows": 248,
+    "rows": 372,
+    "sha256": "145c3cbda7deea0b4befe8d471ecaa6689af524ad528fd851ef20eabe35688ac",
+    "validation_rows": 124
+  },
+  "calibration": {
+    "balanced_accuracy": 0.8901041666666667,
+    "minimum_class_rate": 0.8583333333333333,
+    "negative_specificity": 0.921875,
+    "positive_sensitivity": 0.8583333333333333,
+    "threshold": 0.05
+  },
+  "evaluator": {
+    "architecture_family": "minilm2-roberta",
+    "batch_size": 8,
+    "entailment_label": 1,
+    "max_length": 512,
+    "model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+    "onnx_path": "onnx/model_quint8_avx2.onnx",
+    "onnx_sha256": "44391a5241a62e0083c1a8899a71e69a092b95aea5ba89e14062925468eceac7",
+    "revision": "b95119ce93d3e065de6214e38cd4a97b0f2f2c6d"
+  },
+  "execution_guards": {
+    "candidate_calls": 0,
+    "candidate_scores_computed": 0,
+    "confirmatory_queries_scored": 0,
+    "openai_calls": 0,
+    "post_validation_threshold_adjustment": false
+  },
+  "existing_threshold_diagnostic": {
+    "balanced_accuracy": 0.5416666666666666,
+    "negative_rows": 128,
+    "negative_specificity": 1.0,
+    "positive_rows": 120,
+    "positive_sensitivity": 0.08333333333333333,
+    "rows": 248,
+    "threshold": 0.8
+  },
+  "scientific_sha": "15ad4e92f0d73caf944ebdb7312d6366f933bd33",
+  "selected_threshold": 0.05,
+  "status": "FAILED_EVALUATOR_VALIDITY",
+  "validation": {
+    "categories": {
+      "citation_mismatch": {
+        "balanced_accuracy": null,
+        "negative_rows": 20,
+        "negative_specificity": 1.0,
+        "positive_rows": 0,
+        "positive_sensitivity": null,
+        "rows": 20
+      },
+      "conflict_union_claim": {
+        "balanced_accuracy": null,
+        "negative_rows": 2,
+        "negative_specificity": 0.0,
+        "positive_rows": 0,
+        "positive_sensitivity": null,
+        "rows": 2
+      },
+      "contradiction_queue": {
+        "balanced_accuracy": null,
+        "negative_rows": 20,
+        "negative_specificity": 1.0,
+        "positive_rows": 0,
+        "positive_sensitivity": null,
+        "rows": 20
+      },
+      "literal_policy": {
+        "balanced_accuracy": null,
+        "negative_rows": 0,
+        "negative_specificity": null,
+        "positive_rows": 20,
+        "positive_sensitivity": 0.95,
+        "rows": 20
+      },
+      "multi_document_conjunction": {
+        "balanced_accuracy": null,
+        "negative_rows": 0,
+        "negative_specificity": null,
+        "positive_rows": 20,
+        "positive_sensitivity": 0.85,
+        "rows": 20
+      },
+      "paraphrase_queue": {
+        "balanced_accuracy": null,
+        "negative_rows": 0,
+        "negative_specificity": null,
+        "positive_rows": 20,
+        "positive_sensitivity": 0.95,
+        "rows": 20
+      },
+      "stale_current_claim": {
+        "balanced_accuracy": null,
+        "negative_rows": 2,
+        "negative_specificity": 1.0,
+        "positive_rows": 0,
+        "positive_sensitivity": null,
+        "rows": 2
+      },
+      "unsupported_approval": {
+        "balanced_accuracy": null,
+        "negative_rows": 20,
+        "negative_specificity": 1.0,
+        "positive_rows": 0,
+        "positive_sensitivity": null,
+        "rows": 20
+      }
+    },
+    "checks": {
+      "balanced_accuracy": false,
+      "citation_mismatch_specificity": true,
+      "conflict_union_claim_specificity": false,
+      "contradiction_queue_specificity": true,
+      "literal_policy_sensitivity": true,
+      "multi_document_conjunction_sensitivity": true,
+      "overall_negative_specificity": true,
+      "overall_positive_sensitivity": false,
+      "paraphrase_queue_sensitivity": true,
+      "stale_current_claim_specificity": true,
+      "unsupported_approval_specificity": true
+    },
+    "overall": {
+      "balanced_accuracy": 0.9427083333333333,
+      "negative_rows": 64,
+      "negative_specificity": 0.96875,
+      "positive_rows": 60,
+      "positive_sensitivity": 0.9166666666666666,
+      "rows": 124
+    },
+    "passed": false,
+    "requirements": {
+      "balanced_accuracy_min": 0.95,
+      "citation_mismatch_specificity_min": 0.95,
+      "conflict_union_claim_specificity_min": 0.9,
+      "contradiction_queue_specificity_min": 0.95,
+      "literal_policy_sensitivity_min": 0.95,
+      "multi_document_conjunction_sensitivity_min": 0.85,
+      "overall_negative_specificity_min": 0.95,
+      "overall_positive_sensitivity_min": 0.95,
+      "paraphrase_queue_sensitivity_min": 0.9,
+      "stale_current_claim_specificity_min": 0.9,
+      "unsupported_approval_specificity_min": 0.95
+    }
+  },
+  "validity_id": "phase4-assistance-a4.3a-validity-v1"
+}
