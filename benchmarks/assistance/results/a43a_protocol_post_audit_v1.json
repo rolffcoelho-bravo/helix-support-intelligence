@@ -1,0 +1,67 @@
+{
+  "audit_id": "phase4-assistance-a4.3a-pre-inference-audit-v1",
+  "status": "PASSED_PRE_INFERENCE_NO_RESULTS",
+  "audited_pr": 22,
+  "audited_head_sha": "c404d39e815ebda567ae52d125ce7b2cdc613f6e",
+  "source_main_sha": "7fd6fd7f4e54d8f95d14537a8494c36e0e9d145f",
+  "validity_id": "phase4-assistance-a4.3a-validity-v1",
+  "evidence_contract_id": "phase4-assistance-evidence-v2",
+  "anchor_suite": {
+    "rows": 372,
+    "calibration_rows": 248,
+    "validation_rows": 124,
+    "sha256": "145c3cbda7deea0b4befe8d471ecaa6689af524ad528fd851ef20eabe35688ac",
+    "development_intents_only": true,
+    "candidate_outputs_used": false,
+    "query_text_used": false,
+    "confirmatory_intents_used": false
+  },
+  "evidence_contract_preflight": {
+    "development_intents": 60,
+    "development_queries_inspected": 240,
+    "answer_queries_reclassified_to_conflict": 10,
+    "answer_with_unresolved_conflict_after_resolution": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_metrics_computed": 0
+  },
+  "execution_guards_observed": {
+    "candidate_calls": 0,
+    "candidate_scores": 0,
+    "openai_calls": 0,
+    "nli_calls": 0,
+    "confirmatory_query_scores": 0
+  },
+  "dependency_lock": {
+    "a43a_lock_blob_sha": "f2f4a13c6f311257873ae7132a08f67dcfc3de20",
+    "a41_lock_blob_sha": "f2f4a13c6f311257873ae7132a08f67dcfc3de20",
+    "identical": true,
+    "dependency_requirements_aligned": true
+  },
+  "scope_audit": {
+    "helixbank_corpus_modified": false,
+    "phase2_scientific_inputs_modified": false,
+    "phase3_scientific_inputs_modified": false,
+    "a40_protocol_modified": false,
+    "a41_binding_modified": false,
+    "a42_raw_results_modified": false,
+    "assistance_prompts_modified": false,
+    "temporary_workflows_present_in_final_diff": false
+  },
+  "pre_inference_defect_caught": {
+    "type": "anchor_construct_validity",
+    "description": "The initial conflict-union negative repeated a proposition explicitly asserted by the conflict FAQ, which could conflate sentence entailment with conflict resolution.",
+    "repair": "Before any NLI inference, replace it with the false-consensus hypothesis that both documents agree review is optional when unresolved uncertainty remains.",
+    "model_result_observed_before_repair": false,
+    "candidate_result_used_for_repair": false
+  },
+  "inference_plan_audit": {
+    "threshold_calibration_split_only": true,
+    "validation_split_may_not_influence_threshold": true,
+    "threshold_grid": [0.05, 0.95, 0.01],
+    "validation_evaluated_after_threshold_selection": true,
+    "replacement_model_search_allowed_after_failure": false,
+    "a43b_authorized": false
+  },
+  "interpretation_boundary": "A4.3a validates measurement behavior only on the deterministic fictional HelixBank anchor suite. Passing does not establish general real-world NLI validity.",
+  "required_next_action": "Merge the frozen protocol, bind execution to the merge SHA, then run local NLI inference only on the 372 registered anchors."
+}
