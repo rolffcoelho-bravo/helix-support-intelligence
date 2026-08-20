@@ -1,0 +1,20 @@
+{
+  "target_wrapper_sha": "34884d2ae2d64a73503d26e36576a19571aa0b67",
+  "run_id": 32402729510,
+  "run_attempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-08-20T18:21:22Z",
+  "updated_at": "2026-08-20T18:22:07Z",
+  "job_id": 96534504574,
+  "job_conclusion": "success",
+  "artifacts": [
+    {
+      "id": 9419102659,
+      "name": "phase4-assistance-a43a-15ad4e92f0d73caf944ebdb7312d6366f933bd33-run-32402729510",
+      "size_in_bytes": 14841,
+      "digest": "sha256:56909955e28f05e44b6c86d88a79739678e58afd741daed02fd3844fe7804c8e",
+      "expired": false
+    }
+  ]
+}
