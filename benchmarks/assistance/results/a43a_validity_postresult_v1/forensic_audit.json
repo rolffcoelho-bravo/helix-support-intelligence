@@ -1,0 +1,91 @@
+{
+  "anchor_integrity": {
+    "anchor_rows": 372,
+    "calibration_intents": 40,
+    "calibration_rows": 248,
+    "intent_overlap_count": 0,
+    "registered_anchor_sha256": "145c3cbda7deea0b4befe8d471ecaa6689af524ad528fd851ef20eabe35688ac",
+    "registered_counts_match": true,
+    "unique_anchor_ids": 372,
+    "validation_intents": 20,
+    "validation_rows": 124
+  },
+  "artifact_zip_sha256": "56909955e28f05e44b6c86d88a79739678e58afd741daed02fd3844fe7804c8e",
+  "audit_id": "phase4-assistance-a4.3a-postresult-forensic-audit-v1",
+  "benchmark_rerun_performed_by_this_audit": false,
+  "forensic_result_status": "FAILED_EVALUATOR_VALIDITY_CONFIRMED",
+  "independent_threshold_reconstruction": {
+    "balanced_accuracy": 0.8901041666666667,
+    "grid_points": 91,
+    "matches_registered_threshold": true,
+    "minimum_class_rate": 0.8583333333333333,
+    "negative_specificity": 0.921875,
+    "positive_sensitivity": 0.8583333333333333,
+    "registered_threshold": 0.05,
+    "selected_threshold": 0.05
+  },
+  "independent_validation_reconstruction": {
+    "all_requirements_pass": false,
+    "failed_checks": [
+      "balanced_accuracy",
+      "conflict_union_claim_specificity",
+      "overall_positive_sensitivity"
+    ],
+    "misclassified_validation_anchor_count": 7,
+    "overall": {
+      "balanced_accuracy": 0.9427083333333333,
+      "negative_rows": 64,
+      "negative_specificity": 0.96875,
+      "positive_rows": 60,
+      "positive_sensitivity": 0.9166666666666666,
+      "rows": 124,
+      "true_negative": 62,
+      "true_positive": 55
+    },
+    "registered_checks": {
+      "balanced_accuracy": false,
+      "citation_mismatch_specificity": true,
+      "conflict_union_claim_specificity": false,
+      "contradiction_queue_specificity": true,
+      "literal_policy_sensitivity": true,
+      "multi_document_conjunction_sensitivity": true,
+      "overall_negative_specificity": true,
+      "overall_positive_sensitivity": false,
+      "paraphrase_queue_sensitivity": true,
+      "stale_current_claim_specificity": true,
+      "unsupported_approval_specificity": true
+    },
+    "registered_overall": {
+      "balanced_accuracy": 0.9427083333333333,
+      "negative_rows": 64,
+      "negative_specificity": 0.96875,
+      "positive_rows": 60,
+      "positive_sensitivity": 0.9166666666666666,
+      "rows": 124
+    },
+    "registered_overall_matches": true
+  },
+  "nli_rerun_performed_by_this_audit": false,
+  "protocol_guards_verified": {
+    "all_required_guards_closed": true,
+    "candidate_calls": 0,
+    "candidate_scores_computed": 0,
+    "confirmatory_queries_scored": 0,
+    "openai_calls": 0,
+    "post_validation_threshold_adjustment": false
+  },
+  "registered_result_status": "FAILED_EVALUATOR_VALIDITY",
+  "scientific_disposition": {
+    "a43a_rerun_as_rescue_permitted": false,
+    "a43b_authorized": false,
+    "confirmatory_partition_remains_unopened": true,
+    "evaluation_verifier_rejected_for_future_candidate_selection": true,
+    "interpretation": "Preserve the registered negative validity result. Any replacement evaluator family requires a separately approved and versioned methodology gate before candidate comparison.",
+    "post_result_threshold_rescue_permitted": false,
+    "rejected_model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+    "replacement_evaluator_search_permitted_without_new_approved_protocol": false
+  },
+  "scientific_sha": "15ad4e92f0d73caf944ebdb7312d6366f933bd33",
+  "source_artifact_verified_by_sha256": true,
+  "status": "CLOSED_FAILED_EVALUATOR_VALIDITY"
+}
