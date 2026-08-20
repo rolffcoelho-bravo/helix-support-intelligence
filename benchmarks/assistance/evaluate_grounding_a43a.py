@@ -31,6 +31,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
 from grounding_anchors_a43a import canonical_jsonl_bytes, generate_anchors  # noqa: E402
+
 from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402
 
 CONFIG_PATH = ROOT / "configs" / "models" / "assistance_validity_a43a_v1.json"
@@ -81,9 +82,9 @@ def _category_metrics(rows: list[dict[str, Any]], threshold: float) -> dict[str,
 
 def _select_threshold(calibration: list[dict[str, Any]], config: dict[str, Any]) -> dict[str, Any]:
     spec = config["evaluator_validation"]["threshold_calibration"]
-    minimum = int(round(float(spec["grid_min"]) * 100))
-    maximum = int(round(float(spec["grid_max"]) * 100))
-    step = int(round(float(spec["grid_step"]) * 100))
+    minimum = round(float(spec["grid_min"]) * 100)
+    maximum = round(float(spec["grid_max"]) * 100)
+    step = round(float(spec["grid_step"]) * 100)
     candidates: list[dict[str, Any]] = []
     for integer in range(minimum, maximum + 1, step):
         threshold = integer / 100.0
@@ -126,9 +127,7 @@ def _validation_checks(
         >= float(requirements["overall_negative_specificity_min"]),
         "balanced_accuracy": float(overall["balanced_accuracy"])
         >= float(requirements["balanced_accuracy_min"]),
-        "literal_policy_sensitivity": float(
-            categories["literal_policy"]["positive_sensitivity"]
-        )
+        "literal_policy_sensitivity": float(categories["literal_policy"]["positive_sensitivity"])
         >= float(requirements["literal_policy_sensitivity_min"]),
         "paraphrase_queue_sensitivity": float(
             categories["paraphrase_queue"]["positive_sensitivity"]
@@ -208,9 +207,7 @@ class NliEngine:
             padding=True,
             return_tensors="np",
         )
-        feed = {
-            key: np.asarray(value) for key, value in encoded.items() if key in self.input_names
-        }
+        feed = {key: np.asarray(value) for key, value in encoded.items() if key in self.input_names}
         logits = np.asarray(self.session.run(None, feed)[0]).astype(float)
         logits -= np.max(logits, axis=1, keepdims=True)
         exponentiated = np.exp(logits)
@@ -317,9 +314,18 @@ def execute(output_dir: Path) -> dict[str, Any]:
                 f"**Status: {status}**",
                 "",
                 f"Selected calibration threshold: **{selected_threshold:.2f}**.",
-                f"Validation positive sensitivity: **{float(holdout['overall']['positive_sensitivity']):.4f}**.",
-                f"Validation negative specificity: **{float(holdout['overall']['negative_specificity']):.4f}**.",
-                f"Validation balanced accuracy: **{float(holdout['overall']['balanced_accuracy']):.4f}**.",
+                (
+                    "Validation positive sensitivity: "
+                    f"**{float(holdout['overall']['positive_sensitivity']):.4f}**."
+                ),
+                (
+                    "Validation negative specificity: "
+                    f"**{float(holdout['overall']['negative_specificity']):.4f}**."
+                ),
+                (
+                    "Validation balanced accuracy: "
+                    f"**{float(holdout['overall']['balanced_accuracy']):.4f}**."
+                ),
                 "",
                 "No assistance candidate, OpenAI call, or confirmatory query was used.",
             ]
@@ -335,7 +341,9 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
     result = execute(args.output_dir)
-    print(json.dumps({"status": result["status"], "selected_threshold": result["selected_threshold"]}))
+    print(
+        json.dumps({"status": result["status"], "selected_threshold": result["selected_threshold"]})
+    )
 
 
 if __name__ == "__main__":

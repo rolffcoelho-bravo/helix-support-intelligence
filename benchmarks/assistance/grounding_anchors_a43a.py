@@ -12,7 +12,11 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from helix_support_intelligence.data.helixbank import INTENTS, CorpusBundle, generate_bundle  # noqa: E402
+from helix_support_intelligence.data.helixbank import (  # noqa: E402
+    INTENTS,
+    CorpusBundle,
+    generate_bundle,
+)
 
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 SPLIT_SEED = 20260820
@@ -27,15 +31,9 @@ def _ordered(values: set[str], prefix: str) -> list[str]:
 
 def development_intents(bundle: CorpusBundle) -> set[str]:
     """Reconstruct the frozen A4.0 development-intent partition without query labels."""
-    conflicts = {
-        str(row["intent"])
-        for row in bundle.documents
-        if bool(row["conflict_fixture"])
-    }
+    conflicts = {str(row["intent"]) for row in bundle.documents if bool(row["conflict_fixture"])}
     non_conflicts = set(INTENTS) - conflicts
-    return set(_ordered(conflicts, "20260819")[:5]) | set(
-        _ordered(non_conflicts, "20260819")[:55]
-    )
+    return set(_ordered(conflicts, "20260819")[:5]) | set(_ordered(non_conflicts, "20260819")[:55])
 
 
 def anchor_partition(bundle: CorpusBundle) -> dict[str, set[str]]:
@@ -47,9 +45,7 @@ def anchor_partition(bundle: CorpusBundle) -> dict[str, set[str]]:
         if row["kind"] == "faq" and row["status"] == "archived"
     } & development
     conflicts = {
-        str(row["intent"])
-        for row in bundle.documents
-        if bool(row["conflict_fixture"])
+        str(row["intent"]) for row in bundle.documents if bool(row["conflict_fixture"])
     } & development
     ordinary = development - archived - conflicts
 
@@ -60,7 +56,9 @@ def anchor_partition(bundle: CorpusBundle) -> dict[str, set[str]]:
     )
     validation = development - calibration
     if len(calibration) != 40 or len(validation) != 20:
-        raise RuntimeError("A4.3a anchor partition must be 40 calibration and 20 validation intents.")
+        raise RuntimeError(
+            "A4.3a anchor partition must be 40 calibration and 20 validation intents."
+        )
     return {"calibration": calibration, "validation": validation}
 
 
@@ -216,9 +214,9 @@ def generate_anchors(bundle: CorpusBundle | None = None) -> list[dict[str, Any]]
 def canonical_jsonl_bytes(rows: list[dict[str, Any]]) -> bytes:
     """Serialize anchor rows canonically for provenance hashing."""
     return b"".join(
-        (
-            json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
-        ).encode("utf-8")
+        (json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode(
+            "utf-8"
+        )
         for row in rows
     )
 
@@ -227,8 +225,7 @@ def suite_summary() -> dict[str, Any]:
     """Return deterministic counts and SHA-256 without running any model."""
     rows = generate_anchors()
     counts = {
-        split: sum(row["split"] == split for row in rows)
-        for split in ("calibration", "validation")
+        split: sum(row["split"] == split for row in rows) for split in ("calibration", "validation")
     }
     categories = sorted({str(row["category"]) for row in rows})
     return {

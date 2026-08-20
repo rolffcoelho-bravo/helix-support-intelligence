@@ -17,6 +17,7 @@ from grounding_anchors_a43a import (  # noqa: E402
     generate_anchors,
     suite_summary,
 )
+
 from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402
 
 CONFIG_PATH = ROOT / "configs" / "models" / "assistance_validity_a43a_v1.json"
