@@ -19,6 +19,7 @@ from grounding_anchors_a43a import (  # type: ignore[import-not-found]  # noqa: 
 from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402
 
 CONFIG_PATH = ROOT / "configs" / "models" / "assistance_grounding_a44a_v1.json"
+SUITE_SHA256 = "f1404bcd53d214ebe07cd44a0cd1f7d7b1f661f76a85c206f5cde13a69cb83bf"
 
 
 def test_a44a_suite_is_development_only_and_frozen_size() -> None:
@@ -35,6 +36,7 @@ def test_a44a_suite_is_development_only_and_frozen_size() -> None:
     assert partition["calibration"] | partition["validation"] == development
     assert len(rows) == 432
     assert summary["split_counts"] == {"calibration": 288, "validation": 144}
+    assert summary["sha256"] == SUITE_SHA256
     assert summary["category_counts"] == {
         "citation_invalid": 60,
         "contradiction_unsupported": 60,
@@ -46,6 +48,9 @@ def test_a44a_suite_is_development_only_and_frozen_size() -> None:
         "unresolved_conflict": 5,
         "unsupported_approval": 60,
     }
+
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    assert config["validation_suite"]["sha256"] == SUITE_SHA256
 
 
 def test_a44a_cases_are_candidate_and_query_independent() -> None:
@@ -112,6 +117,80 @@ def test_a44a_deterministic_veto_categories_are_structurally_separable() -> None
         if category == "unresolved_conflict":
             assert row["expected_verdict"] == "CONFLICTING_EVIDENCE"
             assert any(bool(documents[doc_id]["conflict_fixture"]) for doc_id in presented)
+            assert any(atom["entailed_by"] for atom in row["atoms"])
+
+
+def test_a44a_conflict_metadata_is_not_an_atomic_negative_label() -> None:
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    gate = config["component_boundaries"]["registered_conflict_metadata_gate"]
+    category = config["validation_suite"]["case_categories"]["unresolved_conflict"]
+
+    assert gate["type"] == "deterministic_response_level_veto"
+    assert gate["semantic_negative_label"] is False
+    assert category["semantic_negative_label"] is False
+    assert category["construct"] == "response_level_conflict_veto_on_otherwise_supported_atom"
+
+    conflict_cases = [row for row in generate_cases() if row["category"] == "unresolved_conflict"]
+    assert len(conflict_cases) == 5
+    for row in conflict_cases:
+        assert row["expected_verdict"] == "CONFLICTING_EVIDENCE"
+        assert any(atom["entailed_by"] for atom in row["atoms"])
+
+
+def test_a44a_atomic_relation_gold_exercises_all_three_classes() -> None:
+    counts = {"ENTAILED": 0, "CONTRADICTED": 0, "UNKNOWN": 0}
+    for row in generate_cases():
+        presented = {str(value) for value in row["presented_document_ids"]}
+        cited = {str(value) for value in row["cited_document_ids"]}
+        if row["category"] == "citation_invalid":
+            assert not cited <= presented
+            continue
+
+        for atom in row["atoms"]:
+            entailed = {str(value) for value in atom["entailed_by"]}
+            contradicted = {str(value) for value in atom["contradicted_by"]}
+            assert not entailed & contradicted
+            for document_id in cited:
+                if document_id in entailed:
+                    counts["ENTAILED"] += 1
+                elif document_id in contradicted:
+                    counts["CONTRADICTED"] += 1
+                else:
+                    counts["UNKNOWN"] += 1
+
+    assert all(value > 0 for value in counts.values())
+
+
+def test_a44a_metric_definitions_and_future_floors_are_frozen() -> None:
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    metrics = config["metric_definitions"]
+    requirements = config["future_validation_requirements"]
+
+    assert set(metrics) == {
+        "gold_atomic_relation",
+        "semantic_pair_scope",
+        "registered_conflict_scope",
+        "atomic_relation_macro_f1",
+        "atomic_entailment_recall",
+        "atomic_contradiction_recall",
+        "atomic_unknown_recall",
+        "macro_case_category_accuracy",
+        "supported_precision",
+        "supported_recall",
+        "category_accuracy",
+    }
+    assert requirements["macro_case_category_accuracy_min"] == 0.95
+    assert requirements["supported_precision_min"] == 0.98
+    assert requirements["supported_recall_min"] == 0.95
+    assert requirements["atomic_relation_macro_f1_min"] == 0.95
+    assert requirements["atomic_entailment_recall_min"] == 0.95
+    assert requirements["atomic_contradiction_recall_min"] == 0.95
+    assert requirements["atomic_unknown_recall_min"] == 0.95
+    assert requirements["citation_invalid_accuracy"] == 1.0
+    assert requirements["stale_current_evidence_accuracy"] == 1.0
+    assert requirements["unresolved_conflict_accuracy"] == 1.0
+    assert requirements["false_supported_on_citation_stale_or_conflict_cases"] == 0
+    assert requirements["all_requirements_must_pass"] is True
 
 
 def test_a44a_future_binding_cannot_use_validation_or_prior_candidate_results() -> None:
