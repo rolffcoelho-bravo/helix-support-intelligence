@@ -141,7 +141,9 @@ def preflight() -> dict[str, Any]:
             entailed = {str(value) for value in atom["entailed_by"]}
             contradicted = {str(value) for value in atom["contradicted_by"]}
             if entailed & contradicted:
-                raise RuntimeError("A4.4a gold atom relation cannot be both entailed and contradicted.")
+                raise RuntimeError(
+                    "A4.4a gold atom relation cannot be both entailed and contradicted."
+                )
             for document_id in cited:
                 if document_id in entailed:
                     relation_counts["ENTAILED"] += 1
@@ -162,7 +164,9 @@ def preflight() -> dict[str, Any]:
             if not any(bool(documents[doc_id]["conflict_fixture"]) for doc_id in presented):
                 raise RuntimeError("A4.4a conflict cases must retain a conflict fixture.")
             if not any(atom["entailed_by"] for atom in row["atoms"]):
-                raise RuntimeError("A4.4a conflict veto must be tested on otherwise supportable content.")
+                raise RuntimeError(
+                    "A4.4a conflict veto must be tested on otherwise supportable content."
+                )
 
     if any(count <= 0 for count in relation_counts.values()):
         raise RuntimeError("A4.4a atomic relation suite must exercise all three relation classes.")
