@@ -8,6 +8,7 @@ on:
       - ".github/workflows/a42-postresult-audit.yml"
       - "benchmarks/assistance/run_verify_a42_postresult_v1.py"
       - "benchmarks/assistance/audit_a42_forensic_v1.py"
+      - "benchmarks/assistance/run_audit_a42_forensic_v1_fix.py"
 
 permissions:
   actions: read
@@ -57,7 +58,7 @@ jobs:
       - name: Run forensic scientific validity audit
         run: |
           set +e
-          uv run python benchmarks/assistance/audit_a42_forensic_v1.py \
+          uv run python benchmarks/assistance/run_audit_a42_forensic_v1_fix.py \
             --output-dir artifacts/phase4-assistance/a42
           code=$?
           set -e
@@ -92,7 +93,7 @@ jobs:
             "scientific_sha": "fec8c5c63978ccae858257e1a078029c2103943c",
             "candidate_rerun": false,
             "post_score_tuning": false,
-            "repair_scope": "diagnostic zero-denominator handling only"
+            "repair_scope": "diagnostic zero-denominator handling plus audit-only punctuation normalization"
           }
           EOF
           find benchmarks/assistance/results/a42_development_postresult_v1 \
