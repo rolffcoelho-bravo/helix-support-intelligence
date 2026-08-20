@@ -20,7 +20,7 @@ The future validity protocol measures both the three-way atomic relation task an
 
 ## Defects caught before execution
 
-The hostile audit corrected three issues before any semantic verifier binding or inference: ambiguous conflict semantics, omission of explicit three-way atomic relation validity requirements, and five incorrect `UNKNOWN` FAQ gold relations in conflict fixtures where the queue sentence was actually entailed by both cited documents. The last repair changed the suite SHA from `f1404bcd53d214ebe07cd44a0cd1f7d7b1f661f76a85c206f5cde13a69cb83bf` to the final frozen SHA above.
+The pre-execution review corrected three issues before any semantic verifier binding or inference: ambiguous conflict semantics, omission of explicit three-way atomic relation validity requirements, and five incorrect `UNKNOWN` FAQ gold relations in conflict fixtures where the queue sentence was actually entailed by both cited documents. The last repair changed the suite SHA from `f1404bcd53d214ebe07cd44a0cd1f7d7b1f661f76a85c206f5cde13a69cb83bf` to the final frozen SHA above.
 
 ## Guards
 
