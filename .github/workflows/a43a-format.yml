@@ -21,14 +21,72 @@ jobs:
         with:
           version: "0.11.33"
       - run: uv sync --locked --group dev
+      - name: Apply deterministic static-only repairs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          evaluate = Path("benchmarks/assistance/evaluate_grounding_a43a.py")
+          text = evaluate.read_text(encoding="utf-8")
+          text = text.replace(
+              'minimum = int(round(float(spec["grid_min"]) * 100))',
+              'minimum = round(float(spec["grid_min"]) * 100)',
+          )
+          text = text.replace(
+              'maximum = int(round(float(spec["grid_max"]) * 100))',
+              'maximum = round(float(spec["grid_max"]) * 100)',
+          )
+          text = text.replace(
+              'step = int(round(float(spec["grid_step"]) * 100))',
+              'step = round(float(spec["grid_step"]) * 100)',
+          )
+          text = text.replace(
+              '                f"Validation positive sensitivity: **{float(holdout[\'overall\'][\'positive_sensitivity\']):.4f}**.",',
+              '                (\n                    "Validation positive sensitivity: "\n                    f"**{float(holdout[\'overall\'][\'positive_sensitivity\']):.4f}**."\n                ),',
+          )
+          text = text.replace(
+              '                f"Validation negative specificity: **{float(holdout[\'overall\'][\'negative_specificity\']):.4f}**.",',
+              '                (\n                    "Validation negative specificity: "\n                    f"**{float(holdout[\'overall\'][\'negative_specificity\']):.4f}**."\n                ),',
+          )
+          text = text.replace(
+              '                f"Validation balanced accuracy: **{float(holdout[\'overall\'][\'balanced_accuracy\']):.4f}**.",',
+              '                (\n                    "Validation balanced accuracy: "\n                    f"**{float(holdout[\'overall\'][\'balanced_accuracy\']):.4f}**."\n                ),',
+          )
+          text = text.replace(
+              '    print(json.dumps({"status": result["status"], "selected_threshold": result["selected_threshold"]}))',
+              '    print(\n        json.dumps(\n            {"status": result["status"], "selected_threshold": result["selected_threshold"]}\n        )\n    )',
+          )
+          evaluate.write_text(text, encoding="utf-8")
+
+          anchors = Path("benchmarks/assistance/grounding_anchors_a43a.py")
+          text = anchors.read_text(encoding="utf-8")
+          text = text.replace(
+              '        raise RuntimeError("A4.3a anchor partition must be 40 calibration and 20 validation intents.")',
+              '        raise RuntimeError(\n            "A4.3a anchor partition must be 40 calibration and 20 validation intents."\n        )',
+          )
+          anchors.write_text(text, encoding="utf-8")
+
+          tests = Path("tests/test_phase4_a43a_validity.py")
+          text = tests.read_text(encoding="utf-8")
+          text = text.replace(
+              "from helix_support_intelligence.data.helixbank import generate_bundle\n",
+              "from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402\n",
+          )
+          tests.write_text(text, encoding="utf-8")
+          PY
       - name: Ruff-fix and format A4.3a Python only
         run: |
-          uv run ruff check --fix \
+          uv run ruff check --fix --unsafe-fixes \
             benchmarks/assistance/evaluate_grounding_a43a.py \
             benchmarks/assistance/grounding_anchors_a43a.py \
             scripts/preflight_phase4_a43a.py \
             tests/test_phase4_a43a_validity.py
           uv run ruff format \
+            benchmarks/assistance/evaluate_grounding_a43a.py \
+            benchmarks/assistance/grounding_anchors_a43a.py \
+            scripts/preflight_phase4_a43a.py \
+            tests/test_phase4_a43a_validity.py
+          uv run ruff check \
             benchmarks/assistance/evaluate_grounding_a43a.py \
             benchmarks/assistance/grounding_anchors_a43a.py \
             scripts/preflight_phase4_a43a.py \
