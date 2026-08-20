@@ -188,7 +188,9 @@ def main() -> None:
         "scientific_sha": SCIENTIFIC_SHA,
         "raw_artifact_run_id": 32390970870,
         "raw_artifact_id": 9415920431,
-        "raw_artifact_zip_sha256": "376537ebac7800ae9f4f3b3802fcc31a03672f040c3648674f712e7014bb4ca5",
+        "raw_artifact_zip_sha256": (
+            "376537ebac7800ae9f4f3b3802fcc31a03672f040c3648674f712e7014bb4ca5"
+        ),
         "mechanical_reconstruction_status": mechanical["status"],
         "manifest_github_sha": manifest.get("github_sha"),
         "manifest_sha_note": (
@@ -253,7 +255,7 @@ def main() -> None:
         "",
         f"Mechanical reconstruction: **{mechanical['status']}**.",
         f"Selection admissible: **{selection_admissible}**.",
-        f"Confirmatory queries opened: **0**.",
+        "Confirmatory queries opened: **0**.",
         "",
         "## Protocol consistency",
         "",
