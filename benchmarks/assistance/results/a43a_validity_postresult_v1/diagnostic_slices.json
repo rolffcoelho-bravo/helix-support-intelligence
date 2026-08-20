@@ -1,0 +1,170 @@
+{
+  "selected_threshold": 0.05,
+  "split_integrity": {
+    "anchor_rows": 372,
+    "calibration_intents": 40,
+    "calibration_rows": 248,
+    "intent_overlap_count": 0,
+    "unique_anchor_ids": 372,
+    "validation_intents": 20,
+    "validation_rows": 124
+  },
+  "validation_category_metrics_reconstructed": {
+    "citation_mismatch": {
+      "balanced_accuracy": null,
+      "negative_rows": 20,
+      "negative_specificity": 1.0,
+      "positive_rows": 0,
+      "positive_sensitivity": null,
+      "rows": 20,
+      "true_negative": 20,
+      "true_positive": 0
+    },
+    "conflict_union_claim": {
+      "balanced_accuracy": null,
+      "negative_rows": 2,
+      "negative_specificity": 0.0,
+      "positive_rows": 0,
+      "positive_sensitivity": null,
+      "rows": 2,
+      "true_negative": 0,
+      "true_positive": 0
+    },
+    "contradiction_queue": {
+      "balanced_accuracy": null,
+      "negative_rows": 20,
+      "negative_specificity": 1.0,
+      "positive_rows": 0,
+      "positive_sensitivity": null,
+      "rows": 20,
+      "true_negative": 20,
+      "true_positive": 0
+    },
+    "literal_policy": {
+      "balanced_accuracy": null,
+      "negative_rows": 0,
+      "negative_specificity": null,
+      "positive_rows": 20,
+      "positive_sensitivity": 0.95,
+      "rows": 20,
+      "true_negative": 0,
+      "true_positive": 19
+    },
+    "multi_document_conjunction": {
+      "balanced_accuracy": null,
+      "negative_rows": 0,
+      "negative_specificity": null,
+      "positive_rows": 20,
+      "positive_sensitivity": 0.85,
+      "rows": 20,
+      "true_negative": 0,
+      "true_positive": 17
+    },
+    "paraphrase_queue": {
+      "balanced_accuracy": null,
+      "negative_rows": 0,
+      "negative_specificity": null,
+      "positive_rows": 20,
+      "positive_sensitivity": 0.95,
+      "rows": 20,
+      "true_negative": 0,
+      "true_positive": 19
+    },
+    "stale_current_claim": {
+      "balanced_accuracy": null,
+      "negative_rows": 2,
+      "negative_specificity": 1.0,
+      "positive_rows": 0,
+      "positive_sensitivity": null,
+      "rows": 2,
+      "true_negative": 2,
+      "true_positive": 0
+    },
+    "unsupported_approval": {
+      "balanced_accuracy": null,
+      "negative_rows": 20,
+      "negative_specificity": 1.0,
+      "positive_rows": 0,
+      "positive_sensitivity": null,
+      "rows": 20,
+      "true_negative": 20,
+      "true_positive": 0
+    }
+  },
+  "validation_misclassified_anchors": [
+    {
+      "anchor_id": "A43A-VAL-09-MUL",
+      "category": "multi_document_conjunction",
+      "document_ids": ["POLICY-040", "POLICY-011"],
+      "entailment_probability": 0.016717301693075858,
+      "expected_entailment": true,
+      "hypothesis": "Requests are handled by the cash_operations queue. HelixBank guidance for exchange via app.",
+      "intent": "declined_cash_withdrawal"
+    },
+    {
+      "anchor_id": "A43A-VAL-09-PAR",
+      "category": "paraphrase_queue",
+      "document_ids": ["POLICY-040"],
+      "entailment_probability": 0.04594224040463113,
+      "expected_entailment": true,
+      "hypothesis": "Declined Cash Withdrawal requests go to the cash_operations queue.",
+      "intent": "declined_cash_withdrawal"
+    },
+    {
+      "anchor_id": "A43A-VAL-10-CFU",
+      "category": "conflict_union_claim",
+      "document_ids": ["POLICY-011", "FAQ-011"],
+      "entailment_probability": 0.10330513130639056,
+      "expected_entailment": false,
+      "hypothesis": "Both documents agree that review is optional when unresolved uncertainty remains.",
+      "intent": "exchange_via_app"
+    },
+    {
+      "anchor_id": "A43A-VAL-10-MUL",
+      "category": "multi_document_conjunction",
+      "document_ids": ["POLICY-011", "POLICY-005"],
+      "entailment_probability": 0.037628830474402734,
+      "expected_entailment": true,
+      "hypothesis": "Requests are handled by the foreign_exchange queue. HelixBank guidance for extra charge on statement.",
+      "intent": "exchange_via_app"
+    },
+    {
+      "anchor_id": "A43A-VAL-11-LIT",
+      "category": "literal_policy",
+      "document_ids": ["POLICY-005"],
+      "entailment_probability": 0.042549155285081686,
+      "expected_entailment": true,
+      "hypothesis": "Requests are handled by the account_support queue.",
+      "intent": "extra_charge_on_statement"
+    },
+    {
+      "anchor_id": "A43A-VAL-16-CFU",
+      "category": "conflict_union_claim",
+      "document_ids": ["POLICY-071", "FAQ-071"],
+      "entailment_probability": 0.2625120319482405,
+      "expected_entailment": false,
+      "hypothesis": "Both documents agree that review is optional when unresolved uncertainty remains.",
+      "intent": "top_up_by_card_charge"
+    },
+    {
+      "anchor_id": "A43A-VAL-20-MUL",
+      "category": "multi_document_conjunction",
+      "document_ids": ["POLICY-030", "POLICY-045"],
+      "entailment_probability": 0.02406853012369852,
+      "expected_entailment": true,
+      "hypothesis": "Requests are handled by the identity_review queue. HelixBank guidance for refund not showing up.",
+      "intent": "why_verify_identity"
+    }
+  ],
+  "validation_misclassified_count": 7,
+  "validation_overall_reconstructed": {
+    "balanced_accuracy": 0.9427083333333333,
+    "negative_rows": 64,
+    "negative_specificity": 0.96875,
+    "positive_rows": 60,
+    "positive_sensitivity": 0.9166666666666666,
+    "rows": 124,
+    "true_negative": 62,
+    "true_positive": 55
+  }
+}
