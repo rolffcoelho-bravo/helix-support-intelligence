@@ -1,0 +1,10 @@
+{
+  "raw_run_id": 32390970870,
+  "raw_job_id": 96496701904,
+  "raw_artifact_id": 9415920431,
+  "raw_artifact_zip_sha256": "376537ebac7800ae9f4f3b3802fcc31a03672f040c3648674f712e7014bb4ca5",
+  "scientific_sha": "fec8c5c63978ccae858257e1a078029c2103943c",
+  "candidate_rerun": false,
+  "post_score_tuning": false,
+  "repair_scope": "diagnostic zero-denominator handling plus audit-only punctuation normalization"
+}
