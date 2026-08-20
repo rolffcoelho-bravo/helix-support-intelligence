@@ -1,6 +1,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
+#   "httpx>=0.28,<1",
 #   "huggingface-hub>=0.34,<1",
 #   "numpy>=2.1,<3",
 #   "onnxruntime>=1.22,<2",
