@@ -1,0 +1,93 @@
+{
+  "audit_id": "phase4-assistance-a4.4a-protocol-post-audit-v1",
+  "checkpoint": "A4.4a",
+  "status": "PASSED_PRE_EXECUTION_NO_RESULTS",
+  "source_main_sha": "c6ccb1c477cbcdbec69e777aa9a6cca2a133fa5c",
+  "audited_pr": 24,
+  "audited_head_sha": "2432a2a20914faffa4c7a4b02d2b480fd6b16c2e",
+  "ci": {
+    "run_id": 32426158691,
+    "job_id": 96608422080,
+    "conclusion": "success",
+    "tests_passed": 143,
+    "publication_audit_passed": true
+  },
+  "suite": {
+    "suite_id": "phase4-compositional-grounding-a44a-v1",
+    "sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "rows": 432,
+    "calibration_rows": 288,
+    "validation_rows": 144,
+    "calibration_intents": 40,
+    "validation_intents": 20,
+    "category_counts": {
+      "citation_invalid": 60,
+      "contradiction_unsupported": 60,
+      "literal_supported": 60,
+      "multi_document_supported": 60,
+      "paraphrase_supported": 60,
+      "partial_multi_document_unsupported": 60,
+      "stale_current_evidence": 7,
+      "unresolved_conflict": 5,
+      "unsupported_approval": 60
+    },
+    "atomic_relation_gold_counts": {
+      "ENTAILED": 317,
+      "CONTRADICTED": 60,
+      "UNKNOWN": 360
+    },
+    "all_atomic_relation_classes_present_in_each_split": true
+  },
+  "construct_audit": {
+    "citation_identity_is_deterministic": true,
+    "freshness_is_deterministic": true,
+    "registered_conflict_is_response_level_veto": true,
+    "registered_conflict_is_semantic_negative_label": false,
+    "atomic_relation_space": [
+      "ENTAILED",
+      "CONTRADICTED",
+      "UNKNOWN"
+    ],
+    "concatenated_pack_entailment_admissible": false,
+    "multi_atom_support_requires_every_atom": true,
+    "semantic_verifier_binding_status": "UNBOUND",
+    "replacement_model_family_selected": false,
+    "replacement_model_threshold_selected": false
+  },
+  "pre_execution_defects_caught_and_repaired": [
+    {
+      "defect": "The initial conflict wording risked conflating a response-level unresolved-conflict safety veto with proposition-level semantic contradiction.",
+      "repair": "Separated registered conflict metadata from atomic contradiction explicitly. Conflict fixtures are now response-level veto tests and are not semantic-negative labels.",
+      "timing": "before any semantic verifier binding or inference"
+    },
+    {
+      "defect": "The initial future validity rules measured final claim verdicts but did not separately require accurate ENTAILED, CONTRADICTED, and UNKNOWN atomic relations.",
+      "repair": "Registered three-way atomic macro-F1 and per-relation recall floors, all at least 0.95, while retaining separate deterministic final-verdict safety checks.",
+      "timing": "before any semantic verifier binding or inference"
+    },
+    {
+      "defect": "Five unresolved-conflict cases marked the FAQ pair UNKNOWN even though the queue-routing atom appears verbatim in both the governing policy and the FAQ.",
+      "old_suite_sha256": "f1404bcd53d214ebe07cd44a0cd1f7d7b1f661f76a85c206f5cde13a69cb83bf",
+      "repair": "Marked both cited documents ENTAILED for the queue atom while preserving the independent CONFLICTING_EVIDENCE response-level veto.",
+      "corrected_suite_sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+      "timing": "before any semantic verifier binding or inference"
+    }
+  ],
+  "execution_guards_verified": {
+    "candidate_outputs_used": false,
+    "candidate_calls_made": 0,
+    "openai_calls_made": 0,
+    "semantic_verifier_calls_made": 0,
+    "model_family_searches_made": 0,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a44b_authorized": false
+  },
+  "scientific_disposition": {
+    "a44a_protocol_ready_to_freeze": true,
+    "semantic_verifier_may_be_bound_under_a44a_without_new_approval": false,
+    "candidate_comparison_authorized": false,
+    "confirmatory_partition_remains_unopened": true,
+    "next_binding_gate_requires_separate_version_and_approval": true
+  }
+}

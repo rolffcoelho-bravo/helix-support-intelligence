@@ -1,0 +1,210 @@
+{
+  "protocol_id": "phase4-assistance-a4.4a-compositional-grounding-v1",
+  "phase": 4,
+  "checkpoint": "A4.4a",
+  "status": "frozen_pre_execution",
+  "frozen_on": "2026-08-20",
+  "source_main_sha": "c6ccb1c477cbcdbec69e777aa9a6cca2a133fa5c",
+  "purpose": "Define a candidate-independent compositional grounding measurement construct before binding or testing any replacement semantic verifier family.",
+  "predecessor_disposition": {
+    "a42_status": "FAILED_SCIENTIFIC_VALIDITY_NO_SELECTION",
+    "a43a_status": "CLOSED_FAILED_EVALUATOR_VALIDITY",
+    "a43a_rejected_model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+    "a43a_rescue_rerun_permitted": false,
+    "a43b_authorized": false,
+    "confirmatory_partition_unopened": true,
+    "candidate_results_may_not_select_a44a_measurement_components": true
+  },
+  "construct": {
+    "name": "compositional_grounding",
+    "unit": "candidate factual claim decomposed into atomic propositions",
+    "principle": "Grounding is valid only when citation identity, evidence freshness, unresolved-conflict safety, and atomic semantic support all pass under explicit composition rules.",
+    "atomic_relation_space": [
+      "ENTAILED",
+      "CONTRADICTED",
+      "UNKNOWN"
+    ],
+    "claim_verdict_space": [
+      "CITATION_INVALID",
+      "STALE_EVIDENCE",
+      "CONFLICTING_EVIDENCE",
+      "UNSUPPORTED",
+      "SUPPORTED"
+    ],
+    "verdict_precedence": [
+      "CITATION_INVALID",
+      "STALE_EVIDENCE",
+      "CONFLICTING_EVIDENCE",
+      "UNSUPPORTED",
+      "SUPPORTED"
+    ],
+    "atomic_decomposition_rule": "Each factual sentence is represented as one or more independently checkable atomic propositions. A future candidate experiment must freeze its decomposition procedure before candidate scoring. A4.4a validation fixtures provide gold atoms directly and do not use a learned decomposer.",
+    "semantic_support_rule": "For each atom, semantic support is evaluated only against valid cited presented documents. An atom is supported only when at least one cited document is ENTAILED and no current presented direct evidence gives a CONTRADICTED relation for that atom.",
+    "multi_document_rule": "A multi-atom claim is supported only when every atom is independently supported. Support for different atoms may come from different cited documents; concatenated-pack entailment is not an admissible shortcut.",
+    "registered_conflict_veto_rule": "A registered unresolved current direct-evidence conflict fixture for the relevant intent is a response-level safety veto. It forces CONFLICTING_EVIDENCE even when the tested atom itself is semantically supported. These fixtures are not semantic-negative labels and must not be counted as CONTRADICTED atomic relations merely because conflict metadata is present.",
+    "atomic_conflict_rule": "Independently of registered conflict metadata, if valid current presented evidence yields both ENTAILED and CONTRADICTED relations for the same atom, the final claim verdict is CONFLICTING_EVIDENCE.",
+    "citation_rule": "Every cited document identifier must exist in the presented evidence pack, and every atom must have at least one valid cited presented document available for semantic evaluation. Failure yields CITATION_INVALID before semantic aggregation.",
+    "freshness_rule": "For claims requiring current policy evidence, any grounding path that depends on archived evidence yields STALE_EVIDENCE. Archived documents may not be made current by semantic similarity.",
+    "unsupported_rule": "If deterministic vetoes do not fire and any atom lacks entailing cited evidence, the claim verdict is UNSUPPORTED.",
+    "supported_rule": "SUPPORTED is admissible only when every deterministic gate passes and every atom is semantically supported without unresolved contradiction."
+  },
+  "component_boundaries": {
+    "citation_identity_gate": {
+      "type": "deterministic",
+      "learned_model_permitted": false
+    },
+    "freshness_gate": {
+      "type": "deterministic",
+      "learned_model_permitted": false
+    },
+    "registered_conflict_metadata_gate": {
+      "type": "deterministic_response_level_veto",
+      "learned_model_permitted": false,
+      "semantic_negative_label": false
+    },
+    "atomic_semantic_relation": {
+      "type": "semantic_verifier_interface",
+      "model_family": null,
+      "model_revision": null,
+      "thresholds": null,
+      "binding_status": "UNBOUND",
+      "separate_future_approval_required": true
+    },
+    "aggregation": {
+      "type": "deterministic",
+      "learned_model_permitted": false
+    }
+  },
+  "validation_suite": {
+    "suite_id": "phase4-compositional-grounding-a44a-v1",
+    "candidate_independent": true,
+    "source": "frozen HelixBank documents from A4.0 development intents only",
+    "candidate_outputs_used": false,
+    "query_text_used": false,
+    "confirmatory_intents_used": false,
+    "sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "partition": {
+      "unit": "intent",
+      "seed": 20260820,
+      "hash": "sha256(f'20260820:a44a:{intent}')",
+      "strata": {
+        "current_conflict_fixture": {
+          "development_total": 5,
+          "calibration": 3,
+          "validation": 2
+        },
+        "archived_faq": {
+          "development_total": 7,
+          "calibration": 5,
+          "validation": 2
+        },
+        "ordinary": {
+          "development_total": 48,
+          "calibration": 32,
+          "validation": 16
+        }
+      },
+      "calibration_intents": 40,
+      "validation_intents": 20
+    },
+    "case_categories": {
+      "literal_supported": {
+        "expected_verdict": "SUPPORTED",
+        "per_intent": 1
+      },
+      "paraphrase_supported": {
+        "expected_verdict": "SUPPORTED",
+        "per_intent": 1
+      },
+      "contradiction_unsupported": {
+        "expected_verdict": "UNSUPPORTED",
+        "per_intent": 1
+      },
+      "unsupported_approval": {
+        "expected_verdict": "UNSUPPORTED",
+        "per_intent": 1
+      },
+      "citation_invalid": {
+        "expected_verdict": "CITATION_INVALID",
+        "per_intent": 1
+      },
+      "multi_document_supported": {
+        "expected_verdict": "SUPPORTED",
+        "per_intent": 1
+      },
+      "partial_multi_document_unsupported": {
+        "expected_verdict": "UNSUPPORTED",
+        "per_intent": 1
+      },
+      "stale_current_evidence": {
+        "expected_verdict": "STALE_EVIDENCE",
+        "archived_intents_only": true
+      },
+      "unresolved_conflict": {
+        "expected_verdict": "CONFLICTING_EVIDENCE",
+        "conflict_intents_only": true,
+        "construct": "response_level_conflict_veto_on_otherwise_supported_atom",
+        "semantic_negative_label": false
+      }
+    },
+    "expected_counts": {
+      "total": 432,
+      "calibration": 288,
+      "validation": 144
+    }
+  },
+  "metric_definitions": {
+    "gold_atomic_relation": "For each atom-document pair that survives citation identity and is actually eligible for semantic evaluation, the gold relation is ENTAILED when the document id is listed in atom.entailed_by, CONTRADICTED when it is listed in atom.contradicted_by, and UNKNOWN otherwise.",
+    "semantic_pair_scope": "Only valid cited-presented atom-document pairs are sent to the semantic verifier. Citation-invalid pairs bypass semantic scoring and are evaluated only by the deterministic citation gate.",
+    "registered_conflict_scope": "Registered unresolved-conflict fixtures test the response-level conflict veto. Their presence does not alter the gold atomic relation unless the atom fixture explicitly lists the document in contradicted_by.",
+    "atomic_relation_macro_f1": "Unweighted arithmetic mean of one-vs-rest F1 for ENTAILED, CONTRADICTED, and UNKNOWN over all semantic-pair validation records.",
+    "atomic_entailment_recall": "True ENTAILED semantic-pair predictions divided by all gold ENTAILED semantic pairs.",
+    "atomic_contradiction_recall": "True CONTRADICTED semantic-pair predictions divided by all gold CONTRADICTED semantic pairs.",
+    "atomic_unknown_recall": "True UNKNOWN semantic-pair predictions divided by all gold UNKNOWN semantic pairs.",
+    "macro_case_category_accuracy": "Unweighted arithmetic mean of final claim-verdict accuracy computed separately for each of the nine registered A4.4a case categories.",
+    "supported_precision": "Cases with gold and predicted verdict SUPPORTED divided by all cases predicted SUPPORTED.",
+    "supported_recall": "Cases with gold and predicted verdict SUPPORTED divided by all gold SUPPORTED cases.",
+    "category_accuracy": "Within-category fraction of cases whose predicted final claim verdict exactly equals the registered expected_verdict."
+  },
+  "future_binding_rules": {
+    "semantic_verifier_model_search_allowed_in_a44a": false,
+    "semantic_verifier_inference_allowed_in_a44a": false,
+    "a42_candidate_results_may_influence_binding": false,
+    "a43a_validation_results_may_select_replacement_family": false,
+    "a44a_validation_split_may_influence_binding_or_thresholds": false,
+    "calibration_split_only_for_future_parameter_binding": true,
+    "validation_split_remains_untouched_until_future_binding_is_frozen": true,
+    "replacement_family_requires_separately_versioned_approved_gate": true
+  },
+  "future_validation_requirements": {
+    "macro_case_category_accuracy_min": 0.95,
+    "supported_precision_min": 0.98,
+    "supported_recall_min": 0.95,
+    "atomic_relation_macro_f1_min": 0.95,
+    "atomic_entailment_recall_min": 0.95,
+    "atomic_contradiction_recall_min": 0.95,
+    "atomic_unknown_recall_min": 0.95,
+    "literal_supported_recall_min": 0.98,
+    "paraphrase_supported_recall_min": 0.95,
+    "contradiction_unsupported_accuracy_min": 0.95,
+    "unsupported_approval_accuracy_min": 0.95,
+    "multi_document_supported_recall_min": 0.90,
+    "partial_multi_document_unsupported_accuracy_min": 0.95,
+    "citation_invalid_accuracy": 1.0,
+    "stale_current_evidence_accuracy": 1.0,
+    "unresolved_conflict_accuracy": 1.0,
+    "false_supported_on_citation_stale_or_conflict_cases": 0,
+    "all_requirements_must_pass": true
+  },
+  "execution_guards": {
+    "generator_calls": 0,
+    "openai_calls": 0,
+    "candidate_calls": 0,
+    "candidate_scoring": 0,
+    "semantic_verifier_calls": 0,
+    "model_family_searches": 0,
+    "confirmatory_query_scoring": 0,
+    "confirmatory_query_inspection": 0,
+    "a44b_not_authorized_by_this_gate": true
+  }
+}
