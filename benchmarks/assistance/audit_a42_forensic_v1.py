@@ -38,9 +38,7 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
 
 def development_intents(bundle: Any) -> set[str]:
     conflicts = {
-        str(row["intent"])
-        for row in bundle.queries
-        if row["case_type"] == "conflicting_evidence"
+        str(row["intent"]) for row in bundle.queries if row["case_type"] == "conflicting_evidence"
     }
     non_conflicts = set(INTENTS) - conflicts
 
@@ -225,9 +223,7 @@ def main() -> None:
         },
         "selection_admissible": selection_admissible,
         "registered_winner_accepted": (
-            results["complexity_adoption"]["registered_winner"]
-            if selection_admissible
-            else None
+            results["complexity_adoption"]["registered_winner"] if selection_admissible else None
         ),
         "status": (
             "PASSED_SCIENTIFIC_VALIDITY"

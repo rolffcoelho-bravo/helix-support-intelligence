@@ -40,8 +40,7 @@ def aggregate_with_na(rows: list[dict[str, Any]]) -> dict[str, Any]:
     applicable = [row for row in rows if row["citation_completeness"] is not None]
     gold = sum(len(row["gold_citations"]) for row in applicable)
     recovered = sum(
-        len(row["gold_citations"]) * float(row["citation_completeness"])
-        for row in applicable
+        len(row["gold_citations"]) * float(row["citation_completeness"]) for row in applicable
     )
     precision = valid / cited if cited else 1.0
     completeness = recovered / gold if gold else 1.0
@@ -50,26 +49,16 @@ def aggregate_with_na(rows: list[dict[str, Any]]) -> dict[str, Any]:
         if precision + completeness
         else 0.0
     )
-    nonanswerable = [
-        row for row in rows if row["expected_decision"] != "ANSWER_WITH_EVIDENCE"
-    ]
-    answerable = [
-        row for row in rows if row["expected_decision"] == "ANSWER_WITH_EVIDENCE"
-    ]
+    nonanswerable = [row for row in rows if row["expected_decision"] != "ANSWER_WITH_EVIDENCE"]
+    answerable = [row for row in rows if row["expected_decision"] == "ANSWER_WITH_EVIDENCE"]
     costs = [
-        float(row["estimated_cost_usd"])
-        for row in rows
-        if row["estimated_cost_usd"] is not None
+        float(row["estimated_cost_usd"]) for row in rows if row["estimated_cost_usd"] is not None
     ]
 
     return {
-        "strict_grounded_success_rate": sum(
-            bool(row["strict_grounded_success"]) for row in rows
-        )
+        "strict_grounded_success_rate": sum(bool(row["strict_grounded_success"]) for row in rows)
         / total,
-        "decision_exact_match": sum(
-            row["decision"] == row["expected_decision"] for row in rows
-        )
+        "decision_exact_match": sum(row["decision"] == row["expected_decision"] for row in rows)
         / total,
         "unsupported_sentence_rate": unsupported / factual if factual else 0.0,
         "answer_level_unsupported_rate": sum(
@@ -87,8 +76,7 @@ def aggregate_with_na(rows: list[dict[str, Any]]) -> dict[str, Any]:
             else None
         ),
         "over_abstention_rate_on_answerable": (
-            sum(row["decision"] != "ANSWER_WITH_EVIDENCE" for row in answerable)
-            / len(answerable)
+            sum(row["decision"] != "ANSWER_WITH_EVIDENCE" for row in answerable) / len(answerable)
             if answerable
             else None
         ),
