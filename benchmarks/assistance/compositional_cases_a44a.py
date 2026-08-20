@@ -286,10 +286,9 @@ def generate_cases(bundle: CorpusBundle | None = None) -> list[dict[str, Any]]:
 def canonical_jsonl_bytes(rows: list[dict[str, Any]]) -> bytes:
     """Serialize validation rows canonically for provenance hashing."""
     return b"".join(
-        (
-            json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-            + "\n"
-        ).encode("utf-8")
+        (json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode(
+            "utf-8"
+        )
         for row in rows
     )
 
@@ -305,8 +304,7 @@ def suite_summary() -> dict[str, Any]:
             for split in ("calibration", "validation")
         },
         "category_counts": {
-            category: sum(row["category"] == category for row in rows)
-            for category in categories
+            category: sum(row["category"] == category for row in rows) for category in categories
         },
         "sha256": hashlib.sha256(canonical_jsonl_bytes(rows)).hexdigest(),
         "candidate_outputs_used": False,
