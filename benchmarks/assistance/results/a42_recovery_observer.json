@@ -1,0 +1,10 @@
+{
+  "observer": "a42_frozen_recovery",
+  "target_head_sha": "0cfe1edd7fe955a5d0ce57b8f68df2b8c183afb9",
+  "run_id": 32390970870,
+  "status": "completed",
+  "conclusion": "failure",
+  "artifact_count": 1,
+  "artifact_id": "9415920431",
+  "artifact_name": "phase4-assistance-a42-fec8c5c63978ccae858257e1a078029c2103943c-recovery-1"
+}
