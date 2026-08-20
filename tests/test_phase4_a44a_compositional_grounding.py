@@ -19,7 +19,7 @@ from grounding_anchors_a43a import (  # type: ignore[import-not-found]  # noqa: 
 from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402
 
 CONFIG_PATH = ROOT / "configs" / "models" / "assistance_grounding_a44a_v1.json"
-SUITE_SHA256 = "f1404bcd53d214ebe07cd44a0cd1f7d7b1f661f76a85c206f5cde13a69cb83bf"
+SUITE_SHA256 = "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c"
 
 
 def test_a44a_suite_is_development_only_and_frozen_size() -> None:
@@ -130,15 +130,25 @@ def test_a44a_conflict_metadata_is_not_an_atomic_negative_label() -> None:
     assert category["semantic_negative_label"] is False
     assert category["construct"] == "response_level_conflict_veto_on_otherwise_supported_atom"
 
-    conflict_cases = [row for row in generate_cases() if row["category"] == "unresolved_conflict"]
+    bundle = generate_bundle()
+    documents = {str(row["document_id"]): dict(row) for row in bundle.documents}
+    conflict_cases = [row for row in generate_cases(bundle) if row["category"] == "unresolved_conflict"]
     assert len(conflict_cases) == 5
     for row in conflict_cases:
         assert row["expected_verdict"] == "CONFLICTING_EVIDENCE"
-        assert any(atom["entailed_by"] for atom in row["atoms"])
+        atom = row["atoms"][0]
+        assert set(atom["entailed_by"]) == set(row["cited_document_ids"])
+        for document_id in row["cited_document_ids"]:
+            assert bool(documents[str(document_id)]["conflict_fixture"]) or str(document_id).startswith(
+                "POLICY-"
+            )
 
 
-def test_a44a_atomic_relation_gold_exercises_all_three_classes() -> None:
-    counts = {"ENTAILED": 0, "CONTRADICTED": 0, "UNKNOWN": 0}
+def test_a44a_atomic_relation_gold_exercises_all_three_classes_in_each_split() -> None:
+    counts = {
+        split: {"ENTAILED": 0, "CONTRADICTED": 0, "UNKNOWN": 0}
+        for split in ("calibration", "validation")
+    }
     for row in generate_cases():
         presented = {str(value) for value in row["presented_document_ids"]}
         cited = {str(value) for value in row["cited_document_ids"]}
@@ -146,19 +156,21 @@ def test_a44a_atomic_relation_gold_exercises_all_three_classes() -> None:
             assert not cited <= presented
             continue
 
+        split_counts = counts[str(row["split"])]
         for atom in row["atoms"]:
             entailed = {str(value) for value in atom["entailed_by"]}
             contradicted = {str(value) for value in atom["contradicted_by"]}
             assert not entailed & contradicted
             for document_id in cited:
                 if document_id in entailed:
-                    counts["ENTAILED"] += 1
+                    split_counts["ENTAILED"] += 1
                 elif document_id in contradicted:
-                    counts["CONTRADICTED"] += 1
+                    split_counts["CONTRADICTED"] += 1
                 else:
-                    counts["UNKNOWN"] += 1
+                    split_counts["UNKNOWN"] += 1
 
-    assert all(value > 0 for value in counts.values())
+    for split_counts in counts.values():
+        assert all(value > 0 for value in split_counts.values())
 
 
 def test_a44a_metric_definitions_and_future_floors_are_frozen() -> None:
