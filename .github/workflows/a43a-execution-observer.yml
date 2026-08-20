@@ -1,0 +1,88 @@
+name: A4.3a execution observer
+
+on:
+  push:
+    branches:
+      - phase4-a43a-validity-execution
+    paths:
+      - ".github/workflows/a43a-execution-observer.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase4-a43a-validity-execution
+
+      - name: Wait for immutable execution and capture metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: 34884d2ae2d64a73503d26e36576a19571aa0b67
+        run: |
+          mkdir -p benchmarks/assistance/results
+          for _ in $(seq 1 180); do
+            run_id=$(gh api \
+              "repos/rolffcoelho-bravo/helix-support-intelligence/actions/runs?head_sha=${TARGET_SHA}&event=push" \
+              --jq '[.workflow_runs[] | select(.name == "A4.3a frozen grounding validity execution")][0].id // empty')
+            if test -n "$run_id"; then
+              break
+            fi
+            sleep 10
+          done
+          test -n "${run_id:-}"
+
+          for _ in $(seq 1 180); do
+            status=$(gh api \
+              "repos/rolffcoelho-bravo/helix-support-intelligence/actions/runs/${run_id}" \
+              --jq '.status')
+            if test "$status" = "completed"; then
+              break
+            fi
+            sleep 10
+          done
+          test "$status" = "completed"
+
+          run_json=$(gh api \
+            "repos/rolffcoelho-bravo/helix-support-intelligence/actions/runs/${run_id}")
+          jobs_json=$(gh api \
+            "repos/rolffcoelho-bravo/helix-support-intelligence/actions/runs/${run_id}/jobs")
+          artifacts_json=$(gh api \
+            "repos/rolffcoelho-bravo/helix-support-intelligence/actions/runs/${run_id}/artifacts")
+
+          jq -n \
+            --arg target_sha "$TARGET_SHA" \
+            --argjson run "$run_json" \
+            --argjson jobs "$jobs_json" \
+            --argjson artifacts "$artifacts_json" \
+            '{
+              target_wrapper_sha: $target_sha,
+              run_id: $run.id,
+              run_attempt: $run.run_attempt,
+              status: $run.status,
+              conclusion: $run.conclusion,
+              created_at: $run.created_at,
+              updated_at: $run.updated_at,
+              job_id: ($jobs.jobs[0].id // null),
+              job_conclusion: ($jobs.jobs[0].conclusion // null),
+              artifacts: [$artifacts.artifacts[] | {
+                id: .id,
+                name: .name,
+                size_in_bytes: .size_in_bytes,
+                digest: (.digest // null),
+                expired: .expired
+              }]
+            }' > benchmarks/assistance/results/a43a_execution_observer.json
+
+      - name: Commit observer metadata
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- benchmarks/assistance/results/a43a_execution_observer.json
+          git commit -m "Record A4.3a execution metadata" || exit 0
+          git push origin HEAD:phase4-a43a-validity-execution
