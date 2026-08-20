@@ -272,7 +272,13 @@ def generate_cases(bundle: CorpusBundle | None = None) -> list[dict[str, Any]]:
                         category="unresolved_conflict",
                         presented_document_ids=[policy_id, faq_id],
                         cited_document_ids=[policy_id, faq_id],
-                        atoms=[_atom("A1", queue_sentence, entailed_by=[policy_id])],
+                        atoms=[
+                            _atom(
+                                "A1",
+                                queue_sentence,
+                                entailed_by=[policy_id, faq_id],
+                            )
+                        ],
                         expected_verdict="CONFLICTING_EVIDENCE",
                     )
                 )
