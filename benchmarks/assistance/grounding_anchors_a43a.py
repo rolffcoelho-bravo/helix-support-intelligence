@@ -201,7 +201,10 @@ def generate_anchors(bundle: CorpusBundle | None = None) -> list[dict[str, Any]]
                         category="conflict_union_claim",
                         expected_entailment=False,
                         document_ids=[policy_id, faq_id],
-                        hypothesis="Review is optional when unresolved uncertainty remains.",
+                        hypothesis=(
+                            "Both documents agree that review is optional when unresolved "
+                            "uncertainty remains."
+                        ),
                     )
                 )
 

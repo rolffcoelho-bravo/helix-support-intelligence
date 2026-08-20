@@ -18,7 +18,7 @@ The grounding evaluator is validated without using assistance candidate outputs 
 
 The 60 development intents are split again for evaluator calibration and evaluator validation. The split is deterministic by intent and stratified so both sides contain ordinary, archived-FAQ, and current-conflict fixtures. Forty intents are calibration-only and twenty are validation-only.
 
-The frozen suite contains 372 anchors: exact source entailments, deterministic paraphrase entailments, direct contradictions, unsupported approval claims, citation mismatches, multi-document conjunctions, stale-as-current negatives, and unresolved-conflict union negatives. The calibration surface contains 248 anchors and the untouched evaluator-validation surface contains 124.
+The frozen suite contains 372 anchors: exact source entailments, deterministic paraphrase entailments, direct contradictions, unsupported approval claims, citation mismatches, multi-document conjunctions, stale-as-current negatives, and false-consensus negatives over unresolved conflicting evidence. The calibration surface contains 248 anchors and the untouched evaluator-validation surface contains 124.
 
 ## Threshold selection and validity requirements
 
