@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
 from grounding_anchors_a43a import development_intents  # noqa: E402
+
 from helix_support_intelligence.data.helixbank import (  # noqa: E402
     CorpusBundle,
     generate_bundle,
