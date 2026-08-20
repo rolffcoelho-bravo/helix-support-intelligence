@@ -72,7 +72,7 @@ The suite contains 432 cases:
 
 The intent-level split is 40 calibration intents and 20 untouched validation intents, stratified by ordinary, archived-FAQ, and conflict-fixture status. This yields 288 calibration cases and 144 validation cases.
 
-The canonical frozen suite SHA256 is `f1404bcd53d214ebe07cd44a0cd1f7d7b1f661f76a85c206f5cde13a69cb83bf`.
+The canonical frozen suite SHA256 is `0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c`.
 
 ## Measurement definitions
 
