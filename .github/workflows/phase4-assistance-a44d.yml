@@ -1,0 +1,117 @@
+name: Phase 4 Assistance A4.4d
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase4-assistance-a44d.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase4-assistance-a44d-validation-v1
+  cancel-in-progress: false
+
+jobs:
+  registered-validation-only-execution:
+    name: Frozen verifier validation-only execution and audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+
+    steps:
+      - name: Check out immutable execution commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce one-shot predecessor boundary
+        run: |
+          test "$(git rev-parse HEAD^)" = "57bb2c81ab2cc2d5b8c1a4928c2600b4a770d110"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install repository quality environment
+        run: uv sync --locked --group dev
+
+      - name: Verify A4.4d validation-only pre-execution state
+        run: uv run python scripts/preflight_phase4_a44d.py
+
+      - name: Resolve and freeze validation runtime before first model call
+        run: uv lock --script benchmarks/assistance/execute_validation_a44d.py
+
+      - name: Freeze registered scientific inputs before validation inference
+        run: |
+          mkdir -p artifacts/phase4-assistance/a44d
+          sha256sum \
+            configs/data/helixbank_policy_v1.json \
+            configs/models/assistance_protocol_v1.json \
+            configs/models/assistance_grounding_a44a_v1.json \
+            configs/models/assistance_grounding_a44b_v1.json \
+            configs/models/assistance_grounding_a44c_v1.json \
+            configs/models/assistance_grounding_a44d_v1.json \
+            benchmarks/assistance/results/a44c_calibration_postresult_v1/forensic_audit.json \
+            src/helix_support_intelligence/data/helixbank.py \
+            benchmarks/assistance/grounding_anchors_a43a.py \
+            benchmarks/assistance/compositional_cases_a44a.py \
+            benchmarks/assistance/validation_cases_a44d.py \
+            benchmarks/assistance/execute_validation_a44d.py \
+            benchmarks/assistance/execute_validation_a44d.py.lock \
+            benchmarks/assistance/verify_validation_a44d.py \
+            scripts/preflight_phase4_a44d.py \
+            .github/workflows/phase4-assistance-a44d.yml \
+            > artifacts/phase4-assistance/a44d/registered_inputs.sha256
+          cp benchmarks/assistance/execute_validation_a44d.py.lock \
+            artifacts/phase4-assistance/a44d/resolved_environment.lock
+
+      - name: Execute frozen validation-only semantic verifier
+        run: >-
+          uv run --locked benchmarks/assistance/execute_validation_a44d.py
+          --output-dir artifacts/phase4-assistance/a44d
+
+      - name: Reverify frozen scientific inputs after execution
+        run: sha256sum -c artifacts/phase4-assistance/a44d/registered_inputs.sha256
+
+      - name: Independently reconstruct validation arithmetic and verdicts
+        run: >-
+          uv run python benchmarks/assistance/verify_validation_a44d.py
+          --output-dir artifacts/phase4-assistance/a44d
+
+      - name: Freeze artifact checksums
+        run: |
+          cd artifacts/phase4-assistance/a44d
+          find . -maxdepth 1 -type f ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > checksums.sha256
+          sha256sum -c checksums.sha256
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          if test -f artifacts/phase4-assistance/a44d/report.md; then
+            cat artifacts/phase4-assistance/a44d/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f artifacts/phase4-assistance/a44d/post_audit.md; then
+            printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+            cat artifacts/phase4-assistance/a44d/post_audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload immutable A4.4d evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a44d-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: artifacts/phase4-assistance/a44d/
+          if-no-files-found: warn
+          retention-days: 90
