@@ -13,7 +13,9 @@
   },
   "authorized_surface": {
     "calibration_cases": 288,
+    "calibration_case_sha256": "a2a68dac77b644ed1f2b114dc0b59f7daba53a452140d97083be83fd95a4cf58",
     "calibration_semantic_pairs": 491,
+    "validation_cases_materialized": 0,
     "validation_cases": 0,
     "candidate_rows": 0,
     "confirmatory_rows": 0
@@ -37,9 +39,37 @@
     "grid_points": 376,
     "tie_break": "smallest_temperature"
   },
+  "pre_execution_quality_gate": {
+    "run_id": 32500155015,
+    "job_id": 96827728026,
+    "conclusion": "success",
+    "tests_passed": 156,
+    "strict_mypy_passed": true,
+    "publication_audit_passed": true,
+    "semantic_inference_performed": false
+  },
+  "pre_execution_defects_caught_and_repaired": [
+    {
+      "defect": "The initial independent verifier was not in canonical Ruff format.",
+      "repair": "Applied repository-standard Ruff formatting only.",
+      "scientific_change": false
+    },
+    {
+      "defect": "The initial A4.4c preflight dynamic benchmark import lacked the established mypy import-not-found exemption used by A4.4a.",
+      "repair": "Aligned the dynamic import typing annotation with the existing repository pattern.",
+      "scientific_change": false
+    },
+    {
+      "defect": "The initial calibration runner regenerated all 432 A4.4a case records and only then filtered to the 288 calibration rows. It would not have scored validation, but this was weaker than the required unopened-validation boundary.",
+      "repair": "Added a dedicated calibration-only materializer that reconstructs only the 40 registered calibration intents and 288 calibration cases. Validation case records are never materialized by A4.4c. The resulting 288-row calibration surface was hashed and frozen before inference.",
+      "scientific_change": false,
+      "repair_timing": "before model download, semantic inference, calibration-logit exposure, validation exposure, or confirmatory access"
+    }
+  ],
   "execution_guards": {
     "semantic_verifier_calls_made": 0,
     "calibration_logits_opened": 0,
+    "validation_cases_materialized": 0,
     "validation_semantic_verifier_calls_made": 0,
     "validation_results_opened": 0,
     "candidate_calls_made": 0,
