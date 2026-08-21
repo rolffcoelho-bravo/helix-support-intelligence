@@ -1,0 +1,128 @@
+{
+  "audit_id": "phase4-assistance-a4.4b-binding-post-audit-v1",
+  "checkpoint": "A4.4b",
+  "status": "PASSED_PRE_EXECUTION_BINDING_NO_RESULTS",
+  "source_main_sha": "4aa86f70c1a829c6e90d03414736e750daef7c66",
+  "audited_pr": 25,
+  "audited_head_sha": "727f72ae0c9b7e3e5b88b8e1183d77e8ca0ab930",
+  "ci": {
+    "run_id": 32433863469,
+    "job_id": 96630960694,
+    "conclusion": "success",
+    "tests_passed": 150,
+    "publication_audit_passed": true
+  },
+  "predecessor": {
+    "a44a_suite_sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "a44a_calibration_rows": 288,
+    "a44a_validation_rows": 144,
+    "confirmatory_partition_remains_unopened": true,
+    "a43a_negative_evaluator_result_preserved": true
+  },
+  "bound_verifier": {
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "architecture_family": "roberta",
+    "model_class": "RobertaForSequenceClassification",
+    "license": "MIT",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5",
+    "documented_remote_file_size_gb": 1.43,
+    "tokenizer_max_length": 512,
+    "native_label_mapping": {
+      "0": "CONTRADICTION",
+      "1": "NEUTRAL",
+      "2": "ENTAILMENT"
+    },
+    "a44a_relation_mapping": {
+      "CONTRADICTION": "CONTRADICTED",
+      "NEUTRAL": "UNKNOWN",
+      "ENTAILMENT": "ENTAILED"
+    },
+    "class_decision": "argmax_raw_logits",
+    "class_thresholds": null,
+    "remote_code": false,
+    "fine_tuning": false,
+    "quantization_for_validity_execution": false
+  },
+  "selection_audit": {
+    "binding_semantics": "single_pre_registered_nomination_not_empirical_optimum",
+    "empirical_optimality_claimed": false,
+    "empirical_replacement_model_bakeoff_performed": false,
+    "a42_candidate_results_used_to_select_model": false,
+    "a43a_validation_errors_used_to_rank_replacement_models": false,
+    "a44a_calibration_cases_used_to_select_model": false,
+    "a44a_validation_cases_used_to_select_model": false,
+    "external_mnli_score_is_helixbank_validity_evidence": false,
+    "failure_allows_automatic_model_substitution": false,
+    "replacement_requires_new_versioned_binding": true
+  },
+  "independence_audit": {
+    "frozen_g2_runtime_family": "deberta-v3",
+    "rejected_a43a_evaluator_family": "minilm2-roberta",
+    "bound_verifier_family": "roberta",
+    "differs_from_g2_runtime_family": true,
+    "differs_from_rejected_a43a_family": true
+  },
+  "calibration_audit": {
+    "execution_performed": false,
+    "future_parameter": "single_global_temperature",
+    "purpose": "probability_calibration_diagnostics_only",
+    "grid_start": 0.25,
+    "grid_stop": 4.0,
+    "grid_step": 0.01,
+    "grid_points": 376,
+    "grid_point_arithmetic_verified": true,
+    "all_temperatures_positive": true,
+    "temperature_can_change_argmax_class": false,
+    "temperature_can_change_final_grounding_verdict": false,
+    "class_specific_threshold_search_permitted": false,
+    "validation_driven_parameter_selection_permitted": false,
+    "post_validation_refit_permitted": false
+  },
+  "external_provenance_audit": {
+    "snapshot_date": "2026-08-21",
+    "immutable_revision_config_verified": true,
+    "native_label_mapping_verified": true,
+    "tokenizer_max_length_verified": true,
+    "safetensors_sha256_verified": true,
+    "mit_license_verified": true,
+    "mnli_fine_tuning_documented": true,
+    "documented_external_mnli_score": 90.2,
+    "external_score_used_as_internal_validity_evidence": false
+  },
+  "operational_boundary": {
+    "fp32_safetensors_size_gb": 1.43,
+    "future_cpu_execution_may_be_slow": true,
+    "operational_cost_is_not_a44b_validity_evidence": true,
+    "smaller_model_substitution_allowed_after_results": false,
+    "quantized_substitution_allowed_for_validity_execution": false
+  },
+  "pre_execution_defects_caught_and_repaired": [
+    {
+      "defect": "The initial wording could be read as implying that the nominated verifier was empirically optimal among eligible replacement models even though no empirical model comparison was performed.",
+      "repair": "The binding now explicitly defines the model as one pre-registered nomination with no empirical optimality claim and forbids automatic model substitution after failure.",
+      "timing": "before model download, semantic inference, calibration-case inspection, or validation-case inspection"
+    }
+  ],
+  "execution_guards_verified": {
+    "candidate_calls_made": 0,
+    "openai_calls_made": 0,
+    "semantic_verifier_downloads_made": 0,
+    "semantic_verifier_calls_made": 0,
+    "model_family_searches_made": 0,
+    "a44a_calibration_case_records_inspected": 0,
+    "a44a_validation_case_records_inspected": 0,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_queries_scored": 0
+  },
+  "scientific_disposition": {
+    "a44b_binding_ready_to_freeze": true,
+    "semantic_inference_performed": false,
+    "calibration_execution_performed": false,
+    "validation_execution_performed": false,
+    "candidate_comparison_performed": false,
+    "confirmatory_partition_remains_unopened": true,
+    "next_calibration_execution_requires_separate_versioned_checkpoint": true
+  }
+}
