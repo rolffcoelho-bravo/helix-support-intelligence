@@ -60,10 +60,12 @@ def main() -> None:
     assert a44a["validation_suite"]["sha256"] == FROZEN_A44A_SUITE_SHA256
     assert a44c["scope"]["calibration_case_rows"] == 288
     assert a44c["scope"]["calibration_semantic_pair_rows"] == 491
+    assert a44c["scope"]["validation_case_rows_materialized_authorized"] == 0
     assert a44c["scope"]["validation_case_rows_authorized"] == 0
     assert a44c["scope"]["validation_semantic_pair_rows_authorized"] == 0
     assert a44c["scope"]["validation_metrics_authorized"] == 0
     assert a44c["scope"]["confirmatory_query_rows_authorized"] == 0
+    assert a44c["artifact_contract"]["validation_cases_must_not_be_materialized"] is True
     assert a44c["calibration"]["grid_points"] == 376
     assert a44c["calibration"]["grid_start"] == 0.25
     assert a44c["calibration"]["grid_stop"] == 4.0
@@ -96,6 +98,7 @@ def main() -> None:
     assert relation_counts == expected_relation_counts
     assert sum(relation_counts.values()) == 491
     calibration_hash = hashlib.sha256(canonical_calibration_jsonl_bytes(rows)).hexdigest()
+    assert calibration_hash == a44c["scope"]["calibration_case_sha256"]
 
     print(
         json.dumps(
