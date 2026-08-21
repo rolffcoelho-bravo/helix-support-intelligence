@@ -1,0 +1,108 @@
+name: Phase 4 Assistance A4.4c
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase4-assistance-a44c.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase4-assistance-a44c-calibration-v1
+  cancel-in-progress: false
+
+jobs:
+  registered-calibration-only-execution:
+    name: Frozen verifier calibration-only execution and audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+
+    steps:
+      - name: Check out immutable execution commit
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install repository quality environment
+        run: uv sync --locked --group dev
+
+      - name: Verify A4.4c calibration-only pre-execution state
+        run: uv run python scripts/preflight_phase4_a44c.py
+
+      - name: Resolve and freeze calibration runtime before first model call
+        run: uv lock --script benchmarks/assistance/calibrate_grounding_a44c.py
+
+      - name: Freeze registered scientific inputs before semantic inference
+        run: |
+          mkdir -p artifacts/phase4-assistance/a44c
+          sha256sum \
+            configs/data/helixbank_policy_v1.json \
+            configs/models/assistance_protocol_v1.json \
+            configs/models/assistance_grounding_a44a_v1.json \
+            configs/models/assistance_grounding_a44b_v1.json \
+            configs/models/assistance_grounding_a44c_v1.json \
+            src/helix_support_intelligence/data/helixbank.py \
+            benchmarks/assistance/grounding_anchors_a43a.py \
+            benchmarks/assistance/compositional_cases_a44a.py \
+            benchmarks/assistance/calibrate_grounding_a44c.py \
+            benchmarks/assistance/calibrate_grounding_a44c.py.lock \
+            benchmarks/assistance/verify_calibration_a44c.py \
+            scripts/preflight_phase4_a44c.py \
+            .github/workflows/phase4-assistance-a44c.yml \
+            > artifacts/phase4-assistance/a44c/registered_inputs.sha256
+          cp benchmarks/assistance/calibrate_grounding_a44c.py.lock \
+            artifacts/phase4-assistance/a44c/resolved_environment.lock
+
+      - name: Execute frozen calibration-only semantic verifier
+        run: >-
+          uv run --locked benchmarks/assistance/calibrate_grounding_a44c.py
+          --output-dir artifacts/phase4-assistance/a44c
+
+      - name: Reverify frozen scientific inputs after execution
+        run: sha256sum -c artifacts/phase4-assistance/a44c/registered_inputs.sha256
+
+      - name: Independently reconstruct calibration arithmetic
+        run: >-
+          python3 benchmarks/assistance/verify_calibration_a44c.py
+          --output-dir artifacts/phase4-assistance/a44c
+
+      - name: Freeze artifact checksums
+        run: |
+          find artifacts/phase4-assistance/a44c -maxdepth 1 -type f \
+            ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > artifacts/phase4-assistance/a44c/checksums.sha256
+          sha256sum -c artifacts/phase4-assistance/a44c/checksums.sha256
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          if test -f artifacts/phase4-assistance/a44c/report.md; then
+            cat artifacts/phase4-assistance/a44c/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f artifacts/phase4-assistance/a44c/post_audit.md; then
+            printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+            cat artifacts/phase4-assistance/a44c/post_audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload immutable A4.4c evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a44c-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: artifacts/phase4-assistance/a44c/
+          if-no-files-found: warn
+          retention-days: 90
