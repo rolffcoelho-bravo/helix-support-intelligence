@@ -235,9 +235,7 @@ def _registered_metrics(
     relation = {
         "atomic_relation_macro_f1": float(sum(f1_values) / len(f1_values)),
         "atomic_entailment_recall": _recall(gold, predicted, RELATION_TO_LABEL["ENTAILED"]),
-        "atomic_contradiction_recall": _recall(
-            gold, predicted, RELATION_TO_LABEL["CONTRADICTED"]
-        ),
+        "atomic_contradiction_recall": _recall(gold, predicted, RELATION_TO_LABEL["CONTRADICTED"]),
         "atomic_unknown_recall": _recall(gold, predicted, RELATION_TO_LABEL["UNKNOWN"]),
     }
     return {
@@ -251,9 +249,7 @@ def _registered_metrics(
             "contradiction_unsupported"
         ],
         "unsupported_approval_accuracy": case["category_accuracy"]["unsupported_approval"],
-        "multi_document_supported_recall": case["category_accuracy"][
-            "multi_document_supported"
-        ],
+        "multi_document_supported_recall": case["category_accuracy"]["multi_document_supported"],
         "partial_multi_document_unsupported_accuracy": case["category_accuracy"][
             "partial_multi_document_unsupported"
         ],
