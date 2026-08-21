@@ -1,0 +1,45 @@
+{
+  "audit_id": "phase4-assistance-a4.4d-pre-execution-audit-v1",
+  "checkpoint": "A4.4d",
+  "status": "PASSED_PRE_EXECUTION_VALIDATION_ONLY_NO_RESULTS",
+  "source_main_sha": "57bb2c81ab2cc2d5b8c1a4928c2600b4a770d110",
+  "authorized_scope": {
+    "validation_intents": 20,
+    "validation_case_rows": 144,
+    "validation_semantic_pair_rows": 246,
+    "validation_gold_relation_counts": {
+      "ENTAILED": 106,
+      "CONTRADICTED": 20,
+      "UNKNOWN": 120
+    }
+  },
+  "derived_without_validation_materialization": {
+    "base_cases_formula": "20 intents * 7 base categories = 140; +2 archived stale fixtures +2 conflict fixtures = 144",
+    "semantic_pairs_formula": "20 intents * 12 base eligible pairs +2 stale pairs +4 conflict-fixture pairs = 246",
+    "gold_counts_formula": "base per intent 5 ENTAILED +1 CONTRADICTED +6 UNKNOWN; +2 stale ENTAILED +4 conflict ENTAILED"
+  },
+  "frozen_inputs": {
+    "a44a_suite_sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "model_revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "model_weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5",
+    "temperature": 3.67
+  },
+  "sealed_before_one_shot_execution": {
+    "validation_cases_materialized": 0,
+    "validation_pairs_scored": 0,
+    "calibration_cases_materialized": 0,
+    "candidate_rows_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "temperature_refits": 0,
+    "threshold_searches": 0,
+    "model_substitutions": 0
+  },
+  "execution_policy": {
+    "scientific_failure_is_preserved": true,
+    "scientific_failure_does_not_authorize_rescue": true,
+    "workflow_integrity_success_distinct_from_scientific_pass": true,
+    "one_shot_parent_sha_enforced": true
+  }
+}

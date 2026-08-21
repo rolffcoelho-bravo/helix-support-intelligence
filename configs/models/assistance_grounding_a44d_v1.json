@@ -1,0 +1,96 @@
+{
+  "execution_id": "phase4-assistance-a4.4d-validation-only-v1",
+  "protocol_id": "phase4-assistance-a4.4a-compositional-grounding-v1",
+  "binding_id": "phase4-assistance-a4.4b-semantic-verifier-binding-v1",
+  "calibration_execution_id": "phase4-assistance-a4.4c-calibration-only-v1",
+  "phase": 4,
+  "checkpoint": "A4.4d",
+  "status": "registered_validation_only_pre_execution",
+  "registered_on": "2026-08-21",
+  "source_main_sha": "57bb2c81ab2cc2d5b8c1a4928c2600b4a770d110",
+  "purpose": "Execute the frozen semantic verifier exactly once on the registered A4.4a validation split and evaluate only the preregistered A4.4a validation requirements, with no rescue or confirmatory access.",
+  "scope": {
+    "validation_case_rows": 144,
+    "validation_intents": 20,
+    "validation_semantic_pair_rows": 246,
+    "validation_gold_relation_counts": {
+      "ENTAILED": 106,
+      "CONTRADICTED": 20,
+      "UNKNOWN": 120
+    },
+    "calibration_case_rows_authorized": 0,
+    "candidate_rows_authorized": 0,
+    "confirmatory_query_rows_authorized": 0
+  },
+  "frozen_calibration": {
+    "selected_temperature": 3.67,
+    "temperature_purpose": "probability calibration provenance only; class decisions remain raw-logit argmax",
+    "calibration_scientific_sha": "cf35b4e6ea495b776dd92c1420c7f7696e6a14db",
+    "calibration_artifact_id": 9453435038,
+    "calibration_artifact_zip_sha256": "cc80620b3134169110ebbd3c11b567adb715ed955bd48cf391242a7c338246b4",
+    "calibration_case_sha256": "a2a68dac77b644ed1f2b114dc0b59f7daba53a452140d97083be83fd95a4cf58",
+    "temperature_may_change_class_labels": false,
+    "temperature_may_change_claim_verdicts": false,
+    "post_validation_refit_permitted": false
+  },
+  "semantic_verifier": {
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5",
+    "device": "CPU",
+    "dtype": "float32",
+    "batch_size": 8,
+    "class_decision": "argmax_raw_logits"
+  },
+  "validation_requirements": {
+    "macro_case_category_accuracy_min": 0.95,
+    "supported_precision_min": 0.98,
+    "supported_recall_min": 0.95,
+    "atomic_relation_macro_f1_min": 0.95,
+    "atomic_entailment_recall_min": 0.95,
+    "atomic_contradiction_recall_min": 0.95,
+    "atomic_unknown_recall_min": 0.95,
+    "literal_supported_recall_min": 0.98,
+    "paraphrase_supported_recall_min": 0.95,
+    "contradiction_unsupported_accuracy_min": 0.95,
+    "unsupported_approval_accuracy_min": 0.95,
+    "multi_document_supported_recall_min": 0.9,
+    "partial_multi_document_unsupported_accuracy_min": 0.95,
+    "citation_invalid_accuracy": 1.0,
+    "stale_current_evidence_accuracy": 1.0,
+    "unresolved_conflict_accuracy": 1.0,
+    "false_supported_on_citation_stale_or_conflict_cases": 0,
+    "all_requirements_must_pass": true
+  },
+  "artifact_contract": {
+    "persist_raw_validation_pair_logits": true,
+    "persist_validation_case_verdicts": true,
+    "persist_registered_metrics": true,
+    "persist_runtime_versions": true,
+    "independent_arithmetic_reconstruction_required": true,
+    "calibration_rows_must_not_be_materialized": true,
+    "candidate_rows_must_not_be_written": true,
+    "confirmatory_rows_must_not_be_written": true
+  },
+  "forbidden": {
+    "temperature_refit": true,
+    "threshold_search": true,
+    "class_specific_thresholds": true,
+    "abstention_search": true,
+    "model_substitution": true,
+    "model_fine_tuning": true,
+    "prompt_tuning": true,
+    "candidate_inference": true,
+    "candidate_comparison": true,
+    "confirmatory_inference": true,
+    "post_result_rescue": true
+  },
+  "result_policy": {
+    "pass_status": "PASSED_REGISTERED_VALIDATION",
+    "fail_status": "FAILED_REGISTERED_VALIDATION_NO_RESCUE",
+    "workflow_integrity_success_is_distinct_from_scientific_pass": true,
+    "failed_scientific_validation_must_be_preserved": true,
+    "failure_does_not_authorize_replacement_or_rescue": true
+  }
+}
