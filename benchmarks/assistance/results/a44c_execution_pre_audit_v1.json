@@ -1,0 +1,85 @@
+{
+  "audit_id": "phase4-assistance-a4.4c-calibration-pre-execution-audit-v1",
+  "checkpoint": "A4.4c",
+  "status": "PASSED_PRE_EXECUTION_CALIBRATION_ONLY_NO_RESULTS",
+  "source_main_sha": "d94b834f61c4208028907c602b54792c643ac074",
+  "predecessor": {
+    "a44b_merge_sha": "d94b834f61c4208028907c602b54792c643ac074",
+    "a44b_complete": true,
+    "a44a_suite_sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "a44a_calibration_rows": 288,
+    "a44a_validation_rows": 144,
+    "confirmatory_rows": 68
+  },
+  "authorized_surface": {
+    "calibration_cases": 288,
+    "calibration_case_sha256": "a2a68dac77b644ed1f2b114dc0b59f7daba53a452140d97083be83fd95a4cf58",
+    "calibration_semantic_pairs": 491,
+    "validation_cases_materialized": 0,
+    "validation_cases": 0,
+    "candidate_rows": 0,
+    "confirmatory_rows": 0
+  },
+  "calibration_gold_relation_counts": {
+    "ENTAILED": 211,
+    "CONTRADICTED": 40,
+    "UNKNOWN": 240
+  },
+  "frozen_model": {
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5",
+    "class_decision": "argmax_raw_logits"
+  },
+  "frozen_temperature_fit": {
+    "objective": "three_class_negative_log_likelihood",
+    "grid_start": 0.25,
+    "grid_stop": 4.0,
+    "grid_step": 0.01,
+    "grid_points": 376,
+    "tie_break": "smallest_temperature"
+  },
+  "pre_execution_quality_gate": {
+    "run_id": 32500155015,
+    "job_id": 96827728026,
+    "conclusion": "success",
+    "tests_passed": 156,
+    "strict_mypy_passed": true,
+    "publication_audit_passed": true,
+    "semantic_inference_performed": false
+  },
+  "pre_execution_defects_caught_and_repaired": [
+    {
+      "defect": "The initial independent verifier was not in canonical Ruff format.",
+      "repair": "Applied repository-standard Ruff formatting only.",
+      "scientific_change": false
+    },
+    {
+      "defect": "The initial A4.4c preflight dynamic benchmark import lacked the established mypy import-not-found exemption used by A4.4a.",
+      "repair": "Aligned the dynamic import typing annotation with the existing repository pattern.",
+      "scientific_change": false
+    },
+    {
+      "defect": "The initial calibration runner regenerated all 432 A4.4a case records and only then filtered to the 288 calibration rows. It would not have scored validation, but this was weaker than the required unopened-validation boundary.",
+      "repair": "Added a dedicated calibration-only materializer that reconstructs only the 40 registered calibration intents and 288 calibration cases. Validation case records are never materialized by A4.4c. The resulting 288-row calibration surface was hashed and frozen before inference.",
+      "scientific_change": false,
+      "repair_timing": "before model download, semantic inference, calibration-logit exposure, validation exposure, or confirmatory access"
+    }
+  ],
+  "execution_guards": {
+    "semantic_verifier_calls_made": 0,
+    "calibration_logits_opened": 0,
+    "validation_cases_materialized": 0,
+    "validation_semantic_verifier_calls_made": 0,
+    "validation_results_opened": 0,
+    "candidate_calls_made": 0,
+    "confirmatory_queries_scored": 0,
+    "model_family_comparisons": 0
+  },
+  "audit_disposition": {
+    "ready_for_calibration_only_execution": true,
+    "validation_execution_authorized": false,
+    "confirmatory_execution_authorized": false,
+    "next_validation_execution_requires_separate_approval": true
+  }
+}
