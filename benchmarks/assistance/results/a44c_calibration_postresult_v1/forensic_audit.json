@@ -1,0 +1,57 @@
+{
+  "audit_id": "phase4-assistance-a4.4c-postresult-forensic-audit-v1",
+  "calibration_diagnostic": {
+    "contradicted_recall": 1.0,
+    "entailed_recall": 0.981042654028436,
+    "unknown_recall": 0.025,
+    "warning": "UNKNOWN is severely under-recognized on calibration data. This is recorded as a descriptive warning only and cannot trigger model rescue, threshold search, or refitting."
+  },
+  "checkpoint": "A4.4c",
+  "checks": {
+    "all_inner_file_hashes_match": true,
+    "all_pair_rows_calibration_only": true,
+    "artifact_has_exact_expected_file_set": true,
+    "artifact_zip_digest_matches": true,
+    "calibrated_nll_reconstructs": true,
+    "calibration_pair_count_491": true,
+    "candidate_scoring_zero": true,
+    "confirmatory_inspection_zero": true,
+    "confirmatory_scoring_zero": true,
+    "model_family_comparisons_zero": true,
+    "pair_ids_unique": true,
+    "post_result_substitutions_zero": true,
+    "raw_argmax_reconstructs": true,
+    "raw_correctness_reconstructs": true,
+    "raw_nll_reconstructs": true,
+    "runtime_lock_matches_report": true,
+    "selected_temperature_3_67_reconstructs": true,
+    "temperature_grid_376_points": true,
+    "temperature_grid_reconstructs": true,
+    "validation_materialized_zero": true,
+    "validation_metrics_zero": true,
+    "validation_scored_zero": true,
+    "workflow_success": true
+  },
+  "closed_on": "2026-08-21",
+  "independent_reconstruction": {
+    "calibrated_nll": 0.8698291056737014,
+    "grid_max_absolute_nll_error": 1.1102230246251565e-16,
+    "raw_argmax_accuracy": 0.515274949083503,
+    "raw_nll": 1.5764484640192402,
+    "selected_temperature": 3.67
+  },
+  "minor_operational_observation": {
+    "action_for_future_checkpoints": "Prefer artifact-root-relative checksum paths in future workflows. Do not modify the frozen A4.4c workflow because that would create a new execution event.",
+    "checksum_manifest_path_portability": "The checksum manifest contains original workflow-relative paths while the artifact ZIP is flat. All hashes independently match by basename; no scientific or evidence-integrity impact."
+  },
+  "scientific_disposition": {
+    "a44c_is_closed": true,
+    "confirmatory_partition_remains_unopened": true,
+    "global_temperature_is_frozen_at_3_67": true,
+    "no_candidate_or_model_rescue_authorized": true,
+    "temperature_may_not_be_refit_after_validation": true,
+    "validation_remains_unopened": true,
+    "validation_requires_separate_approval": true
+  },
+  "status": "CLOSED_CALIBRATION_TEMPERATURE_FROZEN"
+}
