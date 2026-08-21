@@ -41,15 +41,9 @@ def main() -> None:
         raise RuntimeError("A4.5a must descend from the frozen A4.4e closure")
 
     fresh = config["fresh_validity_construction"]
-    if (
-        fresh["validation_pairs_sha256"]
-        != observed_manifest["sha256"]["validation_pairs"]
-    ):
+    if fresh["validation_pairs_sha256"] != observed_manifest["sha256"]["validation_pairs"]:
         raise RuntimeError("A4.5a validation-pair hash mismatch")
-    if (
-        fresh["validation_claims_sha256"]
-        != observed_manifest["sha256"]["validation_claims"]
-    ):
+    if fresh["validation_claims_sha256"] != observed_manifest["sha256"]["validation_claims"]:
         raise RuntimeError("A4.5a validation-claim hash mismatch")
     if fresh["a44d_rows_reused"] != 0 or observed_manifest["a44d_rows_reused"] != 0:
         raise RuntimeError("A4.5a may not reuse A4.4d rows")
@@ -77,12 +71,8 @@ def main() -> None:
                 "a44d_rows_reused": fresh["a44d_rows_reused"],
                 "semantic_inference_authorized": scope["semantic_inference_authorized"],
                 "model_bindings_authorized": scope["model_bindings_authorized"],
-                "confirmatory_queries_authorized": boundary[
-                    "confirmatory_scoring_authorized"
-                ],
-                "next_checkpoint_authorized": config["next_checkpoint"][
-                    "authorized_by_a45a"
-                ],
+                "confirmatory_queries_authorized": boundary["confirmatory_scoring_authorized"],
+                "next_checkpoint_authorized": config["next_checkpoint"]["authorized_by_a45a"],
             },
             sort_keys=True,
         )
