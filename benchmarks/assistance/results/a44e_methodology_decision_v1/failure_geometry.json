@@ -1,0 +1,96 @@
+{
+  "analysis_id": "phase4-assistance-a4.4e-failure-geometry-v1",
+  "atomic_confusion": {
+    "counts": [
+      [
+        20,
+        0,
+        0
+      ],
+      [
+        114,
+        1,
+        5
+      ],
+      [
+        2,
+        0,
+        104
+      ]
+    ],
+    "gold_order": [
+      "CONTRADICTED",
+      "UNKNOWN",
+      "ENTAILED"
+    ],
+    "predicted_order": [
+      "CONTRADICTED",
+      "UNKNOWN",
+      "ENTAILED"
+    ]
+  },
+  "composition_cascade": {
+    "multi_document_supported": {
+      "cases": 20,
+      "correct": 0,
+      "predicted_conflicting_evidence": 20
+    },
+    "partial_multi_document_unsupported": {
+      "cases": 20,
+      "correct": 2,
+      "predicted_conflicting_evidence": 18,
+      "predicted_unsupported": 2
+    }
+  },
+  "decision_implication": "Failure is structurally concentrated in the distinction between refutation and absence of evidence, with an additional whole-document context effect. A replacement should factor evidence alignment/relevance from polarity rather than reuse native MNLI neutral as epistemic UNKNOWN.",
+  "preserved_strengths": {
+    "atomic_contradicted_recall": 1.0,
+    "atomic_entailed_recall": 0.9811320754716981,
+    "citation_invalid_accuracy": 1.0,
+    "false_supported_on_citation_stale_or_conflict_cases": 0,
+    "stale_current_evidence_accuracy": 1.0,
+    "supported_precision": 1.0,
+    "unresolved_conflict_accuracy": 1.0
+  },
+  "scope": {
+    "candidate_comparison": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "new_semantic_inference": 0,
+    "post_validation_descriptive_only": true,
+    "temperature_refit": 0,
+    "threshold_search": 0
+  },
+  "source": {
+    "artifact_id": 9456245570,
+    "artifact_zip_sha256": "e6e31bd269d3da9b435ec6097d7df492dc4d151ee869b97152895861fad1956c",
+    "checkpoint": "A4.4d",
+    "execution_sha": "794562f6d9914bfc36e929c6c9df57e06969665a",
+    "permanent_closure_sha": "291718add7a37681761ce8365d6db8dfbe504151",
+    "run_id": 32508572173
+  },
+  "unknown_failure_subtypes": {
+    "cross_document_non_evidence": {
+      "gold_unknown_pairs": 100,
+      "predicted_contradicted": 94,
+      "predicted_entailed": 5,
+      "predicted_unknown": 1,
+      "source_categories": {
+        "multi_document_supported": 40,
+        "partial_multi_document_unsupported": 60
+      }
+    },
+    "same_document_insufficient_evidence": {
+      "gold_unknown_pairs": 20,
+      "predicted_contradicted": 20,
+      "predicted_entailed": 0,
+      "predicted_unknown": 0,
+      "source_category": "unsupported_approval"
+    }
+  },
+  "whole_document_context_contamination": {
+    "note": "The atom is the document first sentence, but the full archived FAQ also contains negative staleness language; deterministic freshness still preserved the final case verdict.",
+    "predicted_contradicted": 2,
+    "stale_current_evidence_gold_entailed_pairs": 2
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "a44d_closure": {
+    "artifact_id": 9456245570,
+    "artifact_zip_sha256": "e6e31bd269d3da9b435ec6097d7df492dc4d151ee869b97152895861fad1956c",
+    "forensic_status": "CLOSED_FAILED_REGISTERED_VALIDATION_NO_RESCUE",
+    "requirements_passed": 11,
+    "requirements_total": 17,
+    "scientific_pass": false,
+    "scientific_status": "FAILED_REGISTERED_VALIDATION_NO_RESCUE"
+  },
+  "checkpoint": "A4.4e",
+  "decision_id": "phase4-assistance-a4.4e-methodology-decision-v1",
+  "failure_diagnosis": {
+    "primary": "native_three_way_nli_neutral_is_not_a_valid_proxy_for_epistemic_no_evidence_in_this_grounding_task",
+    "secondary": [
+      "whole_document_context_can_contaminate_atom_level_relation_classification",
+      "cross_document_irrelevance_is_promoted_to_false_contradiction_and_then_to_false_conflict",
+      "positive_temperature_scaling_cannot_repair_argmax_relation_errors"
+    ]
+  },
+  "future_binding_constraints": {
+    "a44d_validation_may_be_used_only_as_opened_descriptive_development_evidence": true,
+    "all_thresholds_or_calibration_parameters_must_be_frozen_before_new_validation": true,
+    "authoritative_model_must_be_bound_before_new_validation_is_opened": true,
+    "confirmatory_partition_must_remain_unopened_until_replacement_method_clears_new_registered_validity": true,
+    "open_weight_or_otherwise_reproducibly_pinned_primary_path_preferred": true,
+    "task_specific_claim_evidence_verification_preferred_over_generic_nli": true
+  },
+  "methodology_decision": {
+    "principles": [
+      "align_each_atom_to_minimal_relevant_evidence_spans_before_relation_judgment",
+      "separate_evidence_relevance_or_coverage_from_support_or_refutation_polarity",
+      "treat_no_relevant_or_insufficient_evidence_as_UNKNOWN_by_construction",
+      "require_positive_refuting_evidence_before_assigning_CONTRADICTED",
+      "ignore_irrelevant_documents_during_atom_level_composition",
+      "surface_support_and_refutation_coexistence_as_conflict_without_collapsing_irrelevance_into_contradiction",
+      "retain_deterministic_citation_freshness_and_registered_conflict_vetoes"
+    ],
+    "relation_mapping": {
+      "no_relevant_evidence": "UNKNOWN",
+      "relevant_but_insufficient_evidence": "UNKNOWN",
+      "relevant_refuting_evidence": "CONTRADICTED",
+      "relevant_supporting_evidence": "ENTAILED",
+      "support_and_refutation_both_present": "CONFLICTING_EVIDENCE"
+    },
+    "selected_architecture": "Atom-Evidence Relation Factorization",
+    "short_name": "AERF",
+    "status": "ARCHITECTURE_SELECTED_MODEL_UNBOUND"
+  },
+  "next_checkpoint": {
+    "authorized_by_a44e": false,
+    "checkpoint": "A4.5a",
+    "must_include": [
+      "fresh_candidate_independent_validation_construction",
+      "sealed_split_and_hashes",
+      "AERF_component_metrics",
+      "claim_level_safety_metrics",
+      "model_binding_and_calibration_order",
+      "explicit_no_reuse_of_a44d_validation_as_hard_validity",
+      "confirmatory_seal"
+    ],
+    "name": "AERF measurement and fresh validity protocol registration",
+    "requires_separate_approval": true
+  },
+  "rejected_paths": {
+    "another_native_three_way_mnli_argmax_swap": true,
+    "class_specific_threshold_tuning_on_a44d_validation": true,
+    "llm_as_judge_as_uncontrolled_authoritative_primary_metric": true,
+    "open_confirmatory_partition_before_new_validity_gate": true,
+    "post_validation_temperature_refit": true,
+    "post_validation_threshold_rescue": true,
+    "reuse_a44a_validation_as_independent_hard_validity_evidence": true
+  },
+  "scope": {
+    "a44a_validation_rows_rescored": 0,
+    "calibration_rows_rescored": 0,
+    "candidate_model_bindings_authorized": 0,
+    "candidate_rows_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_query_rows_authorized": 0,
+    "semantic_inference_authorized": 0,
+    "temperature_refits_authorized": 0,
+    "threshold_searches_authorized": 0
+  },
+  "source_main_sha": "291718add7a37681761ce8365d6db8dfbe504151"
+}
