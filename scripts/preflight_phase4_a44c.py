@@ -11,7 +11,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
-from compositional_cases_a44a import canonical_jsonl_bytes, generate_cases  # noqa: E402
+from compositional_cases_a44a import (  # type: ignore[import-not-found]  # noqa: E402
+    canonical_jsonl_bytes,
+    generate_cases,
+)
 
 A44A = ROOT / "configs" / "models" / "assistance_grounding_a44a_v1.json"
 A44B = ROOT / "configs" / "models" / "assistance_grounding_a44b_v1.json"
