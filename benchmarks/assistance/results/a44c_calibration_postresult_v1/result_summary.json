@@ -1,0 +1,59 @@
+{
+  "calibration_surface": {
+    "case_rows": 288,
+    "case_sha256": "a2a68dac77b644ed1f2b114dc0b59f7daba53a452140d97083be83fd95a4cf58",
+    "gold_relation_counts": {
+      "CONTRADICTED": 40,
+      "ENTAILED": 211,
+      "UNKNOWN": 240
+    },
+    "semantic_pairs": 491
+  },
+  "checkpoint": "A4.4c",
+  "closed_on": "2026-08-21",
+  "execution": {
+    "artifact_id": 9453435038,
+    "artifact_zip_sha256": "cc80620b3134169110ebbd3c11b567adb715ed955bd48cf391242a7c338246b4",
+    "conclusion": "success",
+    "head_sha": "cf35b4e6ea495b776dd92c1420c7f7696e6a14db",
+    "run_attempt": 1,
+    "run_id": 32500393608,
+    "workflow_name": "Phase 4 Assistance A4.4c"
+  },
+  "frozen_result": {
+    "argmax_preserved_after_temperature": true,
+    "nll_improvement": 0.7066193583455388,
+    "raw_argmax_accuracy": 0.515274949083503,
+    "raw_argmax_relation_counts": {
+      "CONTRADICTED": 246,
+      "ENTAILED": 239,
+      "UNKNOWN": 6
+    },
+    "raw_nll_at_temperature_1": 1.5764484640192402,
+    "selected_temperature": 3.67,
+    "selected_temperature_nll": 0.8698291056737014
+  },
+  "scientific_disposition": {
+    "a44c_closed": true,
+    "calibration_diagnostics_are_descriptive_only": true,
+    "confirmatory_partition_remains_unopened": true,
+    "model_substitution_permitted": false,
+    "post_calibration_refit_permitted": false,
+    "temperature_frozen": 3.67,
+    "threshold_search_permitted": false,
+    "validation_execution_requires_separate_approval": true,
+    "validation_split_remains_unopened": true
+  },
+  "sealed_boundaries": {
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "g0_g1_g2_candidates_scored": 0,
+    "model_family_comparisons": 0,
+    "post_result_model_substitutions": 0,
+    "validation_case_rows_materialized": 0,
+    "validation_case_rows_scored": 0,
+    "validation_metrics_computed": 0,
+    "validation_semantic_pairs_scored": 0
+  },
+  "status": "CLOSED_CALIBRATION_TEMPERATURE_FROZEN"
+}
