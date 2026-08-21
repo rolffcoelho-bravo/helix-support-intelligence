@@ -1,0 +1,119 @@
+{
+  "checkpoint": "A4.5a",
+  "protocol_id": "phase4-assistance-a4.5a-aerf-validity-v1",
+  "source_main_sha": "4297d97012549573c107d7165c98f47db57533da",
+  "architecture": {
+    "name": "Atom-Evidence Relation Factorization",
+    "short_name": "AERF",
+    "status": "MEASUREMENT_REGISTERED_MODEL_UNBOUND",
+    "stages": [
+      "minimal_evidence_alignment",
+      "relevance",
+      "sufficiency",
+      "polarity_if_relevant_and_sufficient",
+      "deterministic_relation_mapping",
+      "claim_level_composition"
+    ],
+    "relation_mapping": {
+      "irrelevant": "UNKNOWN",
+      "relevant_insufficient": "UNKNOWN",
+      "relevant_sufficient_supports": "ENTAILED",
+      "relevant_sufficient_refutes": "CONTRADICTED",
+      "support_and_refutation_coexist": "CONFLICTING_EVIDENCE"
+    }
+  },
+  "fresh_validity_construction": {
+    "corpus_id": "helix-aerf-validity-corpus-v1",
+    "seed": 20260821,
+    "units": 60,
+    "calibration_units": 40,
+    "validation_units": 20,
+    "pair_rows": 540,
+    "calibration_pair_rows": 360,
+    "validation_pair_rows": 180,
+    "validation_relation_counts": {
+      "ENTAILED": 60,
+      "CONTRADICTED": 40,
+      "UNKNOWN": 80
+    },
+    "claim_rows": 540,
+    "calibration_claim_rows": 360,
+    "validation_claim_rows": 180,
+    "validation_pairs_sha256": "5f6f0294230de5da3af8baaee2403c9497bd42308c96f9d1041f4f88667d1da7",
+    "validation_claims_sha256": "116040d37035e4a43a3bee17ea2d29fe87d85c6148adade770e8c224456e43d6",
+    "pair_rows_sha256": "bc9d0eafd67ee2484f89c83e4434fb72e01a8addf3a253f4f29e5c72d2f7682a",
+    "claim_rows_sha256": "33f52043230fa821f7388824c8c2e14ed27781b2af164d9156fad60ec2a079b1",
+    "a44d_rows_reused": 0,
+    "confirmatory_query_records_used": 0
+  },
+  "registered_component_requirements": {
+    "minimal_evidence_span_precision_min": 0.95,
+    "minimal_evidence_span_recall_min": 0.95,
+    "relevance_macro_f1_min": 0.95,
+    "relevant_recall_min": 0.95,
+    "irrelevant_recall_min": 0.95,
+    "sufficiency_macro_f1_min_on_relevant_pairs": 0.95,
+    "sufficient_recall_min": 0.95,
+    "insufficient_recall_min": 0.95,
+    "polarity_macro_f1_min_on_relevant_sufficient_pairs": 0.95,
+    "supports_recall_min": 0.95,
+    "refutes_recall_min": 0.95,
+    "final_relation_macro_f1_min": 0.95,
+    "entailed_recall_min": 0.95,
+    "contradicted_recall_min": 0.95,
+    "unknown_recall_min": 0.95,
+    "cross_document_irrelevance_false_contradiction_rate_max": 0.02,
+    "same_domain_irrelevance_false_contradiction_rate_max": 0.02,
+    "relevant_insufficient_false_contradiction_rate_max": 0.02,
+    "context_contamination_support_accuracy_min": 0.95
+  },
+  "registered_claim_requirements": {
+    "macro_case_category_accuracy_min": 0.95,
+    "supported_precision_min": 0.98,
+    "supported_recall_min": 0.95,
+    "multi_document_supported_recall_min": 0.95,
+    "partial_multi_document_unsupported_accuracy_min": 0.95,
+    "support_refute_conflict_accuracy_min": 1.0,
+    "citation_invalid_accuracy_min": 1.0,
+    "stale_evidence_accuracy_min": 1.0,
+    "registered_conflict_accuracy_min": 1.0,
+    "false_supported_on_safety_gate_cases_max": 0
+  },
+  "binding_and_calibration_order": [
+    "register_measurement_and_fresh_validity_construction",
+    "bind_one_authoritative_AERF_implementation_before_validation",
+    "fit_any_thresholds_or_calibration_parameters_on_calibration_only",
+    "freeze_implementation_revision_weights_thresholds_and_runtime",
+    "execute_fresh_validation_once",
+    "accept_pass_or_fail_without_post_validation_rescue"
+  ],
+  "reuse_rules": {
+    "a44d_validation_hard_validity_reuse_forbidden": true,
+    "a44d_may_be_descriptive_regression_only": true,
+    "a44a_validation_hard_validity_reuse_forbidden": true,
+    "a44a_may_be_descriptive_regression_only": true,
+    "fresh_validation_may_not_be_used_for_model_or_threshold_selection": true
+  },
+  "confirmatory_boundary": {
+    "confirmatory_queries": 68,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_scoring_authorized": 0,
+    "must_remain_sealed_until_fresh_validity_passes_and_separate_approval_is_granted": true
+  },
+  "scope": {
+    "semantic_inference_authorized": 0,
+    "model_bindings_authorized": 0,
+    "threshold_searches_authorized": 0,
+    "temperature_or_calibration_fit_authorized": 0,
+    "a44d_rows_rescored": 0,
+    "a44a_rows_rescored": 0,
+    "candidate_rows_scored": 0,
+    "confirmatory_queries_scored": 0
+  },
+  "next_checkpoint": {
+    "checkpoint": "A4.5b",
+    "name": "AERF implementation binding and calibration-only execution protocol",
+    "authorized_by_a45a": false,
+    "requires_separate_approval": true
+  }
+}
