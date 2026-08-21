@@ -134,18 +134,16 @@ def _predict_case_verdict(
     return "SUPPORTED"
 
 
-def _metrics(
-    pair_rows: list[dict[str, Any]], case_rows: list[dict[str, Any]]
-) -> dict[str, Any]:
+def _metrics(pair_rows: list[dict[str, Any]], case_rows: list[dict[str, Any]]) -> dict[str, Any]:
     gold = [int(row["gold_label"]) for row in pair_rows]
     predicted = [int(row["raw_argmax_label"]) for row in pair_rows]
     category_accuracy: dict[str, float] = {}
     categories = sorted({str(row["category"]) for row in case_rows})
     for category in categories:
         rows = [row for row in case_rows if row["category"] == category]
-        category_accuracy[category] = (
-            sum(row["predicted_verdict"] == row["gold_verdict"] for row in rows) / len(rows)
-        )
+        category_accuracy[category] = sum(
+            row["predicted_verdict"] == row["gold_verdict"] for row in rows
+        ) / len(rows)
 
     gold_supported = [row for row in case_rows if row["gold_verdict"] == "SUPPORTED"]
     predicted_supported = [row for row in case_rows if row["predicted_verdict"] == "SUPPORTED"]
@@ -163,23 +161,16 @@ def _metrics(
     return {
         "atomic_relation_macro_f1": macro_f1,
         "atomic_entailment_recall": _recall(gold, predicted, RELATION_TO_LABEL["ENTAILED"]),
-        "atomic_contradiction_recall": _recall(
-            gold, predicted, RELATION_TO_LABEL["CONTRADICTED"]
-        ),
+        "atomic_contradiction_recall": _recall(gold, predicted, RELATION_TO_LABEL["CONTRADICTED"]),
         "atomic_unknown_recall": _recall(gold, predicted, RELATION_TO_LABEL["UNKNOWN"]),
-        "macro_case_category_accuracy": sum(category_accuracy.values())
-        / len(category_accuracy),
+        "macro_case_category_accuracy": sum(category_accuracy.values()) / len(category_accuracy),
         "supported_precision": len(true_supported) / len(predicted_supported)
         if predicted_supported
         else 0.0,
-        "supported_recall": len(true_supported) / len(gold_supported)
-        if gold_supported
-        else 0.0,
+        "supported_recall": len(true_supported) / len(gold_supported) if gold_supported else 0.0,
         "literal_supported_recall": category_accuracy["literal_supported"],
         "paraphrase_supported_recall": category_accuracy["paraphrase_supported"],
-        "contradiction_unsupported_accuracy": category_accuracy[
-            "contradiction_unsupported"
-        ],
+        "contradiction_unsupported_accuracy": category_accuracy["contradiction_unsupported"],
         "unsupported_approval_accuracy": category_accuracy["unsupported_approval"],
         "multi_document_supported_recall": category_accuracy["multi_document_supported"],
         "partial_multi_document_unsupported_accuracy": category_accuracy[
@@ -196,9 +187,7 @@ def _metrics(
     }
 
 
-def _requirement_checks(
-    metrics: dict[str, Any], requirements: dict[str, Any]
-) -> dict[str, bool]:
+def _requirement_checks(metrics: dict[str, Any], requirements: dict[str, Any]) -> dict[str, bool]:
     checks: dict[str, bool] = {}
     for name, value in requirements.items():
         if name == "all_requirements_must_pass":
@@ -289,9 +278,7 @@ def main() -> None:
     for name, value in metrics.items():
         if name == "category_accuracy":
             for category, score in value.items():
-                if not _close(
-                    float(score), float(stored_metrics["category_accuracy"][category])
-                ):
+                if not _close(float(score), float(stored_metrics["category_accuracy"][category])):
                     raise RuntimeError(f"Category metric drift: {category}.")
         elif isinstance(value, float):
             if not _close(float(value), float(stored_metrics[name])):
