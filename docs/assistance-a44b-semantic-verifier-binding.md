@@ -24,9 +24,9 @@ Each future semantic-verifier input is one valid cited-presented atom-document p
 
 ## Selection discipline
 
-The verifier was selected from public model metadata and structural requirements only. No A4.2 candidate result, A4.3a validation error, A4.4a calibration case, or A4.4a validation case was used to rank replacement models. No empirical replacement-model bakeoff was performed.
+The verifier was nominated from public model metadata and structural requirements only. This is a single pre-registered verifier nomination, not a claim that RoBERTa-large-MNLI is empirically optimal among all eligible models. No A4.2 candidate result, A4.3a validation error, A4.4a calibration case, or A4.4a validation case was used to rank replacement models, and no empirical replacement-model bakeoff was performed.
 
-The structural requirements were native three-way NLI output, a permissive public license, a safetensors artifact, an immutable revision, at least a 512-token input limit, disabled remote code, and an architecture family distinct from both the frozen G2 runtime verifier and the rejected A4.3a evaluator.
+The structural requirements were native three-way NLI output, a permissive public license, a safetensors artifact, an immutable revision, at least a 512-token input limit, disabled remote code, and an architecture family distinct from both the frozen G2 runtime verifier and the rejected A4.3a evaluator. If this bound verifier later fails the registered validity requirements, it is rejected under this binding. Another model cannot be substituted automatically; a replacement requires a new versioned binding.
 
 The model card reports that RoBERTa-large-MNLI was fine-tuned on MultiNLI and reports an external MNLI score of 90.2. That number is model documentation only. It is not HelixBank validity evidence and cannot substitute for the untouched A4.4a validation experiment.
 
@@ -46,4 +46,4 @@ The next execution checkpoint must be separately versioned and must remain calib
 
 ## External model evidence snapshot
 
-The public evidence snapshot was taken on 2026-08-21 from the Hugging Face model card, immutable revision, configuration, and safetensors artifact for `FacebookAI/roberta-large-mnli`. Those external sources establish model identity, label mapping, artifact type, license, tokenizer limit, and published model metadata. They do not establish performance on HelixBank.
+The public evidence snapshot was taken on 2026-08-21 from the Hugging Face model card, immutable revision, configuration, tokenizer configuration, and safetensors artifact for `FacebookAI/roberta-large-mnli`. Those external sources establish model identity, label mapping, artifact type, license, tokenizer limit, and published model metadata. They do not establish performance on HelixBank.
