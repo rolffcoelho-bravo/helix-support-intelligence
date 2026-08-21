@@ -8,13 +8,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 A44A_CONFIG = ROOT / "configs" / "models" / "assistance_grounding_a44a_v1.json"
-A44A_AUDIT = (
-    ROOT
-    / "benchmarks"
-    / "assistance"
-    / "results"
-    / "a44a_protocol_post_audit_v1.json"
-)
+A44A_AUDIT = ROOT / "benchmarks" / "assistance" / "results" / "a44a_protocol_post_audit_v1.json"
 A44B_CONFIG = ROOT / "configs" / "models" / "assistance_grounding_a44b_v1.json"
 A41_CONFIG = ROOT / "configs" / "models" / "assistance_binding_a41_v1.json"
 A43A_AUDIT = (
