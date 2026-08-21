@@ -1,0 +1,44 @@
+{
+  "a44d_rows_reused": 0,
+  "candidate_model_calls": 0,
+  "confirmatory_query_records_inspected": 0,
+  "corpus_id": "helix-aerf-validity-corpus-v1",
+  "counts": {
+    "calibration_units": 40,
+    "claim_rows": 540,
+    "claim_rows_by_split": {
+      "calibration": 360,
+      "validation": 180
+    },
+    "pair_rows": 540,
+    "pair_rows_by_split": {
+      "calibration": 360,
+      "validation": 180
+    },
+    "relation_counts_by_split": {
+      "calibration": {
+        "CONTRADICTED": 80,
+        "ENTAILED": 120,
+        "UNKNOWN": 160
+      },
+      "validation": {
+        "CONTRADICTED": 40,
+        "ENTAILED": 60,
+        "UNKNOWN": 80
+      }
+    },
+    "units": 60,
+    "validation_units": 20
+  },
+  "protocol_id": "phase4-assistance-a4.5a-aerf-validity-v1",
+  "seed": 20260821,
+  "sha256": {
+    "calibration_claims": "e04813b1aec29335ffdbfbd8baa2e6f021ca6aa6a64625c255b454139e948ee5",
+    "calibration_pairs": "2339b1328c1dd2854e712862f5e4183300581997a22a7000db2629313a49092f",
+    "claim_rows": "33f52043230fa821f7388824c8c2e14ed27781b2af164d9156fad60ec2a079b1",
+    "pair_rows": "bc9d0eafd67ee2484f89c83e4434fb72e01a8addf3a253f4f29e5c72d2f7682a",
+    "units": "7e89bd9281e07565d262e7569826fd54726eecfc0fc5ab359197be1053688fc8",
+    "validation_claims": "116040d37035e4a43a3bee17ea2d29fe87d85c6148adade770e8c224456e43d6",
+    "validation_pairs": "5f6f0294230de5da3af8baaee2403c9497bd42308c96f9d1041f4f88667d1da7"
+  }
+}
