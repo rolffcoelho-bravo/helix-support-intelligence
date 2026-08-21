@@ -323,9 +323,7 @@ def build_suite() -> dict[str, Any]:
         for offset, unit_id in enumerate(ids):
             unit = by_id[unit_id]
             other = by_id[ids[(offset + 1) % len(ids)]]
-            pair_rows.extend(
-                _unit_pairs(split_name, unit_id, unit, other["documents"]["queue"])
-            )
+            pair_rows.extend(_unit_pairs(split_name, unit_id, unit, other["documents"]["queue"]))
             claim_rows.extend(_unit_claims(split_name, unit_id))
     pair_rows.sort(key=lambda row: str(row["pair_id"]))
     claim_rows.sort(key=lambda row: str(row["case_id"]))
