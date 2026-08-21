@@ -10,6 +10,7 @@
   "purpose": "Execute the frozen semantic verifier only on the registered A4.4a calibration split and freeze one global temperature before any validation exposure.",
   "scope": {
     "calibration_case_rows": 288,
+    "calibration_case_sha256": "a2a68dac77b644ed1f2b114dc0b59f7daba53a452140d97083be83fd95a4cf58",
     "calibration_semantic_pair_rows": 491,
     "calibration_gold_relation_counts": {
       "ENTAILED": 211,
