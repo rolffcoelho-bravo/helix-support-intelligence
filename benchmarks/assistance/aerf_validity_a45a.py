@@ -63,18 +63,12 @@ def build_units() -> list[dict[str, Any]]:
                 "requirement": requirement,
                 "window_days": window,
                 "documents": {
-                    "queue": {
-                        "document_id": f"{unit_id}-Q",
-                        "text": support_queue,
-                    },
+                    "queue": {"document_id": f"{unit_id}-Q", "text": support_queue},
                     "requirement": {
                         "document_id": f"{unit_id}-R",
                         "text": support_requirement,
                     },
-                    "window": {
-                        "document_id": f"{unit_id}-W",
-                        "text": support_window,
-                    },
+                    "window": {"document_id": f"{unit_id}-W", "text": support_window},
                     "refutation": {
                         "document_id": f"{unit_id}-X",
                         "text": (
@@ -112,13 +106,13 @@ def _pair(
     unit_id: str,
     subtype: str,
     claim: str,
-    evidence_document_id: str,
-    evidence_text: str,
+    document: dict[str, Any],
     relevance: str,
     sufficiency: str,
     polarity: str,
     final_relation: str,
 ) -> dict[str, Any]:
+    evidence_text = str(document["text"])
     minimal = None
     if relevance != "IRRELEVANT":
         minimal = evidence_text.split(". ", 1)[0].rstrip(".") + "."
@@ -128,7 +122,7 @@ def _pair(
         "unit_id": unit_id,
         "subtype": subtype,
         "claim": claim,
-        "evidence_document_id": evidence_document_id,
+        "evidence_document_id": str(document["document_id"]),
         "evidence_text": evidence_text,
         "gold": {
             "relevance": relevance,
@@ -160,231 +154,179 @@ def _claim(
     }
 
 
+def _unit_pairs(
+    split_name: str,
+    unit_id: str,
+    unit: dict[str, Any],
+    other_queue: dict[str, Any],
+) -> list[dict[str, Any]]:
+    documents = unit["documents"]
+    subject = str(unit["subject"])
+    queue = str(unit["queue"])
+    requirement = str(unit["requirement"])
+    window = int(unit["window_days"])
+    prefix = f"{split_name[:3].upper()}-{unit_id}"
+    specs = [
+        (
+            "P01",
+            "literal_support",
+            f"{subject} requests are handled by the {queue} queue.",
+            documents["queue"],
+            "RELEVANT",
+            "SUFFICIENT",
+            "SUPPORTS",
+            "ENTAILED",
+        ),
+        (
+            "P02",
+            "paraphrase_support",
+            f"The {queue} queue handles {subject.lower()} requests.",
+            documents["queue"],
+            "RELEVANT",
+            "SUFFICIENT",
+            "SUPPORTS",
+            "ENTAILED",
+        ),
+        (
+            "P03",
+            "explicit_refutation",
+            f"{subject} requests are handled by the {queue} queue.",
+            documents["refutation"],
+            "RELEVANT",
+            "SUFFICIENT",
+            "REFUTES",
+            "CONTRADICTED",
+        ),
+        (
+            "P04",
+            "attribute_refutation",
+            f"{subject} requests are not handled by the {queue} queue.",
+            documents["queue"],
+            "RELEVANT",
+            "SUFFICIENT",
+            "REFUTES",
+            "CONTRADICTED",
+        ),
+        (
+            "P05",
+            "cross_document_irrelevance",
+            f"{subject} requests are handled by the {queue} queue.",
+            other_queue,
+            "IRRELEVANT",
+            "NOT_APPLICABLE",
+            "NOT_APPLICABLE",
+            "UNKNOWN",
+        ),
+        (
+            "P06",
+            "same_domain_irrelevance",
+            f"{subject} review requires {requirement}.",
+            documents["window"],
+            "IRRELEVANT",
+            "NOT_APPLICABLE",
+            "NOT_APPLICABLE",
+            "UNKNOWN",
+        ),
+        (
+            "P07",
+            "relevant_but_insufficient",
+            (
+                f"{subject} requests are handled by the {queue} queue and review "
+                f"requires {requirement}."
+            ),
+            documents["queue"],
+            "RELEVANT",
+            "INSUFFICIENT",
+            "UNRESOLVED",
+            "UNKNOWN",
+        ),
+        (
+            "P08",
+            "temporal_insufficiency",
+            f"{subject} review always finishes within {window} business days.",
+            documents["window"],
+            "RELEVANT",
+            "INSUFFICIENT",
+            "UNRESOLVED",
+            "UNKNOWN",
+        ),
+        (
+            "P09",
+            "context_contamination_support",
+            f"{subject} requests are handled by the {queue} queue.",
+            documents["contaminated"],
+            "RELEVANT",
+            "SUFFICIENT",
+            "SUPPORTS",
+            "ENTAILED",
+        ),
+    ]
+    return [
+        _pair(f"{prefix}-{suffix}", split_name, unit_id, subtype, claim, *rest)
+        for suffix, subtype, claim, *rest in specs
+    ]
+
+
+def _unit_claims(split_name: str, unit_id: str) -> list[dict[str, Any]]:
+    prefix = f"{split_name[:3].upper()}-{unit_id}"
+    specs = [
+        ("C01", "single_supported", ["ENTAILED"], "SUPPORTED", "NONE"),
+        ("C02", "single_refuted", ["CONTRADICTED"], "UNSUPPORTED", "NONE"),
+        ("C03", "single_unknown", ["UNKNOWN"], "UNSUPPORTED", "NONE"),
+        ("C04", "multi_document_supported", ["ENTAILED", "ENTAILED"], "SUPPORTED", "NONE"),
+        (
+            "C05",
+            "partial_multi_document_unsupported",
+            ["ENTAILED", "UNKNOWN"],
+            "UNSUPPORTED",
+            "NONE",
+        ),
+        (
+            "C06",
+            "support_refute_conflict",
+            ["ENTAILED", "CONTRADICTED"],
+            "CONFLICTING_EVIDENCE",
+            "NONE",
+        ),
+        ("C07", "citation_invalid", ["ENTAILED"], "CITATION_INVALID", "CITATION_INVALID"),
+        ("C08", "stale_evidence", ["ENTAILED"], "STALE_EVIDENCE", "STALE_EVIDENCE"),
+        (
+            "C09",
+            "registered_conflict",
+            ["ENTAILED"],
+            "CONFLICTING_EVIDENCE",
+            "REGISTERED_CONFLICT",
+        ),
+    ]
+    return [
+        _claim(
+            f"{prefix}-{suffix}",
+            split_name,
+            unit_id,
+            category,
+            relations,
+            verdict,
+            gate,
+        )
+        for suffix, category, relations, verdict, gate in specs
+    ]
+
+
 def build_suite() -> dict[str, Any]:
     units = build_units()
     by_id = {str(unit["unit_id"]): unit for unit in units}
     split = split_units(units)
     pair_rows: list[dict[str, Any]] = []
     claim_rows: list[dict[str, Any]] = []
-
     for split_name in ("calibration", "validation"):
         ids = split[split_name]
         for offset, unit_id in enumerate(ids):
             unit = by_id[unit_id]
-            documents = unit["documents"]
-            subject = str(unit["subject"])
-            queue = str(unit["queue"])
-            requirement = str(unit["requirement"])
-            window = int(unit["window_days"])
             other = by_id[ids[(offset + 1) % len(ids)]]
-            other_doc = other["documents"]["queue"]
-            prefix = f"{split_name[:3].upper()}-{unit_id}"
-
             pair_rows.extend(
-                [
-                    _pair(
-                        f"{prefix}-P01",
-                        split_name,
-                        unit_id,
-                        "literal_support",
-                        f"{subject} requests are handled by the {queue} queue.",
-                        str(documents["queue"]["document_id"]),
-                        str(documents["queue"]["text"]),
-                        "RELEVANT",
-                        "SUFFICIENT",
-                        "SUPPORTS",
-                        "ENTAILED",
-                    ),
-                    _pair(
-                        f"{prefix}-P02",
-                        split_name,
-                        unit_id,
-                        "paraphrase_support",
-                        f"The {queue} queue handles {subject.lower()} requests.",
-                        str(documents["queue"]["document_id"]),
-                        str(documents["queue"]["text"]),
-                        "RELEVANT",
-                        "SUFFICIENT",
-                        "SUPPORTS",
-                        "ENTAILED",
-                    ),
-                    _pair(
-                        f"{prefix}-P03",
-                        split_name,
-                        unit_id,
-                        "explicit_refutation",
-                        f"{subject} requests are handled by the {queue} queue.",
-                        str(documents["refutation"]["document_id"]),
-                        str(documents["refutation"]["text"]),
-                        "RELEVANT",
-                        "SUFFICIENT",
-                        "REFUTES",
-                        "CONTRADICTED",
-                    ),
-                    _pair(
-                        f"{prefix}-P04",
-                        split_name,
-                        unit_id,
-                        "attribute_refutation",
-                        f"{subject} requests are not handled by the {queue} queue.",
-                        str(documents["queue"]["document_id"]),
-                        str(documents["queue"]["text"]),
-                        "RELEVANT",
-                        "SUFFICIENT",
-                        "REFUTES",
-                        "CONTRADICTED",
-                    ),
-                    _pair(
-                        f"{prefix}-P05",
-                        split_name,
-                        unit_id,
-                        "cross_document_irrelevance",
-                        f"{subject} requests are handled by the {queue} queue.",
-                        str(other_doc["document_id"]),
-                        str(other_doc["text"]),
-                        "IRRELEVANT",
-                        "NOT_APPLICABLE",
-                        "NOT_APPLICABLE",
-                        "UNKNOWN",
-                    ),
-                    _pair(
-                        f"{prefix}-P06",
-                        split_name,
-                        unit_id,
-                        "same_domain_irrelevance",
-                        f"{subject} review requires {requirement}.",
-                        str(documents["window"]["document_id"]),
-                        str(documents["window"]["text"]),
-                        "IRRELEVANT",
-                        "NOT_APPLICABLE",
-                        "NOT_APPLICABLE",
-                        "UNKNOWN",
-                    ),
-                    _pair(
-                        f"{prefix}-P07",
-                        split_name,
-                        unit_id,
-                        "relevant_but_insufficient",
-                        (
-                            f"{subject} requests are handled by the {queue} queue and review "
-                            f"requires {requirement}."
-                        ),
-                        str(documents["queue"]["document_id"]),
-                        str(documents["queue"]["text"]),
-                        "RELEVANT",
-                        "INSUFFICIENT",
-                        "UNRESOLVED",
-                        "UNKNOWN",
-                    ),
-                    _pair(
-                        f"{prefix}-P08",
-                        split_name,
-                        unit_id,
-                        "temporal_insufficiency",
-                        f"{subject} review always finishes within {window} business days.",
-                        str(documents["window"]["document_id"]),
-                        str(documents["window"]["text"]),
-                        "RELEVANT",
-                        "INSUFFICIENT",
-                        "UNRESOLVED",
-                        "UNKNOWN",
-                    ),
-                    _pair(
-                        f"{prefix}-P09",
-                        split_name,
-                        unit_id,
-                        "context_contamination_support",
-                        f"{subject} requests are handled by the {queue} queue.",
-                        str(documents["contaminated"]["document_id"]),
-                        str(documents["contaminated"]["text"]),
-                        "RELEVANT",
-                        "SUFFICIENT",
-                        "SUPPORTS",
-                        "ENTAILED",
-                    ),
-                ]
+                _unit_pairs(split_name, unit_id, unit, other["documents"]["queue"])
             )
-
-            claim_rows.extend(
-                [
-                    _claim(
-                        f"{prefix}-C01",
-                        split_name,
-                        unit_id,
-                        "single_supported",
-                        ["ENTAILED"],
-                        "SUPPORTED",
-                    ),
-                    _claim(
-                        f"{prefix}-C02",
-                        split_name,
-                        unit_id,
-                        "single_refuted",
-                        ["CONTRADICTED"],
-                        "UNSUPPORTED",
-                    ),
-                    _claim(
-                        f"{prefix}-C03",
-                        split_name,
-                        unit_id,
-                        "single_unknown",
-                        ["UNKNOWN"],
-                        "UNSUPPORTED",
-                    ),
-                    _claim(
-                        f"{prefix}-C04",
-                        split_name,
-                        unit_id,
-                        "multi_document_supported",
-                        ["ENTAILED", "ENTAILED"],
-                        "SUPPORTED",
-                    ),
-                    _claim(
-                        f"{prefix}-C05",
-                        split_name,
-                        unit_id,
-                        "partial_multi_document_unsupported",
-                        ["ENTAILED", "UNKNOWN"],
-                        "UNSUPPORTED",
-                    ),
-                    _claim(
-                        f"{prefix}-C06",
-                        split_name,
-                        unit_id,
-                        "support_refute_conflict",
-                        ["ENTAILED", "CONTRADICTED"],
-                        "CONFLICTING_EVIDENCE",
-                    ),
-                    _claim(
-                        f"{prefix}-C07",
-                        split_name,
-                        unit_id,
-                        "citation_invalid",
-                        ["ENTAILED"],
-                        "CITATION_INVALID",
-                        "CITATION_INVALID",
-                    ),
-                    _claim(
-                        f"{prefix}-C08",
-                        split_name,
-                        unit_id,
-                        "stale_evidence",
-                        ["ENTAILED"],
-                        "STALE_EVIDENCE",
-                        "STALE_EVIDENCE",
-                    ),
-                    _claim(
-                        f"{prefix}-C09",
-                        split_name,
-                        unit_id,
-                        "registered_conflict",
-                        ["ENTAILED"],
-                        "CONFLICTING_EVIDENCE",
-                        "REGISTERED_CONFLICT",
-                    ),
-                ]
-            )
-
+            claim_rows.extend(_unit_claims(split_name, unit_id))
     pair_rows.sort(key=lambda row: str(row["pair_id"]))
     claim_rows.sort(key=lambda row: str(row["case_id"]))
     return {
@@ -399,10 +341,7 @@ def build_suite() -> dict[str, Any]:
 
 def _jsonl(rows: list[dict[str, Any]]) -> bytes:
     return b"".join(
-        (
-            json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-            + "\n"
-        ).encode()
+        (json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
         for row in rows
     )
 
@@ -415,8 +354,7 @@ def manifest() -> dict[str, Any]:
     relation_counts = {
         split_name: {
             relation: sum(
-                row["split"] == split_name
-                and row["gold"]["final_relation"] == relation
+                row["split"] == split_name and row["gold"]["final_relation"] == relation
                 for row in pairs
             )
             for relation in ("ENTAILED", "CONTRADICTED", "UNKNOWN")
