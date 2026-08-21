@@ -96,6 +96,7 @@ def verify(output_dir: Path) -> dict[str, Any]:
     raw_accuracy = raw_correct / len(rows)
 
     calibration = result["calibration"]
+    sealed = result["sealed_boundaries"]
     checks = {
         "semantic_pair_count": int(calibration["semantic_pairs"]) == len(rows),
         "grid_point_count": int(calibration["grid_points"]) == 376,
@@ -113,14 +114,10 @@ def verify(output_dir: Path) -> dict[str, Any]:
             float(calibration["raw_argmax_accuracy"]), raw_accuracy, rel_tol=0.0, abs_tol=1e-15
         ),
         "argmax_preserved": bool(calibration["argmax_preserved_after_temperature"]),
-        "validation_cases_scored_zero": (
-            int(result["sealed_boundaries"]["validation_case_rows_scored"]) == 0
-        ),
-        "validation_metrics_zero": (
-            int(result["sealed_boundaries"]["validation_metrics_computed"]) == 0
-        ),
-        "confirmatory_scored_zero": int(result["sealed_boundaries"]["confirmatory_queries_scored"])
-        == 0,
+        "validation_materialized_zero": int(sealed["validation_case_rows_materialized"]) == 0,
+        "validation_cases_scored_zero": int(sealed["validation_case_rows_scored"]) == 0,
+        "validation_metrics_zero": int(sealed["validation_metrics_computed"]) == 0,
+        "confirmatory_scored_zero": int(sealed["confirmatory_queries_scored"]) == 0,
     }
     if not all(checks.values()):
         failed = sorted(name for name, passed in checks.items() if not passed)
@@ -135,6 +132,7 @@ def verify(output_dir: Path) -> dict[str, Any]:
         "calibrated_nll": calibrated_nll,
         "raw_argmax_accuracy": raw_accuracy,
         "checks": checks,
+        "validation_cases_materialized": 0,
         "validation_results_opened": False,
         "confirmatory_results_opened": False,
     }
@@ -157,7 +155,8 @@ def verify(output_dir: Path) -> dict[str, Any]:
                 f"Raw NLL: **{raw_nll:.6f}**.",
                 f"Calibrated NLL: **{calibrated_nll:.6f}**.",
                 "",
-                "No validation or confirmatory result was opened by this reconstruction.",
+                "No validation case was materialized or scored by A4.4c.",
+                "No confirmatory result was opened by this reconstruction.",
             ]
         )
         + "\n",
