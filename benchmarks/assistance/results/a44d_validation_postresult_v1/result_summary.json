@@ -1,0 +1,101 @@
+{
+  "checkpoint": "A4.4d",
+  "closed_on": "2026-08-21",
+  "disposition": {
+    "candidate_scoring_authorized": false,
+    "confirmatory_partition_opened": false,
+    "confirmatory_scoring_authorized": false,
+    "model_substitution_authorized": false,
+    "post_result_rescue_authorized": false,
+    "rerun_for_scientific_failure_authorized": false,
+    "result_is_final_for_a44d": true,
+    "temperature_refit_authorized": false,
+    "threshold_search_authorized": false
+  },
+  "failed_requirements": [
+    "macro_case_category_accuracy_min",
+    "supported_recall_min",
+    "atomic_relation_macro_f1_min",
+    "atomic_unknown_recall_min",
+    "multi_document_supported_recall_min",
+    "partial_multi_document_unsupported_accuracy_min"
+  ],
+  "frozen_surface": {
+    "batch_size": 8,
+    "class_decision": "argmax_raw_logits",
+    "device": "CPU",
+    "dtype": "float32",
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "temperature": 3.67,
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5"
+  },
+  "registered_metrics": {
+    "atomic_contradiction_recall": 1.0,
+    "atomic_entailment_recall": 0.9811320754716981,
+    "atomic_relation_macro_f1": 0.41346034749840244,
+    "atomic_unknown_recall": 0.008333333333333333,
+    "category_accuracy": {
+      "citation_invalid": 1.0,
+      "contradiction_unsupported": 1.0,
+      "literal_supported": 1.0,
+      "multi_document_supported": 0.0,
+      "paraphrase_supported": 1.0,
+      "partial_multi_document_unsupported": 0.1,
+      "stale_current_evidence": 1.0,
+      "unresolved_conflict": 1.0,
+      "unsupported_approval": 1.0
+    },
+    "citation_invalid_accuracy": 1.0,
+    "contradiction_unsupported_accuracy": 1.0,
+    "false_supported_on_citation_stale_or_conflict_cases": 0,
+    "literal_supported_recall": 1.0,
+    "macro_case_category_accuracy": 0.7888888888888889,
+    "multi_document_supported_recall": 0.0,
+    "paraphrase_supported_recall": 1.0,
+    "partial_multi_document_unsupported_accuracy": 0.1,
+    "stale_current_evidence_accuracy": 1.0,
+    "supported_precision": 1.0,
+    "supported_recall": 0.6666666666666666,
+    "unresolved_conflict_accuracy": 1.0,
+    "unsupported_approval_accuracy": 1.0
+  },
+  "scientific_execution": {
+    "run_attempt": 1,
+    "run_id": 32508572173,
+    "scientific_pass": false,
+    "scientific_sha": "794562f6d9914bfc36e929c6c9df57e06969665a",
+    "scientific_status": "FAILED_REGISTERED_VALIDATION_NO_RESCUE",
+    "workflow_conclusion": "success"
+  },
+  "sealed_boundaries": {
+    "calibration_case_rows_materialized": 0,
+    "candidate_rows_scored": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "model_substitutions": 0,
+    "post_result_rescues": 0,
+    "temperature_refits": 0,
+    "threshold_searches": 0
+  },
+  "status": "CLOSED_FAILED_REGISTERED_VALIDATION_NO_RESCUE",
+  "validation": {
+    "all_requirements_pass": false,
+    "case_rows": 144,
+    "gold_relation_counts": {
+      "CONTRADICTED": 20,
+      "ENTAILED": 106,
+      "UNKNOWN": 120
+    },
+    "predicted_relation_counts": {
+      "CONTRADICTED": 136,
+      "ENTAILED": 109,
+      "UNKNOWN": 1
+    },
+    "raw_argmax_accuracy": 0.508130081300813,
+    "requirements_passed": 11,
+    "requirements_total": 17,
+    "semantic_pairs": 246,
+    "validation_case_sha256": "5bdb38a6c8f805538801e39c4c9fe7ec58dafb695a028d3e359e534c5711e3b2"
+  }
+}

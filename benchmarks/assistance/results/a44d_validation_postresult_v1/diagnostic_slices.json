@@ -1,0 +1,68 @@
+{
+  "atomic_class_recall": {
+    "CONTRADICTED": {
+      "correct": 20,
+      "gold": 20,
+      "recall": 1.0
+    },
+    "ENTAILED": {
+      "correct": 104,
+      "gold": 106,
+      "recall": 0.9811320754716981
+    },
+    "UNKNOWN": {
+      "correct": 1,
+      "gold": 120,
+      "recall": 0.008333333333333333
+    }
+  },
+  "atomic_confusion_matrix": {
+    "counts": [
+      [
+        20,
+        0,
+        0
+      ],
+      [
+        114,
+        1,
+        5
+      ],
+      [
+        2,
+        0,
+        104
+      ]
+    ],
+    "gold_rows": [
+      "CONTRADICTED",
+      "UNKNOWN",
+      "ENTAILED"
+    ],
+    "predicted_columns": [
+      "CONTRADICTED",
+      "UNKNOWN",
+      "ENTAILED"
+    ]
+  },
+  "case_category_accuracy": {
+    "citation_invalid": 1.0,
+    "contradiction_unsupported": 1.0,
+    "literal_supported": 1.0,
+    "multi_document_supported": 0.0,
+    "paraphrase_supported": 1.0,
+    "partial_multi_document_unsupported": 0.1,
+    "stale_current_evidence": 1.0,
+    "unresolved_conflict": 1.0,
+    "unsupported_approval": 1.0
+  },
+  "checkpoint": "A4.4d",
+  "diagnostic_scope": "descriptive_post_validation_only_no_tuning",
+  "interpretation": {
+    "compositional_effect": "This UNKNOWN-to-CONTRADICTED error propagates into multi-document claim verdicts: multi_document_supported recall is 0.0 and partial_multi_document_unsupported accuracy is 0.1.",
+    "precision_recall_shape": "SUPPORTED precision remains 1.0 but SUPPORTED recall falls to 0.6666666666666666, showing conservative false-negative behavior rather than false-SUPPORTED leakage.",
+    "primary_failure": "The frozen verifier almost never emits UNKNOWN on validation: 1 of 120 UNKNOWN gold pairs is recognized, while 114 are classified CONTRADICTED and 5 ENTAILED.",
+    "protocol_consequence": "The registered A4.4a validity gate fails. This diagnostic cannot be used to modify or rerun A4.4d.",
+    "safety_vetoes": "Citation-invalid, stale-evidence, unresolved-conflict, contradiction-unsupported, and unsupported-approval accuracy each remain 1.0; false SUPPORTED on citation/stale/conflict cases remains 0."
+  }
+}

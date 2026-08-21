@@ -1,0 +1,58 @@
+{
+  "artifact": {
+    "created_at": "2026-08-21T17:34:21Z",
+    "expected_file_count": 9,
+    "expires_at": "2026-11-19T17:31:09Z",
+    "id": 9456245570,
+    "name": "phase4-assistance-a44d-794562f6d9914bfc36e929c6c9df57e06969665a-attempt-1",
+    "size_in_bytes": 67370,
+    "zip_sha256": "e6e31bd269d3da9b435ec6097d7df492dc4d151ee869b97152895861fad1956c"
+  },
+  "checkpoint": "A4.4d",
+  "model": {
+    "batch_size": 8,
+    "class_decision": "argmax_raw_logits",
+    "device": "CPU",
+    "dtype": "float32",
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5"
+  },
+  "predecessor_main_sha": "57bb2c81ab2cc2d5b8c1a4928c2600b4a770d110",
+  "registered_input_sha256": {
+    ".github/workflows/phase4-assistance-a44d.yml": "21d6c3c9b1e90b3cf218d6eccf15978453ce1ec2e0ea6146fc13b2e6ed200de9",
+    "benchmarks/assistance/compositional_cases_a44a.py": "05d7694b8a582d444176d84ce16a0742d2e63dce55237c6353859ec61a2e8684",
+    "benchmarks/assistance/execute_validation_a44d.py": "614eda1441a81e5beca5eadaf339acc1c60a1333660bfe76a7c057422caf9ec6",
+    "benchmarks/assistance/execute_validation_a44d.py.lock": "683510cfe8704ab441b9ec298fb89f8f1cf7454813013c7206091be9664896bc",
+    "benchmarks/assistance/grounding_anchors_a43a.py": "ed42f3c591ba6da95e4778c72d09ecc4a0eeb1d5fcda0f975f6780547b60d2b2",
+    "benchmarks/assistance/results/a44c_calibration_postresult_v1/forensic_audit.json": "846bfafdcadfce008633ab639f664b52a1e513f47583d03af5e61ca683fcae49",
+    "benchmarks/assistance/validation_cases_a44d.py": "16abb0a94e781228c9dd1f17aede84dbf2fa0ba86a90a235af0e6e274570cd6d",
+    "benchmarks/assistance/verify_validation_a44d.py": "65983ae9f9bdfece28a19be12ea97f5b814c4dddc153b6df6cfe8d193aab783d",
+    "configs/data/helixbank_policy_v1.json": "5d1f68cad47da6a85e92af751af95accf775bd34c7fea8c90e46619825d883eb",
+    "configs/models/assistance_grounding_a44a_v1.json": "969c8fc632a7b3c401caecc65e54d9529002659d63d6d6c5de002ff0866950b4",
+    "configs/models/assistance_grounding_a44b_v1.json": "49941cdcee11c2921aff53b99dce9aa4d3379e0ceb0105dbf043de5f74c35432",
+    "configs/models/assistance_grounding_a44c_v1.json": "8856163f0b5639f7d5710cda2291618c5ca483a2c319c0bb5faad195266c710b",
+    "configs/models/assistance_grounding_a44d_v1.json": "5ea454d6b7844ae4db063221555d89dfb4d8e68c43cf36f4a17be3455c8d7609",
+    "configs/models/assistance_protocol_v1.json": "80534f9b4d1b55acda2a018ebbad528913848e33b68a19a493b5e65262af597c",
+    "scripts/preflight_phase4_a44d.py": "f6ba8cde0d423d0fc5bda3fcdfc033fea01a3aeeed9b1d1469ae301bbecbcad1",
+    "src/helix_support_intelligence/data/helixbank.py": "e8f87bc9601bb562dac6a05038cf7978b97c7b1d0a7a548b856e1ed57075ded1"
+  },
+  "registered_suite": {
+    "a44a_suite_sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "validation_case_sha256": "5bdb38a6c8f805538801e39c4c9fe7ec58dafb695a028d3e359e534c5711e3b2"
+  },
+  "run_attempt": 1,
+  "run_id": 32508572173,
+  "run_number": 1,
+  "runtime": {
+    "huggingface_hub": "0.36.2",
+    "numpy": "2.5.2",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "safetensors": "0.8.0",
+    "torch": "2.13.0",
+    "transformers": "4.57.6"
+  },
+  "scientific_execution_sha": "794562f6d9914bfc36e929c6c9df57e06969665a"
+}

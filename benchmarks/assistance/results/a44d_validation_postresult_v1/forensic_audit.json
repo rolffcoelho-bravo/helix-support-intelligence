@@ -1,0 +1,64 @@
+{
+  "artifact_integrity": {
+    "all_inner_checksums_match": true,
+    "exact_nine_file_set": true,
+    "zip_digest_matches_github": true
+  },
+  "audit_id": "phase4-assistance-a4.4d-postresult-forensic-audit-v1",
+  "checkpoint": "A4.4d",
+  "closed_on": "2026-08-21",
+  "external_reconstruction": {
+    "all_rows_validation_only": true,
+    "case_ids_unique": true,
+    "frozen_temperature_argmax_preserved": true,
+    "gold_counts_reconstruct": true,
+    "pair_ids_unique": true,
+    "raw_argmax_reconstruct": true,
+    "raw_correctness_reconstruct": true,
+    "registered_metrics_reconstruct": true,
+    "requirement_checks_reconstruct": true,
+    "scientific_failure_reconstruct": true,
+    "validation_cases_144": true,
+    "validation_pairs_246": true
+  },
+  "operational_observations": {
+    "cpu_execution_with_cuda_dependency_downloads": "Operational dependency bloat only; execution device remained CPU and scientific inputs were unchanged.",
+    "torch_dtype_deprecation_warning": "Observed; no effect on frozen logits or validity.",
+    "unused_roberta_pooler_weights_warning": "Observed and consistent with the A4.4c runtime warning; no effect on the frozen classification head outputs."
+  },
+  "scientific_disposition": {
+    "a44d_is_closed": true,
+    "confirmatory_partition_remains_unopened": true,
+    "failed_result_is_preserved": true,
+    "next_action_requires_separate_approval": true,
+    "no_candidate_rescue": true,
+    "no_refit_threshold_search_or_model_substitution": true,
+    "rerun_for_scientific_failure_is_forbidden": true
+  },
+  "scientific_result": {
+    "failed_requirements": [
+      "macro_case_category_accuracy_min",
+      "supported_recall_min",
+      "atomic_relation_macro_f1_min",
+      "atomic_unknown_recall_min",
+      "multi_document_supported_recall_min",
+      "partial_multi_document_unsupported_accuracy_min"
+    ],
+    "requirements_passed": 11,
+    "requirements_total": 17,
+    "scientific_pass": false,
+    "scientific_status": "FAILED_REGISTERED_VALIDATION_NO_RESCUE"
+  },
+  "sealed_boundaries": {
+    "calibration_case_rows_materialized": 0,
+    "candidate_rows_scored": 0,
+    "confirmatory_partition_remains_unopened": true,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "model_substitutions": 0,
+    "post_result_rescues": 0,
+    "temperature_refits": 0,
+    "threshold_searches": 0
+  },
+  "status": "CLOSED_FAILED_REGISTERED_VALIDATION_NO_RESCUE"
+}
