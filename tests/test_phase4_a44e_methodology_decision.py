@@ -39,9 +39,12 @@ def test_a44e_keeps_confirmatory_sealed_and_next_gate_unapproved() -> None:
     assert config["scope"]["confirmatory_query_rows_authorized"] == 0
     assert config["scope"]["confirmatory_query_records_inspected"] == 0
     future = config["future_binding_constraints"]
-    assert future[
-        "confirmatory_partition_must_remain_unopened_until_replacement_method_clears_new_registered_validity"
-    ] is True
+    assert (
+        future[
+            "confirmatory_partition_must_remain_unopened_until_replacement_method_clears_new_registered_validity"
+        ]
+        is True
+    )
     assert config["next_checkpoint"]["checkpoint"] == "A4.5a"
     assert config["next_checkpoint"]["authorized_by_a44e"] is False
     assert config["next_checkpoint"]["requires_separate_approval"] is True
@@ -75,9 +78,13 @@ def test_a44e_failure_geometry_is_descriptive_only() -> None:
     assert result["scope"]["threshold_search"] == 0
     assert result["scope"]["temperature_refit"] == 0
     assert result["scope"]["confirmatory_queries_scored"] == 0
-    assert result["unknown_failure_subtypes"]["cross_document_non_evidence"][
-        "gold_unknown_pairs"
-    ] == 100
-    assert result["unknown_failure_subtypes"]["same_document_insufficient_evidence"][
-        "gold_unknown_pairs"
-    ] == 20
+    assert (
+        result["unknown_failure_subtypes"]["cross_document_non_evidence"]["gold_unknown_pairs"]
+        == 100
+    )
+    assert (
+        result["unknown_failure_subtypes"]["same_document_insufficient_evidence"][
+            "gold_unknown_pairs"
+        ]
+        == 20
+    )
