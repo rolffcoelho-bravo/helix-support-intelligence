@@ -1,0 +1,85 @@
+name: Temporary A4.4c Run Pointer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/tmp-a44c-run-pointer.yml"
+  workflow_run:
+    workflows: ["Phase 4 Assistance A4.4c"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+jobs:
+  publish-pointer:
+    name: Publish A4.4c run metadata pointer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Find exact A4.4c run and comment tracking issue
+        uses: actions/github-script@v7
+        env:
+          TARGET_SHA: cf35b4e6ea495b776dd92c1420c7f7696e6a14db
+          TRACKING_ISSUE: "27"
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const targetSha = process.env.TARGET_SHA;
+            const issueNumber = Number(process.env.TRACKING_ISSUE);
+            let run = null;
+
+            if (context.eventName === "workflow_run") {
+              const candidate = context.payload.workflow_run;
+              if (candidate.name === "Phase 4 Assistance A4.4c" && candidate.head_sha === targetSha) {
+                run = candidate;
+              }
+            } else {
+              const response = await github.rest.actions.listWorkflowRunsForRepo({
+                owner,
+                repo,
+                head_sha: targetSha,
+                event: "push",
+                per_page: 100,
+              });
+              run = response.data.workflow_runs.find(
+                (candidate) => candidate.name === "Phase 4 Assistance A4.4c"
+              ) ?? null;
+            }
+
+            if (!run) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: JSON.stringify({
+                  pointer_status: "A44C_RUN_NOT_FOUND_YET",
+                  target_sha: targetSha,
+                  observer_event: context.eventName,
+                }),
+              });
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: JSON.stringify({
+                pointer_status: "A44C_RUN_FOUND",
+                run_id: run.id,
+                run_number: run.run_number,
+                run_attempt: run.run_attempt,
+                status: run.status,
+                conclusion: run.conclusion,
+                event: run.event,
+                head_sha: run.head_sha,
+                workflow_name: run.name,
+                html_url: run.html_url,
+                observer_event: context.eventName,
+              }),
+            });
