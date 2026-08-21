@@ -25,3 +25,13 @@ Every A4.4a requirement must pass. A scientific failure is preserved as `FAILED_
 The immutable artifact contains raw validation pair logits, gold relations, reconstructed raw argmax classes, final case verdicts, all registered metrics and gate decisions, runtime versions, frozen-input hashes, an independently reconstructed post-audit, and artifact checksums.
 
 No calibration result is rescored. No G0/G1/G2 candidate is scored. The 68-query confirmatory partition remains unopened. Any later action after A4.4d requires a new explicit checkpoint and approval.
+
+## Final registered result
+
+A4.4d executed once at scientific SHA `794562f6d9914bfc36e929c6c9df57e06969665a`, GitHub Actions run `32508572173`, attempt 1. Workflow integrity passed, including the predecessor guard, frozen-input checks before and after inference, independent metric and verdict reconstruction, and immutable artifact checksums.
+
+The scientific result is `FAILED_REGISTERED_VALIDATION_NO_RESCUE`. Eleven of seventeen preregistered requirements passed and six failed. Atomic relation macro F1 was `0.41346034749840244`, UNKNOWN recall was `0.008333333333333333`, macro case-category accuracy was `0.7888888888888889`, SUPPORTED recall was `0.6666666666666666`, multi-document SUPPORTED recall was `0.0`, and partial multi-document UNSUPPORTED accuracy was `0.1`.
+
+The dominant validation failure is UNKNOWN discrimination. Of 120 UNKNOWN gold semantic pairs, 114 were classified CONTRADICTED, 5 ENTAILED, and only 1 UNKNOWN. ENTAILED recall remained `0.9811320754716981`, CONTRADICTED recall remained `1.0`, and SUPPORTED precision remained `1.0`.
+
+This result is final for A4.4d. It does not authorize a validation rerun, temperature refit, threshold search, model substitution, prompt change, candidate rescue, or confirmatory access. The confirmatory partition remains unopened pending a separately approved checkpoint.
