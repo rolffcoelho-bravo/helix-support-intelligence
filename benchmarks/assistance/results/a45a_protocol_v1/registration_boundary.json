@@ -1,0 +1,11 @@
+{
+  "checkpoint": "A4.5a",
+  "registration_only": true,
+  "model_bound": false,
+  "semantic_inference_performed": 0,
+  "threshold_fit_performed": 0,
+  "a44d_validation_reused_as_hard_validity": false,
+  "a44a_validation_reused_as_hard_validity": false,
+  "confirmatory_partition_opened": false,
+  "a45b_authorized": false
+}

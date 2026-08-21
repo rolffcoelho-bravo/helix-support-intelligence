@@ -1,0 +1,23 @@
+{
+  "checkpoint": "A4.5a",
+  "status": "REGISTERED_NO_INFERENCE",
+  "architecture": "AERF",
+  "source_main_sha": "4297d97012549573c107d7165c98f47db57533da",
+  "fresh_validation": {
+    "units": 20,
+    "component_pairs": 180,
+    "claim_cases": 180
+  },
+  "sealed_boundaries": {
+    "a44d_rows_reused": 0,
+    "model_bindings": 0,
+    "semantic_inference": 0,
+    "confirmatory_queries_inspected": 0,
+    "confirmatory_queries_scored": 0
+  },
+  "next_checkpoint": {
+    "checkpoint": "A4.5b",
+    "authorized": false,
+    "requires_separate_approval": true
+  }
+}
