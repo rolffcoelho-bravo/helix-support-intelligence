@@ -56,6 +56,7 @@ jobs:
             src/helix_support_intelligence/data/helixbank.py \
             benchmarks/assistance/grounding_anchors_a43a.py \
             benchmarks/assistance/compositional_cases_a44a.py \
+            benchmarks/assistance/calibration_cases_a44c.py \
             benchmarks/assistance/calibrate_grounding_a44c.py \
             benchmarks/assistance/calibrate_grounding_a44c.py.lock \
             benchmarks/assistance/verify_calibration_a44c.py \
