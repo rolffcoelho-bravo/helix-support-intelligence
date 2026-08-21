@@ -75,8 +75,7 @@ def verify(output_dir: Path) -> dict[str, Any]:
             raise RuntimeError("Stored raw correctness does not reconstruct from logits.")
 
     reconstructed_grid = [
-        {"temperature": temperature, "nll": _nll(rows, temperature)}
-        for temperature in _grid()
+        {"temperature": temperature, "nll": _nll(rows, temperature)} for temperature in _grid()
     ]
     for stored, reconstructed in zip(grid_rows, reconstructed_grid, strict=True):
         if float(stored["temperature"]) != float(reconstructed["temperature"]):
