@@ -16,6 +16,7 @@
       "CONTRADICTED": 40,
       "UNKNOWN": 240
     },
+    "validation_case_rows_materialized_authorized": 0,
     "validation_case_rows_authorized": 0,
     "validation_semantic_pair_rows_authorized": 0,
     "validation_metrics_authorized": 0,
@@ -66,6 +67,7 @@
     "persist_temperature_grid": true,
     "persist_runtime_versions": true,
     "independent_arithmetic_reconstruction_required": true,
+    "validation_cases_must_not_be_materialized": true,
     "validation_rows_must_not_be_written": true,
     "validation_metrics_must_not_be_computed": true,
     "confirmatory_rows_must_not_be_written": true
