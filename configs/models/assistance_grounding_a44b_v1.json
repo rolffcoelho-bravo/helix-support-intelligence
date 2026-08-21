@@ -20,6 +20,10 @@
   },
   "selection_policy": {
     "selection_basis": "public model metadata, architecture, artifact safety, licensing, and interface compatibility only",
+    "binding_semantics": "single_pre_registered_nomination_not_empirical_optimum",
+    "empirical_optimality_claimed": false,
+    "failure_replacement_allowed_under_same_binding": false,
+    "replacement_requires_new_versioned_binding": true,
     "a42_candidate_results_used": false,
     "a43a_validation_errors_used_to_rank_replacement_models": false,
     "a44a_calibration_cases_opened": false,
