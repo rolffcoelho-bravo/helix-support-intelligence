@@ -1,5 +1,7 @@
 """Fail-closed no-inference preflight for Phase 4 A4.5a."""
+
 from __future__ import annotations
+
 import importlib.util
 import json
 from pathlib import Path
@@ -32,20 +34,30 @@ def main() -> None:
     expected_manifest = _load_json(MANIFEST)
     module = _load_generator()
     observed_manifest = module.manifest()
+
     if observed_manifest != expected_manifest:
         raise RuntimeError("A4.5a deterministic manifest drifted")
     if config["source_main_sha"] != "4297d97012549573c107d7165c98f47db57533da":
         raise RuntimeError("A4.5a must descend from the frozen A4.4e closure")
+
     fresh = config["fresh_validity_construction"]
-    if fresh["validation_pairs_sha256"] != observed_manifest["sha256"]["validation_pairs"]:
+    if (
+        fresh["validation_pairs_sha256"]
+        != observed_manifest["sha256"]["validation_pairs"]
+    ):
         raise RuntimeError("A4.5a validation-pair hash mismatch")
-    if fresh["validation_claims_sha256"] != observed_manifest["sha256"]["validation_claims"]:
+    if (
+        fresh["validation_claims_sha256"]
+        != observed_manifest["sha256"]["validation_claims"]
+    ):
         raise RuntimeError("A4.5a validation-claim hash mismatch")
     if fresh["a44d_rows_reused"] != 0 or observed_manifest["a44d_rows_reused"] != 0:
         raise RuntimeError("A4.5a may not reuse A4.4d rows")
+
     scope = config["scope"]
     if any(int(value) != 0 for value in scope.values()):
         raise RuntimeError("A4.5a is registration-only and cannot authorize execution")
+
     boundary = config["confirmatory_boundary"]
     if boundary["confirmatory_query_records_inspected"] != 0:
         raise RuntimeError("A4.5a confirmatory partition must remain unopened")
@@ -55,6 +67,7 @@ def main() -> None:
         raise RuntimeError("A4.5a must leave the authoritative implementation unbound")
     if config["next_checkpoint"]["authorized_by_a45a"] is not False:
         raise RuntimeError("A4.5b requires separate approval")
+
     print(
         json.dumps(
             {
@@ -64,8 +77,12 @@ def main() -> None:
                 "a44d_rows_reused": fresh["a44d_rows_reused"],
                 "semantic_inference_authorized": scope["semantic_inference_authorized"],
                 "model_bindings_authorized": scope["model_bindings_authorized"],
-                "confirmatory_queries_authorized": boundary["confirmatory_scoring_authorized"],
-                "next_checkpoint_authorized": config["next_checkpoint"]["authorized_by_a45a"],
+                "confirmatory_queries_authorized": boundary[
+                    "confirmatory_scoring_authorized"
+                ],
+                "next_checkpoint_authorized": config["next_checkpoint"][
+                    "authorized_by_a45a"
+                ],
             },
             sort_keys=True,
         )
