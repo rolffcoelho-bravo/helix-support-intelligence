@@ -31,7 +31,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
-from compositional_cases_a44a import canonical_jsonl_bytes, generate_cases  # noqa: E402
+from calibration_cases_a44c import (  # noqa: E402
+    canonical_calibration_jsonl_bytes,
+    generate_calibration_cases,
+)
 
 from helix_support_intelligence.data.helixbank import generate_bundle  # noqa: E402
 
@@ -41,6 +44,7 @@ A44C_CONFIG_PATH = ROOT / "configs" / "models" / "assistance_grounding_a44c_v1.j
 CACHE_ROOT = ROOT / ".cache" / "phase4-assistance-a44c"
 RELATION_TO_LABEL = {"CONTRADICTED": 0, "UNKNOWN": 1, "ENTAILED": 2}
 LABEL_TO_RELATION = {value: key for key, value in RELATION_TO_LABEL.items()}
+FROZEN_A44A_SUITE_SHA256 = "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -63,10 +67,10 @@ def _gold_relation(atom: dict[str, Any], document_id: str) -> str:
 
 
 def _semantic_pairs(
-    calibration_cases: list[dict[str, Any]], documents: dict[str, dict[str, Any]]
+    cases: list[dict[str, Any]], documents: dict[str, dict[str, Any]]
 ) -> list[dict[str, Any]]:
     pairs: list[dict[str, Any]] = []
-    for case in calibration_cases:
+    for case in cases:
         if case["split"] != "calibration":
             raise RuntimeError("A4.4c received a non-calibration case.")
         presented = {str(value) for value in case["presented_document_ids"]}
@@ -214,17 +218,19 @@ def execute(output_dir: Path) -> dict[str, Any]:
         raise RuntimeError("A4.4c binding id does not match frozen A4.4b.")
     if a44c["protocol_id"] != a44a["protocol_id"]:
         raise RuntimeError("A4.4c protocol id does not match frozen A4.4a.")
-
-    cases = generate_cases()
-    suite_hash = hashlib.sha256(canonical_jsonl_bytes(cases)).hexdigest()
-    expected_suite_hash = str(a44a["validation_suite"]["sha256"])
-    if suite_hash != expected_suite_hash:
-        raise RuntimeError("Frozen A4.4a suite hash mismatch.")
-    calibration_cases = [row for row in cases if row["split"] == "calibration"]
-    if len(calibration_cases) != int(a44c["scope"]["calibration_case_rows"]):
-        raise RuntimeError("A4.4c calibration case count mismatch.")
+    if str(a44a["validation_suite"]["sha256"]) != FROZEN_A44A_SUITE_SHA256:
+        raise RuntimeError("Frozen A4.4a suite registration hash drifted.")
 
     bundle = generate_bundle()
+    calibration_cases = generate_calibration_cases(bundle)
+    if len(calibration_cases) != int(a44c["scope"]["calibration_case_rows"]):
+        raise RuntimeError("A4.4c calibration case count mismatch.")
+    if any(row["split"] != "calibration" for row in calibration_cases):
+        raise RuntimeError("A4.4c materialized a validation row.")
+    calibration_case_sha = hashlib.sha256(
+        canonical_calibration_jsonl_bytes(calibration_cases)
+    ).hexdigest()
+
     documents = {str(row["document_id"]): dict(row) for row in bundle.documents}
     pairs = _semantic_pairs(calibration_cases, documents)
     expected_pairs = int(a44c["scope"]["calibration_semantic_pair_rows"])
@@ -233,6 +239,13 @@ def execute(output_dir: Path) -> dict[str, Any]:
             f"A4.4c calibration semantic-pair count mismatch: expected {expected_pairs}, "
             f"got {len(pairs)}."
         )
+    gold = np.asarray([int(row["gold_label"]) for row in pairs], dtype=np.int64)
+    expected_gold = {
+        str(key): int(value)
+        for key, value in a44c["scope"]["calibration_gold_relation_counts"].items()
+    }
+    if _class_counts(gold) != expected_gold:
+        raise RuntimeError("A4.4c calibration semantic-pair gold counts drifted.")
 
     engine = NliEngine(binding)
     all_logits: list[np.ndarray] = []
@@ -246,7 +259,6 @@ def execute(output_dir: Path) -> dict[str, Any]:
             )
         )
     logits = np.concatenate(all_logits, axis=0)
-    gold = np.asarray([int(row["gold_label"]) for row in pairs], dtype=np.int64)
     raw_argmax = np.argmax(logits, axis=1).astype(np.int64)
 
     temperature_fit = _fit_temperature(logits, gold)
@@ -293,7 +305,8 @@ def execute(output_dir: Path) -> dict[str, Any]:
         "source_main_sha": a44c["source_main_sha"],
         "protocol_id": a44c["protocol_id"],
         "binding_id": a44c["binding_id"],
-        "a44a_suite_sha256": suite_hash,
+        "a44a_suite_sha256": FROZEN_A44A_SUITE_SHA256,
+        "calibration_case_sha256": calibration_case_sha,
         "calibration": {
             "case_rows": len(calibration_cases),
             "semantic_pairs": len(pairs),
@@ -322,6 +335,7 @@ def execute(output_dir: Path) -> dict[str, Any]:
             "class_decision": "argmax_raw_logits",
         },
         "sealed_boundaries": {
+            "validation_case_rows_materialized": 0,
             "validation_case_rows_scored": 0,
             "validation_semantic_pairs_scored": 0,
             "validation_metrics_computed": 0,
@@ -357,7 +371,7 @@ def execute(output_dir: Path) -> dict[str, Any]:
                 "",
                 "**Status: CALIBRATION_TEMPERATURE_FROZEN**",
                 "",
-                f"Calibration cases scored: **{len(calibration_cases)}**.",
+                f"Calibration cases materialized and scored: **{len(calibration_cases)}**.",
                 f"Eligible semantic pairs scored: **{len(pairs)}**.",
                 f"Frozen global temperature: **{selected_temperature:.2f}**.",
                 f"Raw three-class NLL: **{raw_nll:.6f}**.",
@@ -368,7 +382,8 @@ def execute(output_dir: Path) -> dict[str, Any]:
                 ),
                 "",
                 "The positive global temperature preserved every raw-logit argmax class.",
-                "No A4.4a validation case, G0/G1/G2 candidate, or confirmatory query was scored.",
+                "No A4.4a validation case was materialized or scored.",
+                "No G0/G1/G2 candidate or confirmatory query was scored.",
             ]
         )
         + "\n",
