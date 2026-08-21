@@ -1,0 +1,92 @@
+{
+  "execution_id": "phase4-assistance-a4.4c-calibration-only-v1",
+  "protocol_id": "phase4-assistance-a4.4a-compositional-grounding-v1",
+  "binding_id": "phase4-assistance-a4.4b-semantic-verifier-binding-v1",
+  "phase": 4,
+  "checkpoint": "A4.4c",
+  "status": "registered_calibration_only_pre_execution",
+  "registered_on": "2026-08-21",
+  "source_main_sha": "d94b834f61c4208028907c602b54792c643ac074",
+  "purpose": "Execute the frozen semantic verifier only on the registered A4.4a calibration split and freeze one global temperature before any validation exposure.",
+  "scope": {
+    "calibration_case_rows": 288,
+    "calibration_semantic_pair_rows": 491,
+    "calibration_gold_relation_counts": {
+      "ENTAILED": 211,
+      "CONTRADICTED": 40,
+      "UNKNOWN": 240
+    },
+    "validation_case_rows_authorized": 0,
+    "validation_semantic_pair_rows_authorized": 0,
+    "validation_metrics_authorized": 0,
+    "candidate_rows_authorized": 0,
+    "confirmatory_query_rows_authorized": 0
+  },
+  "semantic_verifier": {
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5",
+    "device": "CPU",
+    "dtype": "float32",
+    "batch_size": 8,
+    "trust_remote_code": false,
+    "use_safetensors": true,
+    "native_label_mapping": {
+      "0": "CONTRADICTION",
+      "1": "NEUTRAL",
+      "2": "ENTAILMENT"
+    },
+    "a44a_relation_mapping": {
+      "CONTRADICTION": "CONTRADICTED",
+      "NEUTRAL": "UNKNOWN",
+      "ENTAILMENT": "ENTAILED"
+    },
+    "premise_field": "document.body",
+    "hypothesis_field": "atom.text",
+    "class_decision": "argmax_raw_logits"
+  },
+  "calibration": {
+    "parameter": "single_global_temperature",
+    "purpose": "probability calibration diagnostics only",
+    "objective": "three_class_negative_log_likelihood",
+    "search": "deterministic_grid",
+    "grid_start": 0.25,
+    "grid_stop": 4.0,
+    "grid_step": 0.01,
+    "grid_points": 376,
+    "tie_break": "smallest_temperature",
+    "may_change_raw_argmax_class": false,
+    "may_change_final_grounding_verdict": false,
+    "post_calibration_refit_permitted": false
+  },
+  "artifact_contract": {
+    "persist_raw_calibration_pair_logits": true,
+    "persist_gold_relations": true,
+    "persist_temperature_grid": true,
+    "persist_runtime_versions": true,
+    "independent_arithmetic_reconstruction_required": true,
+    "validation_rows_must_not_be_written": true,
+    "validation_metrics_must_not_be_computed": true,
+    "confirmatory_rows_must_not_be_written": true
+  },
+  "forbidden": {
+    "validation_inference": true,
+    "validation_parameter_selection": true,
+    "candidate_inference": true,
+    "candidate_comparison": true,
+    "confirmatory_inference": true,
+    "model_substitution": true,
+    "model_fine_tuning": true,
+    "prompt_tuning": true,
+    "class_specific_threshold_search": true,
+    "margin_threshold_search": true,
+    "abstention_threshold_search": true,
+    "post_result_rescue": true
+  },
+  "next_boundary": {
+    "validation_execution_requires_separate_approval": true,
+    "validation_split_remains_unopened_after_a44c": true,
+    "confirmatory_partition_remains_unopened_after_a44c": true
+  }
+}
