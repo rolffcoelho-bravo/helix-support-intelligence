@@ -111,7 +111,8 @@ def preflight() -> dict[str, Any]:
     decision = verifier["class_decision"]
     if decision["rule"] != "argmax_raw_logits":
         raise RuntimeError("A4.4b class decision must remain raw-logit argmax.")
-    if any(decision[field] is not None for field in ("class_thresholds", "margin_threshold", "abstention_threshold")):
+    threshold_fields = ("class_thresholds", "margin_threshold", "abstention_threshold")
+    if any(decision[field] is not None for field in threshold_fields):
         raise RuntimeError("A4.4b class decision may not introduce thresholds.")
     if decision["calibration_may_change_predicted_class"] is not False:
         raise RuntimeError("A4.4b calibration may not change predicted classes.")
@@ -162,7 +163,8 @@ def preflight() -> dict[str, Any]:
             raise RuntimeError(f"A4.4b execution boundary {field} must remain false.")
     if boundary["next_calibration_execution_requires_separate_versioned_checkpoint"] is not True:
         raise RuntimeError("A4.4b must not authorize its future calibration execution.")
-    if boundary["validation_must_remain_unopened_until_model_and_calibration_rules_are_frozen"] is not True:
+    validation_rule = "validation_must_remain_unopened_until_model_and_calibration_rules_are_frozen"
+    if boundary[validation_rule] is not True:
         raise RuntimeError("A4.4b validation isolation rule changed.")
 
     guards = a44b["execution_guards"]
