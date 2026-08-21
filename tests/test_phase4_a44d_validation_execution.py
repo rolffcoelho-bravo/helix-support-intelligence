@@ -59,9 +59,9 @@ def test_a44d_preflight_does_not_materialize_validation_cases() -> None:
 
 
 def test_a44d_workflow_is_main_push_one_shot_surface() -> None:
-    source = (
-        ROOT / ".github" / "workflows" / "phase4-assistance-a44d.yml"
-    ).read_text(encoding="utf-8")
+    source = (ROOT / ".github" / "workflows" / "phase4-assistance-a44d.yml").read_text(
+        encoding="utf-8"
+    )
     assert "push:" in source
     assert "branches: [main]" in source
     assert '".github/workflows/phase4-assistance-a44d.yml"' in source
