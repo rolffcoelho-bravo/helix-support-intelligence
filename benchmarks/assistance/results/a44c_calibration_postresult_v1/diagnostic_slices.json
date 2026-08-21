@@ -1,0 +1,58 @@
+{
+  "checkpoint": "A4.4c",
+  "confusion_matrix_gold_by_predicted": {
+    "CONTRADICTED": {
+      "CONTRADICTED": 40,
+      "ENTAILED": 0,
+      "UNKNOWN": 0
+    },
+    "ENTAILED": {
+      "CONTRADICTED": 4,
+      "ENTAILED": 207,
+      "UNKNOWN": 0
+    },
+    "UNKNOWN": {
+      "CONTRADICTED": 202,
+      "ENTAILED": 32,
+      "UNKNOWN": 6
+    }
+  },
+  "interpretation": {
+    "contradicted_recall": 1.0,
+    "decision_use": "Descriptive only. This diagnostic cannot alter the frozen model, temperature, thresholds, or validation protocol.",
+    "entailed_recall": 0.981042654028436,
+    "unknown_recall": 0.025,
+    "warning": "UNKNOWN is the dominant calibration failure mode: only 6 of 240 gold UNKNOWN pairs are predicted UNKNOWN; 202 are predicted CONTRADICTED and 32 ENTAILED."
+  },
+  "macro_f1": 0.41616692250838594,
+  "macro_precision": 0.6762368042090463,
+  "macro_recall": 0.6686808846761454,
+  "per_class": {
+    "CONTRADICTED": {
+      "f1": 0.27972027972027974,
+      "fn": 0,
+      "fp": 206,
+      "precision": 0.16260162601626016,
+      "recall": 1.0,
+      "tp": 40
+    },
+    "ENTAILED": {
+      "f1": 0.92,
+      "fn": 4,
+      "fp": 32,
+      "precision": 0.8661087866108786,
+      "recall": 0.981042654028436,
+      "tp": 207
+    },
+    "UNKNOWN": {
+      "f1": 0.04878048780487806,
+      "fn": 234,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 0.025,
+      "tp": 6
+    }
+  },
+  "semantic_pairs": 491,
+  "status": "DESCRIPTIVE_CALIBRATION_DIAGNOSTIC_ONLY"
+}

@@ -1,0 +1,62 @@
+{
+  "artifact": {
+    "file_count": 9,
+    "id": 9453435038,
+    "inner_file_sha256": {
+      "calibration_pair_logits.jsonl": "67e35dbc01e1ef820aa7c799349176dc44bf053843d0c5ba129c073560c9a1db",
+      "post_audit.json": "80d1beba688c1017ee97e513fdc1a44975a1a5f6634123ba1e289e56778d544c",
+      "post_audit.md": "04a0410e908872d5e9e2068dcb622de36d8cdda57c23d3b7a61f89f1cb7fd834",
+      "registered_inputs.sha256": "1b3ce48619fd327639c57c5db2b26a21e1f9934eae9970ac1cdc934bf60e871c",
+      "report.md": "5078b21e5375b4e75dc3bd09b24549c133378d18f74ba48e6a8babb2fcf5f878",
+      "resolved_environment.lock": "683510cfe8704ab441b9ec298fb89f8f1cf7454813013c7206091be9664896bc",
+      "results.json": "b1c22022cb9f116d710ea5171e82b57a1cf5bbaf70c9d052848d0f5c6913b00e",
+      "temperature_grid.jsonl": "e24b961292c32e906e1e071320868d76aa8512afc923f8e5f9527357fccadcf8"
+    },
+    "name": "phase4-assistance-a44c-cf35b4e6ea495b776dd92c1420c7f7696e6a14db-attempt-1",
+    "size_bytes": 78226,
+    "zip_sha256": "cc80620b3134169110ebbd3c11b567adb715ed955bd48cf391242a7c338246b4"
+  },
+  "checkpoint": "A4.4c",
+  "external_inspection": {
+    "all_inner_sha256_match_manifest": true,
+    "all_raw_rows_calibration_split": true,
+    "artifact_zip_digest_matches_github": true,
+    "expected_files_only": true,
+    "raw_pair_ids_unique": true,
+    "raw_pair_rows": 491,
+    "runtime_lock_matches_runtime_report": true,
+    "selected_temperature_reconstructed": 3.67,
+    "stored_argmax_reconstructs_from_logits": true,
+    "stored_correctness_reconstructs_from_logits": true,
+    "temperature_grid_max_absolute_nll_reconstruction_error": 1.1102230246251565e-16,
+    "temperature_grid_points": 376,
+    "validation_token_present_in_raw_pair_rows": false
+  },
+  "model": {
+    "batch_size": 8,
+    "device": "CPU",
+    "dtype": "float32",
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5"
+  },
+  "operational_note": "The artifact checksum manifest records original workflow-relative paths. GitHub's uploaded ZIP is flat, so direct `sha256sum -c` after extraction requires path rehydration; independent basename-matched SHA256 comparison verified all eight manifest-listed evidence files. This is a portability issue only, not an integrity failure.",
+  "runtime": {
+    "huggingface_hub": "0.36.2",
+    "numpy": "2.5.2",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "safetensors": "0.8.0",
+    "torch": "2.13.0",
+    "transformers": "4.57.6"
+  },
+  "scientific_execution_sha": "cf35b4e6ea495b776dd92c1420c7f7696e6a14db",
+  "status": "VERIFIED_POSTRESULT_PROVENANCE",
+  "workflow_run": {
+    "attempt": 1,
+    "conclusion": "success",
+    "id": 32500393608,
+    "job_id": 96828482829
+  }
+}
