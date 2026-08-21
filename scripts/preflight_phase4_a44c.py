@@ -11,14 +11,15 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "benchmarks" / "assistance"))
 
-from compositional_cases_a44a import (  # type: ignore[import-not-found]  # noqa: E402
-    canonical_jsonl_bytes,
-    generate_cases,
+from calibration_cases_a44c import (  # type: ignore[import-not-found]  # noqa: E402
+    canonical_calibration_jsonl_bytes,
+    generate_calibration_cases,
 )
 
 A44A = ROOT / "configs" / "models" / "assistance_grounding_a44a_v1.json"
 A44B = ROOT / "configs" / "models" / "assistance_grounding_a44b_v1.json"
 A44C = ROOT / "configs" / "models" / "assistance_grounding_a44c_v1.json"
+FROZEN_A44A_SUITE_SHA256 = "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c"
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -26,6 +27,26 @@ def _load(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise TypeError(f"{path} must contain a JSON object.")
     return value
+
+
+def _relation_counts(rows: list[dict[str, Any]]) -> dict[str, int]:
+    counts = {"ENTAILED": 0, "CONTRADICTED": 0, "UNKNOWN": 0}
+    for row in rows:
+        presented = {str(value) for value in row["presented_document_ids"]}
+        cited = {str(value) for value in row["cited_document_ids"]}
+        if not cited or not cited.issubset(presented):
+            continue
+        for atom in row["atoms"]:
+            entailed = {str(value) for value in atom["entailed_by"]}
+            contradicted = {str(value) for value in atom["contradicted_by"]}
+            for document_id in cited:
+                if document_id in entailed:
+                    counts["ENTAILED"] += 1
+                elif document_id in contradicted:
+                    counts["CONTRADICTED"] += 1
+                else:
+                    counts["UNKNOWN"] += 1
+    return counts
 
 
 def main() -> None:
@@ -36,9 +57,12 @@ def main() -> None:
     assert a44c["source_main_sha"] == "d94b834f61c4208028907c602b54792c643ac074"
     assert a44c["protocol_id"] == a44a["protocol_id"]
     assert a44c["binding_id"] == a44b["binding_id"]
+    assert a44a["validation_suite"]["sha256"] == FROZEN_A44A_SUITE_SHA256
     assert a44c["scope"]["calibration_case_rows"] == 288
     assert a44c["scope"]["calibration_semantic_pair_rows"] == 491
     assert a44c["scope"]["validation_case_rows_authorized"] == 0
+    assert a44c["scope"]["validation_semantic_pair_rows_authorized"] == 0
+    assert a44c["scope"]["validation_metrics_authorized"] == 0
     assert a44c["scope"]["confirmatory_query_rows_authorized"] == 0
     assert a44c["calibration"]["grid_points"] == 376
     assert a44c["calibration"]["grid_start"] == 0.25
@@ -60,19 +84,27 @@ def main() -> None:
     )
     assert verifier["class_decision"]["rule"] == "argmax_raw_logits"
 
-    rows = generate_cases()
-    assert len(rows) == 432
-    assert sum(row["split"] == "calibration" for row in rows) == 288
-    assert sum(row["split"] == "validation" for row in rows) == 144
-    suite_hash = hashlib.sha256(canonical_jsonl_bytes(rows)).hexdigest()
-    assert suite_hash == "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c"
-    assert suite_hash == a44a["validation_suite"]["sha256"]
+    rows = generate_calibration_cases()
+    assert len(rows) == 288
+    assert len({str(row["intent"]) for row in rows}) == 40
+    assert all(row["split"] == "calibration" for row in rows)
+    relation_counts = _relation_counts(rows)
+    expected_relation_counts = {
+        str(key): int(value)
+        for key, value in a44c["scope"]["calibration_gold_relation_counts"].items()
+    }
+    assert relation_counts == expected_relation_counts
+    assert sum(relation_counts.values()) == 491
+    calibration_hash = hashlib.sha256(canonical_calibration_jsonl_bytes(rows)).hexdigest()
 
     print(
         json.dumps(
             {
                 "status": "PASSED_PRE_EXECUTION_CALIBRATION_ONLY_NO_RESULTS",
                 "calibration_cases_authorized": 288,
+                "calibration_semantic_pairs": 491,
+                "calibration_case_sha256": calibration_hash,
+                "validation_cases_materialized": 0,
                 "validation_cases_authorized": 0,
                 "confirmatory_queries_authorized": 0,
                 "semantic_inference_performed": 0,
