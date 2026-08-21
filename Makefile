@@ -1,4 +1,4 @@
-.PHONY: setup lint format typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight publication-audit quality
+.PHONY: setup lint format typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight assistance-a44d-preflight publication-audit quality
 
 setup:
 	uv sync --locked --group dev
@@ -42,7 +42,10 @@ assistance-a44b-preflight:
 assistance-a44c-preflight:
 	uv run python scripts/preflight_phase4_a44c.py
 
+assistance-a44d-preflight:
+	uv run python scripts/preflight_phase4_a44d.py
+
 publication-audit:
 	uv run python scripts/audit_publication.py
 
-quality: lint typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight publication-audit
+quality: lint typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight assistance-a44d-preflight publication-audit
