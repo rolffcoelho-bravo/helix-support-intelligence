@@ -10,10 +10,7 @@ CONFIG_PATH = ROOT / "configs" / "models" / "assistance_grounding_a44b_v1.json"
 def test_a44b_is_single_nomination_without_empirical_optimality_claim() -> None:
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     selection = config["selection_policy"]
-    expected_semantics = (
-        "single_pre_registered_nomination_"
-        "not_empirical_optimum"
-    )
+    expected_semantics = "single_pre_registered_nomination_not_empirical_optimum"
 
     assert selection["binding_semantics"] == expected_semantics
     assert selection["empirical_optimality_claimed"] is False
