@@ -1,0 +1,158 @@
+{
+  "binding_id": "phase4-assistance-a4.4b-semantic-verifier-binding-v1",
+  "protocol_id": "phase4-assistance-a4.4a-compositional-grounding-v1",
+  "phase": 4,
+  "checkpoint": "A4.4b",
+  "status": "registered_pre_execution_no_inference",
+  "registered_on": "2026-08-21",
+  "source_main_sha": "4aa86f70c1a829c6e90d03414736e750daef7c66",
+  "purpose": "Bind one candidate-independent three-way semantic verifier and its future calibration procedure before any A4.4a calibration or validation inference.",
+  "predecessor": {
+    "a44a_suite_id": "phase4-compositional-grounding-a44a-v1",
+    "a44a_suite_sha256": "0ad07e9d08678dbc5fa8b625870d2c3140eef83b0dddb013a4ae479c56bdd90c",
+    "a44a_calibration_rows": 288,
+    "a44a_validation_rows": 144,
+    "a44a_validation_intents": 20,
+    "a44a_semantic_verifier_was_unbound": true,
+    "a43a_rejected_model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+    "a43a_negative_result_preserved": true,
+    "confirmatory_partition_unopened": true
+  },
+  "selection_policy": {
+    "selection_basis": "public model metadata, architecture, artifact safety, licensing, and interface compatibility only",
+    "a42_candidate_results_used": false,
+    "a43a_validation_errors_used_to_rank_replacement_models": false,
+    "a44a_calibration_cases_opened": false,
+    "a44a_validation_cases_opened": false,
+    "local_model_search_performed": false,
+    "empirical_candidate_bakeoff_performed": false,
+    "external_benchmark_results_are_helixbank_acceptance_evidence": false,
+    "eligibility_criteria": {
+      "public_pretrained_three_way_nli_model": true,
+      "native_contradiction_neutral_entailment_outputs": true,
+      "architecture_must_differ_from_frozen_g2_runtime_verifier": true,
+      "architecture_must_differ_from_rejected_a43a_evaluator": true,
+      "permissive_public_license_required": true,
+      "safetensors_checkpoint_required": true,
+      "immutable_revision_required": true,
+      "tokenizer_limit_at_least_512": true,
+      "remote_code_forbidden": true
+    }
+  },
+  "semantic_verifier": {
+    "provider": "local Hugging Face Transformers",
+    "model_id": "FacebookAI/roberta-large-mnli",
+    "revision": "2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "architecture_family": "roberta",
+    "model_class": "RobertaForSequenceClassification",
+    "license": "MIT",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "f4dbab1bceb16f9800f7b9a9c96b187d5400511b66982e4e845de920f69b89b5",
+    "tokenizer_max_length": 512,
+    "trust_remote_code": false,
+    "use_safetensors": true,
+    "device": "CPU",
+    "dtype": "float32",
+    "batch_size": 8,
+    "model_eval_mode": true,
+    "dropout_active": false,
+    "fine_tuning_permitted": false,
+    "quantization_permitted_for_validity_execution": false,
+    "premise_field": "document.body",
+    "hypothesis_field": "atom.text",
+    "pair_order": "premise_document_body_then_hypothesis_atom_text",
+    "tokenization": {
+      "padding": "longest_in_batch",
+      "truncation": true,
+      "max_length": 512,
+      "special_tokens": true
+    },
+    "native_label_mapping": {
+      "0": "CONTRADICTION",
+      "1": "NEUTRAL",
+      "2": "ENTAILMENT"
+    },
+    "a44a_relation_mapping": {
+      "CONTRADICTION": "CONTRADICTED",
+      "NEUTRAL": "UNKNOWN",
+      "ENTAILMENT": "ENTAILED"
+    },
+    "class_decision": {
+      "rule": "argmax_raw_logits",
+      "class_thresholds": null,
+      "margin_threshold": null,
+      "abstention_threshold": null,
+      "calibration_may_change_predicted_class": false
+    },
+    "independence": {
+      "frozen_g2_runtime_model_id": "cross-encoder/nli-deberta-v3-small",
+      "frozen_g2_runtime_architecture_family": "deberta-v3",
+      "rejected_a43a_model_id": "cross-encoder/nli-MiniLM2-L6-H768",
+      "rejected_a43a_architecture_family": "minilm2-roberta",
+      "selected_architecture_differs_from_g2_runtime": true,
+      "selected_architecture_differs_from_rejected_a43a_evaluator": true
+    }
+  },
+  "calibration_policy": {
+    "execution_in_a44b": false,
+    "future_scope": "A4.4a calibration split only",
+    "calibration_case_rows_registered": 288,
+    "validation_case_rows_available_to_calibration": 0,
+    "model_weights_frozen": true,
+    "class_decision_frozen_to_raw_argmax": true,
+    "fit": {
+      "parameter": "single_global_temperature",
+      "purpose": "probability calibration diagnostics only",
+      "objective": "three_class_negative_log_likelihood",
+      "search": "deterministic_grid",
+      "grid_start": 0.25,
+      "grid_stop": 4.0,
+      "grid_step": 0.01,
+      "tie_break": "smallest_temperature",
+      "may_change_class_labels": false,
+      "may_change_claim_verdicts": false
+    },
+    "forbidden": {
+      "class_specific_threshold_search": true,
+      "validation_threshold_selection": true,
+      "post_validation_temperature_refit": true,
+      "model_fine_tuning": true,
+      "prompt_tuning": true,
+      "model_family_switch_after_calibration": true,
+      "post_result_rescue": true
+    }
+  },
+  "future_execution_boundary": {
+    "semantic_inference_authorized_in_a44b": false,
+    "a44a_calibration_execution_authorized_in_a44b": false,
+    "a44a_validation_execution_authorized_in_a44b": false,
+    "candidate_comparison_authorized_in_a44b": false,
+    "confirmatory_execution_authorized_in_a44b": false,
+    "next_calibration_execution_requires_separate_versioned_checkpoint": true,
+    "validation_must_remain_unopened_until_model_and_calibration_rules_are_frozen": true
+  },
+  "external_model_evidence": {
+    "snapshot_date": "2026-08-21",
+    "model_card": "https://huggingface.co/FacebookAI/roberta-large-mnli",
+    "immutable_revision": "https://huggingface.co/FacebookAI/roberta-large-mnli/tree/2a8f12d27941090092df78e4ba6f0928eb5eac98",
+    "config": "https://huggingface.co/FacebookAI/roberta-large-mnli/blob/2a8f12d27941090092df78e4ba6f0928eb5eac98/config.json",
+    "safetensors": "https://huggingface.co/FacebookAI/roberta-large-mnli/blob/2a8f12d27941090092df78e4ba6f0928eb5eac98/model.safetensors",
+    "documented_training": "RoBERTa-large fine-tuned on MultiNLI",
+    "documented_external_mnli_score": 90.2,
+    "external_score_used_for_helixbank_validity": false
+  },
+  "execution_guards": {
+    "generator_calls": 0,
+    "openai_calls": 0,
+    "candidate_calls": 0,
+    "candidate_scoring": 0,
+    "semantic_verifier_downloads": 0,
+    "semantic_verifier_calls": 0,
+    "model_family_searches": 0,
+    "a44a_calibration_case_records_inspected": 0,
+    "a44a_validation_case_records_inspected": 0,
+    "a44a_validation_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_queries_scored": 0
+  }
+}
