@@ -70,9 +70,7 @@ def _checks_registered(
         observed = float(metrics[metric_name])
         threshold = float(raw_threshold)
         checks[requirement_name] = (
-            observed >= threshold - 1e-12
-            if direction == "min"
-            else observed <= threshold + 1e-12
+            observed >= threshold - 1e-12 if direction == "min" else observed <= threshold + 1e-12
         )
     return checks, all(checks.values())
 
