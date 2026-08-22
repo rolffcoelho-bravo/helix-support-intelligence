@@ -31,19 +31,11 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Enforce exact M3 scientific lineage
+      - name: Enforce exact M3 infrastructure-recovery lineage
         run: |
-          test "$(git rev-parse HEAD^)" = "e44fc9d53d217b6bf506a2253d06da876f904c26"
+          test "$(git rev-parse HEAD^)" = "806efae4fcbc1f24cc2db8cd8616b5c49d6a1f2a"
           cat > /tmp/a45bm3-expected-files.txt <<'EOF'
           .github/workflows/phase4-assistance-a45bm3.yml
-          Makefile
-          benchmarks/assistance/calibrate_scec_a45bm3.py
-          benchmarks/assistance/scec_calibration_core_a45bm3.py
-          benchmarks/assistance/verify_calibration_a45bm3.py
-          configs/models/assistance_grounding_a45bm3_v1.json
-          docs/assistance-a45bm3-scec-binding-calibration.md
-          scripts/preflight_phase4_a45bm3.py
-          tests/test_phase4_a45bm3_binding.py
           EOF
           git diff --name-only HEAD^ HEAD | sort > /tmp/a45bm3-actual-files.txt
           diff -u /tmp/a45bm3-expected-files.txt /tmp/a45bm3-actual-files.txt
@@ -81,9 +73,27 @@ jobs:
           cp benchmarks/assistance/calibrate_scec_a45bm3.py.lock \
             artifacts/phase4-assistance/a45bm3/resolved_environment.lock
 
+      - name: Record authorized infrastructure-only runtime repair
+        run: |
+          cat > artifacts/phase4-assistance/a45bm3/infrastructure_repair.json <<'EOF'
+          {
+            "classification": "INFRASTRUCTURE_ONLY_PRE_INFERENCE",
+            "failed_attempt_artifact_id": 9481252468,
+            "failed_attempt_artifact_sha256": "c481f745752259f496b4fd4c4c13488ca43de3452deba2daf07ecb060d3d1577",
+            "failed_attempt_run_id": 32594745676,
+            "failed_attempt_scientific_sha": "806efae4fcbc1f24cc2db8cd8616b5c49d6a1f2a",
+            "repair": "layer pinned protobuf into the isolated PEP 723 execution environment",
+            "protobuf_version": "6.33.6",
+            "scientific_configuration_changed": false,
+            "semantic_inference_in_failed_attempt": 0,
+            "threshold_searches_in_failed_attempt": 0
+          }
+          EOF
+
       - name: Execute frozen SCEC calibration-only stage
         run: >-
-          uv run --locked benchmarks/assistance/calibrate_scec_a45bm3.py
+          uv run --locked --with "protobuf==6.33.6"
+          benchmarks/assistance/calibrate_scec_a45bm3.py
           --output-dir artifacts/phase4-assistance/a45bm3
 
       - name: Reverify frozen scientific inputs after execution
