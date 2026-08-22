@@ -24,11 +24,11 @@ from typing import Any
 
 import numpy as np
 import torch
-from huggingface_hub import hf_hub_download
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from aerf_calibration_core_a45b import select_thresholds
 from calibration_cases_a45b import build_calibration_only, calibration_manifest
+from huggingface_hub import hf_hub_download
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "configs" / "models" / "assistance_grounding_a45b_v1.json"
@@ -228,9 +228,9 @@ def _claim_composition_accuracy(claims: list[dict[str, Any]]) -> float:
             predicted = "CITATION_INVALID"
         elif gate == "STALE_EVIDENCE":
             predicted = "STALE_EVIDENCE"
-        elif gate == "REGISTERED_CONFLICT":
-            predicted = "CONFLICTING_EVIDENCE"
-        elif "ENTAILED" in relations and "CONTRADICTED" in relations:
+        elif gate == "REGISTERED_CONFLICT" or (
+            "ENTAILED" in relations and "CONTRADICTED" in relations
+        ):
             predicted = "CONFLICTING_EVIDENCE"
         elif relations and all(value == "ENTAILED" for value in relations):
             predicted = "SUPPORTED"
