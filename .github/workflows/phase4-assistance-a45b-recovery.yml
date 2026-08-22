@@ -1,0 +1,136 @@
+name: Phase 4 Assistance A4.5b Deterministic Recovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase4-assistance-a45b-recovery.yml"
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: phase4-assistance-a45b-deterministic-recovery-v1
+  cancel-in-progress: false
+
+jobs:
+  deterministic-threshold-recovery:
+    name: Recover frozen A4.5b threshold decision without model inference
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out recovery commit with predecessor
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce exact recovery lineage and additive-only repair surface
+        run: |
+          test "$(git rev-parse HEAD^)" = "92c5b073fd91454a6b3f1b11ab13f453e1644a6d"
+          git diff --name-only HEAD^ HEAD | sort > /tmp/actual-files
+          cat > /tmp/expected-files <<'EOF'
+          .github/workflows/phase4-assistance-a45b-recovery.yml
+          Makefile
+          benchmarks/assistance/finalize_calibration_a45b_recovery.py
+          benchmarks/assistance/results/a45b_partial_attempt1_v1.json
+          benchmarks/assistance/verify_calibration_a45b_recovery.py
+          scripts/preflight_phase4_a45b_recovery.py
+          tests/test_phase4_a45b_recovery.py
+          EOF
+          sort -o /tmp/expected-files /tmp/expected-files
+          cmp /tmp/expected-files /tmp/actual-files
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install repository quality environment
+        run: uv sync --locked --group dev
+
+      - name: Verify deterministic recovery pre-execution state
+        run: uv run python scripts/preflight_phase4_a45b_recovery.py
+
+      - name: Download exact immutable partial A4.5b artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts/phase4-assistance/a45b-recovery/source
+          gh api \
+            "/repos/${GITHUB_REPOSITORY}/actions/artifacts/9477913279/zip" \
+            > /tmp/a45b-partial.zip
+          echo "0bb5bd16c5a582f69e6421d0017bfa3e33e60cb5d4b31a005f6929d6cfc2c633  /tmp/a45b-partial.zip" \
+            | sha256sum -c -
+          unzip -q /tmp/a45b-partial.zip \
+            -d artifacts/phase4-assistance/a45b-recovery/source
+
+      - name: Verify partial artifact file hashes
+        run: |
+          cd artifacts/phase4-assistance/a45b-recovery/source
+          echo "fe6b22278945e4df094fe8d0314706281ae6fd7915a2f613606b29f63c5d32b6  calibration_pair_scores.jsonl" | sha256sum -c -
+          echo "3de21ab00668699db71ea6e2d7f997f475f74ea2fac9ddbbe8cd7acc7be2936f  model_weight_verification.json" | sha256sum -c -
+          echo "5d80f2347b0bcba6187edef45471cd110c55375507e2ee27c091669786111ed3  registered_inputs.sha256" | sha256sum -c -
+          echo "c80a41b08f501ddc15e28cae9c065c8c5b3688316b2e5ff210cd7c1f56c6a801  resolved_environment.lock" | sha256sum -c -
+
+      - name: Freeze deterministic recovery inputs before threshold arithmetic
+        run: |
+          mkdir -p artifacts/phase4-assistance/a45b-recovery/final
+          sha256sum \
+            configs/models/assistance_grounding_a45b_v1.json \
+            benchmarks/assistance/calibration_cases_a45b.py \
+            benchmarks/assistance/aerf_calibration_core_a45b.py \
+            benchmarks/assistance/verify_calibration_a45b.py \
+            benchmarks/assistance/results/a45b_partial_attempt1_v1.json \
+            benchmarks/assistance/finalize_calibration_a45b_recovery.py \
+            benchmarks/assistance/verify_calibration_a45b_recovery.py \
+            scripts/preflight_phase4_a45b_recovery.py \
+            .github/workflows/phase4-assistance-a45b-recovery.yml \
+            > artifacts/phase4-assistance/a45b-recovery/final/recovery_inputs.sha256
+          cp artifacts/phase4-assistance/a45b-recovery/source/* \
+            artifacts/phase4-assistance/a45b-recovery/final/
+
+      - name: Finalize frozen threshold selection from immutable raw scores
+        run: >-
+          uv run python benchmarks/assistance/finalize_calibration_a45b_recovery.py
+          --input-dir artifacts/phase4-assistance/a45b-recovery/source
+          --output-dir artifacts/phase4-assistance/a45b-recovery/final
+
+      - name: Reverify deterministic recovery inputs
+        run: sha256sum -c artifacts/phase4-assistance/a45b-recovery/final/recovery_inputs.sha256
+
+      - name: Independently reconstruct all threshold arithmetic
+        run: >-
+          uv run python benchmarks/assistance/verify_calibration_a45b_recovery.py
+          --input-dir artifacts/phase4-assistance/a45b-recovery/source
+          --output-dir artifacts/phase4-assistance/a45b-recovery/final
+
+      - name: Freeze recovered evidence checksums
+        run: |
+          find artifacts/phase4-assistance/a45b-recovery/final -maxdepth 1 -type f \
+            ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > artifacts/phase4-assistance/a45b-recovery/final/checksums.sha256
+          sha256sum -c artifacts/phase4-assistance/a45b-recovery/final/checksums.sha256
+
+      - name: Publish recovered A4.5b summary
+        if: always()
+        run: |
+          if test -f artifacts/phase4-assistance/a45b-recovery/final/report.md; then
+            cat artifacts/phase4-assistance/a45b-recovery/final/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f artifacts/phase4-assistance/a45b-recovery/final/post_audit.md; then
+            printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+            cat artifacts/phase4-assistance/a45b-recovery/final/post_audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload immutable recovered A4.5b evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a45b-recovery-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: artifacts/phase4-assistance/a45b-recovery/final/
+          if-no-files-found: warn
+          retention-days: 90
