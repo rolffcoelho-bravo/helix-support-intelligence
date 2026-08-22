@@ -89,9 +89,7 @@ def _compatible(span: dict[str, Any], mismatch_threshold: float) -> bool:
 
 
 def _span_rank(span: dict[str, Any]) -> float:
-    return 1.0 - max(
-        float(span["dimensions"][dimension]["MISMATCH"]) for dimension in DIMENSIONS
-    )
+    return 1.0 - max(float(span["dimensions"][dimension]["MISMATCH"]) for dimension in DIMENSIONS)
 
 
 def _select_span(spans: list[dict[str, Any]]) -> dict[str, Any]:
@@ -102,20 +100,12 @@ def _select_span(spans: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _coverage(span: dict[str, Any], threshold: float) -> set[str]:
-    return {
-        slot
-        for slot in SLOTS
-        if float(span["coverage"][slot]["COVERED"]) >= threshold
-    }
+    return {slot for slot in SLOTS if float(span["coverage"][slot]["COVERED"]) >= threshold}
 
 
 def _polarity(span: dict[str, Any]) -> str:
     scores = span["polarity"]
-    return (
-        "SUPPORTS"
-        if float(scores["SUPPORTS"]) >= float(scores["REFUTES"])
-        else "REFUTES"
-    )
+    return "SUPPORTS" if float(scores["SUPPORTS"]) >= float(scores["REFUTES"]) else "REFUTES"
 
 
 def _pair_prediction(
@@ -218,11 +208,7 @@ def _set_prediction(
         raise RuntimeError(
             f"Missing registered subset polarity scores for {raw['set_id']} subset {key}"
         )
-    polarity = (
-        "SUPPORTS"
-        if float(scores["SUPPORTS"]) >= float(scores["REFUTES"])
-        else "REFUTES"
-    )
+    polarity = "SUPPORTS" if float(scores["SUPPORTS"]) >= float(scores["REFUTES"]) else "REFUTES"
     return {
         "set_id": raw["set_id"],
         "subtype": raw["subtype"],
@@ -306,9 +292,7 @@ def evaluate_candidate(
     set_pred_by_id = {str(row["set_id"]): row for row in set_pred}
     claim_pred = _claim_predictions(suite["claim_rows"], set_pred_by_id)
 
-    gold_compat = [
-        str(pair_gold[row["pair_id"]]["gold"]["compatibility"]) for row in pair_pred
-    ]
+    gold_compat = [str(pair_gold[row["pair_id"]]["gold"]["compatibility"]) for row in pair_pred]
     pred_compat = [str(row["compatibility"]) for row in pair_pred]
     gold_minimal = [
         pair_gold[row["pair_id"]]["gold"]["minimal_compatible_span"] for row in pair_pred
@@ -321,13 +305,10 @@ def evaluate_candidate(
     minimal_correct = {
         index
         for index in range(len(pair_pred))
-        if predicted_minimal[index] is not None
-        and predicted_minimal[index] == gold_minimal[index]
+        if predicted_minimal[index] is not None and predicted_minimal[index] == gold_minimal[index]
     }
 
-    set_gold_suff = [
-        str(set_gold[row["set_id"]]["gold"]["sufficiency"]) for row in set_pred
-    ]
+    set_gold_suff = [str(set_gold[row["set_id"]]["gold"]["sufficiency"]) for row in set_pred]
     set_pred_suff = [str(row["sufficiency"]) for row in set_pred]
     suff_labels = ("SUFFICIENT", "INSUFFICIENT", "CONFLICTING")
     polarity_gold_rows = [
@@ -335,13 +316,11 @@ def evaluate_candidate(
         for row in set_pred
         if str(set_gold[row["set_id"]]["gold"]["sufficiency"]) == "SUFFICIENT"
     ]
-    gold_polarity = [
-        str(set_gold[row["set_id"]]["gold"]["polarity"]) for row in polarity_gold_rows
-    ]
+    gold_polarity = [str(set_gold[row["set_id"]]["gold"]["polarity"]) for row in polarity_gold_rows]
     pred_polarity = [str(row["polarity"]) for row in polarity_gold_rows]
-    final_gold = [
-        str(pair_gold[row["pair_id"]]["gold"]["final_relation"]) for row in pair_pred
-    ] + [str(set_gold[row["set_id"]]["gold"]["final_relation"]) for row in set_pred]
+    final_gold = [str(pair_gold[row["pair_id"]]["gold"]["final_relation"]) for row in pair_pred] + [
+        str(set_gold[row["set_id"]]["gold"]["final_relation"]) for row in set_pred
+    ]
     final_pred = [str(row["final_relation"]) for row in pair_pred] + [
         str(row["final_relation"]) for row in set_pred
     ]
@@ -439,9 +418,7 @@ def evaluate_candidate(
             "sufficiency",
             "INSUFFICIENT",
         ),
-        "polarity_macro_f1": _macro_f1(
-            gold_polarity, pred_polarity, ("SUPPORTS", "REFUTES")
-        ),
+        "polarity_macro_f1": _macro_f1(gold_polarity, pred_polarity, ("SUPPORTS", "REFUTES")),
         "supports_recall": _recall(gold_polarity, pred_polarity, "SUPPORTS"),
         "refutes_recall": _recall(gold_polarity, pred_polarity, "REFUTES"),
         "final_relation_macro_f1": _macro_f1(final_gold, final_pred, RELATION_LABELS),
