@@ -82,9 +82,10 @@ def main() -> None:
         raise RuntimeError("A4.5b-M3 registered parameter grids drifted")
     if int(calibration["joint_candidate_count"]) != 609:
         raise RuntimeError("A4.5b-M3 joint parameter count must remain 609")
-    if calibration["calibration_readiness_requirements"] != m2[
-        "calibration_readiness_requirements"
-    ]:
+    if (
+        calibration["calibration_readiness_requirements"]
+        != m2["calibration_readiness_requirements"]
+    ):
         raise RuntimeError("A4.5b-M3 weakened or altered M2 readiness requirements")
 
     dimensions = implementation["compatibility"]["dimensions"]
