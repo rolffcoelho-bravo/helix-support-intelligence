@@ -73,7 +73,8 @@ def requirement_checks_registered(
         metric_name, direction = registered_metric_name(requirement_name)
         if metric_name not in metrics:
             raise RuntimeError(
-                f"Registered A4.5b requirement maps to absent metric: {requirement_name} -> {metric_name}"
+                "Registered A4.5b requirement maps to absent metric: "
+                f"{requirement_name} -> {metric_name}"
             )
         threshold = float(raw_threshold)
         observed = float(metrics[metric_name])
@@ -176,6 +177,9 @@ def _write_json(path: Path, value: Any) -> None:
 def _report(results: dict[str, Any]) -> str:
     selected = results["threshold_selection"]["selected"]
     metrics = selected["metrics"]
+    feasible_count = results["threshold_selection"]["feasible_candidate_count"]
+    sufficiency_f1 = metrics["sufficiency_macro_f1_on_relevant_pairs"]
+    polarity_f1 = metrics["polarity_macro_f1_on_relevant_sufficient_pairs"]
     return "\n".join(
         [
             "# A4.5b deterministic calibration recovery",
@@ -187,14 +191,14 @@ def _report(results: dict[str, Any]) -> str:
             "",
             f"- relevance threshold: `{selected['relevance_threshold']}`",
             f"- sufficiency threshold: `{selected['sufficiency_threshold']}`",
-            f"- feasible candidates: `{results['threshold_selection']['feasible_candidate_count']}`",
+            f"- feasible candidates: `{feasible_count}`",
             f"- final relation macro F1: `{metrics['final_relation_macro_f1']:.6f}`",
             f"- ENTAILED recall: `{metrics['entailed_recall']:.6f}`",
             f"- CONTRADICTED recall: `{metrics['contradicted_recall']:.6f}`",
             f"- UNKNOWN recall: `{metrics['unknown_recall']:.6f}`",
             f"- relevance macro F1: `{metrics['relevance_macro_f1']:.6f}`",
-            f"- sufficiency macro F1: `{metrics['sufficiency_macro_f1_on_relevant_pairs']:.6f}`",
-            f"- polarity macro F1: `{metrics['polarity_macro_f1_on_relevant_sufficient_pairs']:.6f}`",
+            f"- sufficiency macro F1: `{sufficiency_f1:.6f}`",
+            f"- polarity macro F1: `{polarity_f1:.6f}`",
             "",
             "Fresh validation and confirmatory queries remain unopened and unscored.",
             "",
