@@ -1,0 +1,53 @@
+name: Temporary A4.5b-M3 Run Observer
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Locate exact M3 push workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: 806efae4fcbc1f24cc2db8cd8616b5c49d6a1f2a
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          sha = os.environ["TARGET_SHA"]
+          request = urllib.request.Request(
+              f"https://api.github.com/repos/{repo}/actions/runs?head_sha={sha}&event=push&per_page=100",
+              headers={
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              },
+          )
+          with urllib.request.urlopen(request) as response:
+              payload = json.load(response)
+          rows = [
+              {
+                  "id": run["id"],
+                  "name": run["name"],
+                  "status": run["status"],
+                  "conclusion": run["conclusion"],
+                  "event": run["event"],
+                  "head_sha": run["head_sha"],
+                  "run_number": run["run_number"],
+                  "run_attempt": run["run_attempt"],
+              }
+              for run in payload.get("workflow_runs", [])
+          ]
+          print(json.dumps(rows, indent=2, sort_keys=True))
+          if not rows:
+              raise SystemExit("No push workflow run found for exact M3 SHA")
+          PY
