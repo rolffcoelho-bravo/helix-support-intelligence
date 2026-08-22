@@ -8,9 +8,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
+from pathlib import Path
 from typing import Any
 
-from benchmarks.assistance.aerf_validity_a45a import _unit_claims, _unit_pairs
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+
+from aerf_validity_a45a import _unit_claims, _unit_pairs  # noqa: E402
 
 CALIBRATION_UNIT_IDS = (
     "AERF-U052",
