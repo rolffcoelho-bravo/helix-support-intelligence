@@ -1,0 +1,36 @@
+{
+  "checkpoint": "A4.5b-M2",
+  "novelty_claim": false,
+  "sources": [
+    {
+      "citation": "Akhtar, Mubashara, Michael Schlichtkrull, and Andreas Vlachos. 2026. Ev2R: Evaluating Evidence Retrieval in Automated Fact-Checking. Transactions of the Association for Computational Linguistics 14: 530-561.",
+      "role": "separate evidence alignment quality from downstream verdict utility",
+      "url": "https://aclanthology.org/2026.tacl-1.25/"
+    },
+    {
+      "citation": "Atanasova, Pepa, et al. 2022. Fact Checking with Insufficient Evidence. Transactions of the Association for Computational Linguistics.",
+      "role": "measure missing decisive evidence explicitly instead of collapsing it into irrelevance",
+      "url": "https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00486/112498/"
+    },
+    {
+      "citation": "Wuehrl, Amelie, Yarik Menchaca Resendiz, Lara Grimminger, and Roman Klinger. 2024. What Makes Medical Claims (Un)Verifiable? Analyzing Entity and Relation Properties for Fact Verification. EACL 2024.",
+      "role": "explicit entity and relation constraints for evidence search and verifiability",
+      "url": "https://aclanthology.org/2024.eacl-long.124/"
+    },
+    {
+      "citation": "Barik, Anab Maulana, Wynne Hsu, and Mong Li Lee. 2024. Evidence-Based Temporal Fact Verification.",
+      "role": "treat temporal information as a first-class evidence compatibility dimension",
+      "url": "https://arxiv.org/abs/2407.15291"
+    },
+    {
+      "citation": "Li, Xiangci, Sihao Chen, Rajvi Kapadia, Jessica Ouyang, and Fan Zhang. 2025. Minimal Evidence Group Identification for Claim Verification. TrustNLP 2025.",
+      "role": "set-level complementary evidence coverage and minimal evidence groups",
+      "url": "https://aclanthology.org/2025.trustnlp-main.8/"
+    },
+    {
+      "citation": "Zheng, Liwen, Chaozhuo Li, Xi Zhang, Yu-Ming Shang, Feiran Huang, and Haoran Jia. 2024. Evidence Retrieval is almost All You Need for Fact Verification. Findings of ACL 2024.",
+      "role": "document the limitations of heuristic semantic-similarity retrieval for verification",
+      "url": "https://aclanthology.org/2024.findings-acl.551/"
+    }
+  ]
+}
