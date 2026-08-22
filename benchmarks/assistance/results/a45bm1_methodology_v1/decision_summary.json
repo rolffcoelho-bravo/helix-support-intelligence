@@ -1,0 +1,69 @@
+{
+  "checkpoint": "A4.5b-M1",
+  "decision_id": "phase4-assistance-a4.5b-m1-scec-methodology-v1",
+  "status": "CLOSED_METHODOLOGY_SELECTED_NO_INFERENCE",
+  "source_main_sha": "e27f7652032ad72c3bc526067a403b58bb50636c",
+  "source_failure": {
+    "checkpoint": "A4.5b",
+    "scientific_status": "FAILED_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+    "failed_construct": "scalar relevance/alignment gate",
+    "feasible_threshold_candidates": 0
+  },
+  "selected_methodology": {
+    "name": "Scope-Conditioned Evidence Compatibility",
+    "short_name": "SCEC",
+    "novelty_claim": false,
+    "implementation_bound": false,
+    "model_bound": false,
+    "thresholds_bound": false
+  },
+  "core_decisions": [
+    "Replace one scalar retrieval-relevance gate with explicit scope-compatibility analysis.",
+    "Keep evidence compatibility and evidence sufficiency as distinct constructs.",
+    "Preserve existing minimal AERF atoms and forbid free-form redecomposition in this repair.",
+    "Permit multiple compatible evidence spans to accumulate decisive coverage.",
+    "Keep support/refutation polarity outside the relevance decision.",
+    "Retain deterministic UNKNOWN, ENTAILED, CONTRADICTED, and CONFLICTING_EVIDENCE mapping semantics."
+  ],
+  "compatibility_dimensions": [
+    "subject_or_entity_scope",
+    "predicate_or_attribute_scope",
+    "target_slot_identity_or_type",
+    "required_context_qualifiers"
+  ],
+  "future_validity_focus": [
+    "scope compatibility",
+    "relevant-but-insufficient preservation",
+    "cross-document irrelevance rejection",
+    "same-domain irrelevance rejection",
+    "temporal-scope compatibility",
+    "set-level sufficiency coverage",
+    "final relation and safety preservation"
+  ],
+  "data_governance": {
+    "closed_a45b_calibration_independent_validity_evidence": false,
+    "closed_a45b_calibration_regression_use_only": true,
+    "fresh_replacement_calibration_required": true,
+    "a45a_fresh_validation_pairs_scored": 0,
+    "a45a_fresh_validation_claims_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a45c_eligible": false,
+    "a45c_authorized": false,
+    "a45c_repurposed": false
+  },
+  "scope": {
+    "semantic_inference_performed": 0,
+    "model_bindings_performed": 0,
+    "model_family_comparisons_performed": 0,
+    "threshold_searches_performed": 0,
+    "calibration_fits_performed": 0,
+    "validation_rows_scored": 0,
+    "confirmatory_queries_scored": 0
+  },
+  "next_action": {
+    "class": "FRESH_SCEC_MEASUREMENT_AND_CALIBRATION_PROTOCOL_REGISTRATION",
+    "authorized": false,
+    "requires_separate_approval": true
+  }
+}
