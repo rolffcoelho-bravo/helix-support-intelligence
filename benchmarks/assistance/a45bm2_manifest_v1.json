@@ -1,0 +1,81 @@
+{
+  "corpus_id": "helix-scec-calibration-corpus-v1",
+  "counts": {
+    "claim_categories": {
+      "citation_invalid": 48,
+      "compatible_insufficient": 48,
+      "complementary_multi_span_supported": 48,
+      "registered_conflict": 48,
+      "single_refuted": 48,
+      "single_supported": 48,
+      "stale_evidence": 48,
+      "support_refute_conflict": 48
+    },
+    "claim_rows": 384,
+    "evidence_set_relations": {
+      "CONFLICTING_EVIDENCE": 48,
+      "CONTRADICTED": 48,
+      "ENTAILED": 144,
+      "UNKNOWN": 144
+    },
+    "evidence_set_rows": 384,
+    "evidence_set_subtypes": {
+      "compatible_incomplete_missing_value": 48,
+      "compatible_incomplete_scope_gap": 48,
+      "compatible_multi_span_unresolved_scope_gap": 48,
+      "complementary_two_span_support": 48,
+      "complete_support_with_irrelevant_distractor": 48,
+      "single_span_complete_refutation": 48,
+      "single_span_complete_support": 48,
+      "support_refute_conflict": 48
+    },
+    "pair_compatibility": {
+      "COMPATIBLE": 288,
+      "INCOMPATIBLE": 480
+    },
+    "pair_relations": {
+      "CONTRADICTED": 48,
+      "ENTAILED": 96,
+      "UNKNOWN": 624
+    },
+    "pair_rows": 768,
+    "pair_subtypes": {
+      "conditional_scope_mismatch": 48,
+      "context_contamination_support": 48,
+      "cross_document_irrelevance": 48,
+      "direct_refutation_full_scope": 48,
+      "direct_support_full_scope": 48,
+      "entity_scope_mismatch": 48,
+      "location_scope_mismatch": 48,
+      "modality_quantification_scope_mismatch": 48,
+      "organizational_scope_mismatch": 48,
+      "predicate_scope_mismatch": 48,
+      "relevant_but_insufficient_missing_conditional_scope": 48,
+      "relevant_but_insufficient_missing_temporal_scope": 48,
+      "relevant_but_insufficient_missing_value": 48,
+      "same_domain_irrelevance": 48,
+      "target_slot_mismatch": 48,
+      "temporal_scope_mismatch": 48
+    },
+    "units": 48
+  },
+  "governance": {
+    "a45a_fresh_validation_rows_materialized": 0,
+    "a45a_fresh_validation_rows_scored": 0,
+    "a45b_calibration_rows_reused": 0,
+    "candidate_model_calls": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "model_bindings": 0,
+    "threshold_searches": 0
+  },
+  "partition": "calibration_only",
+  "protocol_id": "phase4-assistance-a4.5b-m2-scec-calibration-v1",
+  "seed": 20260822,
+  "sha256": {
+    "claim_rows": "3dc8b01f797ca1b97ae5330929d8b462bf3b85b3d0788433c23026bf8bef262e",
+    "evidence_set_rows": "698b348b4bb5d5b00e597a7fcea144ce10ecd62e40036602ae5fa25577606d61",
+    "pair_rows": "2ee18830fb2510aae85a936368adea72de145f82b2282831e0d2ee841546e12f",
+    "units": "ece3b03fe215cb4847ec1e8ed71f05885bddc6807fe7a87691af55b05dc75d84"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "calibration_construction": {
+    "claim_rows": 384,
+    "corpus_id": "helix-scec-calibration-corpus-v1",
+    "evidence_set_rows": 384,
+    "pair_rows": 768,
+    "partition": "calibration_only",
+    "sha256": {
+      "claim_rows": "3dc8b01f797ca1b97ae5330929d8b462bf3b85b3d0788433c23026bf8bef262e",
+      "evidence_set_rows": "698b348b4bb5d5b00e597a7fcea144ce10ecd62e40036602ae5fa25577606d61",
+      "pair_rows": "2ee18830fb2510aae85a936368adea72de145f82b2282831e0d2ee841546e12f",
+      "units": "ece3b03fe215cb4847ec1e8ed71f05885bddc6807fe7a87691af55b05dc75d84"
+    },
+    "units": 48
+  },
+  "checkpoint": "A4.5b-M2",
+  "execution_scope": {
+    "a44a_or_a44d_rescoring_authorized": 0,
+    "a45a_fresh_validation_authorized": 0,
+    "calibration_fit_authorized": 0,
+    "confirmatory_scoring_authorized": 0,
+    "model_binding_authorized": 0,
+    "model_family_comparison_authorized": 0,
+    "new_validation_construction_authorized": 0,
+    "semantic_inference_authorized": 0,
+    "threshold_search_authorized": 0
+  },
+  "measurement_targets": {
+    "compatibility_dimensions": [
+      "entity",
+      "predicate",
+      "target_slot",
+      "temporal_scope",
+      "location_scope",
+      "organizational_scope",
+      "conditional_scope",
+      "modality_quantification_scope"
+    ],
+    "complementary_evidence_set_sufficiency": true,
+    "final_relation_and_claim_safety": true,
+    "relevant_but_insufficient_preservation": true,
+    "scope_mismatch_rejection": true,
+    "unresolved_scope_gap_detection": true
+  },
+  "next_action": {
+    "authorized": false,
+    "checkpoint": "A4.5b-M3",
+    "class": "SCEC_IMPLEMENTATION_BINDING_AND_CALIBRATION_ONLY_EXECUTION_PROTOCOL",
+    "must_bind_exactly_one_authoritative_implementation_before_calibration": true,
+    "must_keep_validation_and_confirmatory_partitions_sealed": true,
+    "must_not_use_a45b_failure_rows_for_selection": true,
+    "requires_separate_approval": true
+  },
+  "protocol_id": "phase4-assistance-a4.5b-m2-scec-calibration-v1",
+  "sealed_partitions": {
+    "a45a_fresh_validation_materialized": 0,
+    "a45a_fresh_validation_scored": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_records_inspected": 0
+  },
+  "selected_methodology": "SCEC",
+  "source_main_sha": "1b3a0cd1a0e552bef6ae33b44969d67b11dce7de",
+  "status": "CLOSED_PROTOCOL_REGISTERED_NO_INFERENCE"
+}
