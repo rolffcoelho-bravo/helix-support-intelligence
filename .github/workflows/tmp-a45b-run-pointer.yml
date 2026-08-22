@@ -1,0 +1,23 @@
+name: Temporary A4.5b run pointer
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  pointer:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Locate exact A4.5b push run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCIENTIFIC_SHA: 6ad2b93ccdc92af204bd5bc93cd2bd2c3a7f817d
+        run: |
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${SCIENTIFIC_SHA}&event=push&per_page=100" \
+            --jq '.workflow_runs[] | {id,name,status,conclusion,event,head_sha,run_number,run_attempt,created_at,updated_at}'
