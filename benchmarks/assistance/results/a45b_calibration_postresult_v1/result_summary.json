@@ -1,0 +1,75 @@
+{
+  "checkpoint": "A4.5b",
+  "status": "CLOSED_FAILED_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+  "scientific_pass": false,
+  "scientific_status": "FAILED_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+  "binding_id": "phase4-assistance-a4.5b-aerf-binding-calibration-v1",
+  "calibration": {
+    "units": 40,
+    "pair_rows": 360,
+    "claim_rows": 360,
+    "pairs_sha256": "2339b1328c1dd2854e712862f5e4183300581997a22a7000db2629313a49092f",
+    "claims_sha256": "e04813b1aec29335ffdbfbd8baa2e6f021ca6aa6a64625c255b454139e948ee5"
+  },
+  "threshold_selection": {
+    "joint_candidates_evaluated": 12050,
+    "feasible_candidate_count": 0,
+    "selection_used_feasible_set": false,
+    "selected_relevance_threshold": 8.1,
+    "selected_sufficiency_threshold": 0.99
+  },
+  "selected_metrics": {
+    "minimal_evidence_span_precision": 1.0,
+    "minimal_evidence_span_recall": 1.0,
+    "relevance_macro_f1": 0.7703703703703704,
+    "relevant_recall": 0.8535714285714285,
+    "irrelevant_recall": 0.7375,
+    "sufficiency_macro_f1_on_relevant_pairs": 1.0,
+    "sufficient_recall": 1.0,
+    "insufficient_recall": 1.0,
+    "polarity_macro_f1_on_relevant_sufficient_pairs": 1.0,
+    "supports_recall": 1.0,
+    "refutes_recall": 1.0,
+    "final_relation_macro_f1": 1.0,
+    "entailed_recall": 1.0,
+    "contradicted_recall": 1.0,
+    "unknown_recall": 1.0,
+    "cross_document_irrelevance_false_contradiction_rate": 0.0,
+    "same_domain_irrelevance_false_contradiction_rate": 0.0,
+    "relevant_insufficient_false_contradiction_rate": 0.0,
+    "context_contamination_support_accuracy": 1.0,
+    "claim_composition_accuracy": 1.0
+  },
+  "failed_readiness_requirements": {
+    "relevance_macro_f1_min": {
+      "required": 0.9,
+      "observed": 0.7703703703703704
+    },
+    "relevant_recall_min": {
+      "required": 0.9,
+      "observed": 0.8535714285714285
+    },
+    "irrelevant_recall_min": {
+      "required": 0.9,
+      "observed": 0.7375
+    }
+  },
+  "passed_readiness_requirements": 17,
+  "failed_readiness_requirements_count": 3,
+  "sealed_partitions": {
+    "fresh_validation_rows_materialized": 0,
+    "fresh_validation_rows_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a44a_rows_rescored": 0,
+    "a44d_rows_rescored": 0
+  },
+  "governance": {
+    "second_model_inference_performed_during_recovery": false,
+    "post_result_threshold_rescue_authorized": false,
+    "model_substitution_authorized": false,
+    "a45c_eligible": false,
+    "a45c_authorized": false,
+    "required_next_action_class": "SEPARATELY_REGISTERED_METHODOLOGICAL_DECISION"
+  }
+}

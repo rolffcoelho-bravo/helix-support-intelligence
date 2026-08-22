@@ -1,0 +1,76 @@
+{
+  "checkpoint": "A4.5b",
+  "audit_status": "PASSED_A45B_POSTRESULT_FORENSIC_CLOSURE",
+  "scientific_status": "FAILED_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+  "scientific_pass": false,
+  "recovery_main_sha": "735eb357bf8693b3aa0d7a881a748a5123173006",
+  "source_inference": {
+    "workflow_run_id": 32581433921,
+    "artifact_id": 9477913279,
+    "artifact_zip_sha256": "0bb5bd16c5a582f69e6421d0017bfa3e33e60cb5d4b31a005f6929d6cfc2c633",
+    "raw_score_sha256": "fe6b22278945e4df094fe8d0314706281ae6fd7915a2f613606b29f63c5d32b6",
+    "score_rows": 360,
+    "score_split": "calibration"
+  },
+  "deterministic_recovery": {
+    "workflow_run_id": 32581996227,
+    "job_id": 97052657366,
+    "artifact_id": 9478056833,
+    "artifact_zip_sha256": "661bffe06934098d1c6764c0705f3d70a9216f04a09b2e00d6ba4a81db184598",
+    "workflow_conclusion": "success",
+    "independent_reconstruction_status": "PASSED_A45B_DETERMINISTIC_RECOVERY_RECONSTRUCTION",
+    "threshold_candidates_reconstructed": 12050,
+    "second_model_inference_performed": false
+  },
+  "selected_thresholds": {
+    "relevance": 8.1,
+    "sufficiency": 0.99,
+    "feasible_candidates": 0
+  },
+  "relevance_confusion": {
+    "gold_relevant_pred_relevant": 239,
+    "gold_relevant_pred_irrelevant": 41,
+    "gold_irrelevant_pred_irrelevant": 59,
+    "gold_irrelevant_pred_relevant": 21,
+    "gold_relevant_total": 280,
+    "gold_irrelevant_total": 80
+  },
+  "failure_geometry": {
+    "relevant_but_insufficient": {
+      "total": 40,
+      "predicted_irrelevant": 40
+    },
+    "cross_document_irrelevance": {
+      "total": 40,
+      "predicted_relevant": 21
+    },
+    "same_domain_irrelevance": {
+      "total": 40,
+      "predicted_relevant": 0
+    },
+    "temporal_insufficiency": {
+      "total": 40,
+      "predicted_irrelevant": 1
+    }
+  },
+  "failed_requirements": [
+    "relevance_macro_f1_min",
+    "relevant_recall_min",
+    "irrelevant_recall_min"
+  ],
+  "sealed_partitions": {
+    "fresh_validation_rows_materialized": 0,
+    "fresh_validation_rows_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a44a_rows_rescored": 0,
+    "a44d_rows_rescored": 0
+  },
+  "governance": {
+    "post_result_threshold_rescue_authorized": false,
+    "model_substitution_authorized": false,
+    "a45c_eligible": false,
+    "a45c_authorized": false,
+    "next_action_requires_separate_methodological_decision": true
+  }
+}
