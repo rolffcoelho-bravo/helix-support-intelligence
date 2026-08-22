@@ -79,9 +79,7 @@ def _component(score: dict[str, Any], rel_t: float, suff_t: float) -> tuple[str,
     return relevance, sufficiency, polarity, relation
 
 
-def _false_contradiction(
-    pairs: list[dict[str, Any]], relations: list[str], subtype: str
-) -> float:
+def _false_contradiction(pairs: list[dict[str, Any]], relations: list[str], subtype: str) -> float:
     indices = [index for index, row in enumerate(pairs) if row["subtype"] == subtype]
     errors = sum(relations[index] == "CONTRADICTED" for index in indices)
     return errors / len(indices)
@@ -133,9 +131,7 @@ def _metrics(
     insufficient_recall = _stats(gold_sufficiency, pred_sufficiency_relevant, "INSUFFICIENT")[1]
 
     sufficient_indices = [
-        index
-        for index in relevant_indices
-        if pairs[index]["gold"]["sufficiency"] == "SUFFICIENT"
+        index for index in relevant_indices if pairs[index]["gold"]["sufficiency"] == "SUFFICIENT"
     ]
     gold_polarity = [str(pairs[index]["gold"]["polarity"]) for index in sufficient_indices]
     pred_polarity_sufficient = [pred_polarity[index] for index in sufficient_indices]
