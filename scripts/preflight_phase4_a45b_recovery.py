@@ -64,9 +64,10 @@ def main() -> None:
         "min",
     ):
         raise RuntimeError("A4.5b sufficiency requirement dispatch is incorrect")
-    if finalizer.registered_metric_name(
-        "polarity_macro_f1_min_on_relevant_sufficient_pairs"
-    ) != ("polarity_macro_f1_on_relevant_sufficient_pairs", "min"):
+    if finalizer.registered_metric_name("polarity_macro_f1_min_on_relevant_sufficient_pairs") != (
+        "polarity_macro_f1_on_relevant_sufficient_pairs",
+        "min",
+    ):
         raise RuntimeError("A4.5b polarity requirement dispatch is incorrect")
 
     for path in (FINALIZER, VERIFIER):
