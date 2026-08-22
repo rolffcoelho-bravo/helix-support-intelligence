@@ -1,0 +1,126 @@
+{
+  "checkpoint": "A4.5b-M1",
+  "name": "AERF relevance/alignment methodological decision",
+  "decision_id": "phase4-assistance-a4.5b-m1-scec-methodology-v1",
+  "source_main_sha": "e27f7652032ad72c3bc526067a403b58bb50636c",
+  "source_closed_checkpoint": "A4.5b",
+  "status": "REGISTERED_METHODOLOGY_DECISION_NO_INFERENCE",
+  "selected_methodology": {
+    "name": "Scope-Conditioned Evidence Compatibility",
+    "short_name": "SCEC",
+    "novelty_claim": false,
+    "role": "replace the failed scalar AERF relevance/alignment construct while retaining relevance, sufficiency, polarity, deterministic relation mapping, and claim composition as distinct conceptual stages",
+    "binding_status": "UNBOUND"
+  },
+  "failure_basis": {
+    "a45b_scientific_status": "FAILED_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+    "feasible_threshold_candidates": 0,
+    "selected_relevance_threshold": 8.1,
+    "selected_sufficiency_threshold": 0.99,
+    "relevance_macro_f1": 0.7703703703703704,
+    "relevant_recall": 0.8535714285714285,
+    "irrelevant_recall": 0.7375,
+    "relevant_but_insufficient_predicted_irrelevant": 40,
+    "relevant_but_insufficient_total": 40,
+    "cross_document_irrelevance_predicted_relevant": 21,
+    "cross_document_irrelevance_total": 40
+  },
+  "construct_definition": {
+    "claim_compatibility_frame": [
+      "subject_or_entity_scope",
+      "predicate_or_attribute_scope",
+      "target_slot_identity_or_type",
+      "required_context_qualifiers"
+    ],
+    "required_context_qualifiers": [
+      "temporal_scope_when_present",
+      "location_or_organizational_scope_when_present",
+      "conditional_scope_when_present",
+      "modality_or_quantification_scope_when_present"
+    ],
+    "excluded_from_relevance_decision": [
+      "support_vs_refutation polarity",
+      "claim truth value",
+      "whether all decisive evidence is present"
+    ],
+    "relevance_semantics": {
+      "RELEVANT": "The candidate evidence matches the atom's mandatory entity, predicate/attribute, target-slot, and applicable scope constraints, even if decisive evidence is missing.",
+      "IRRELEVANT": "At least one mandatory compatibility dimension mismatches or the evidence concerns a different evidential target."
+    },
+    "sufficiency_semantics": {
+      "SUFFICIENT": "The compatible evidence set covers every decisive content slot required to license support or refutation without an unresolved scope gap.",
+      "INSUFFICIENT": "The evidence is compatible but one or more decisive content slots required for a verdict remain uncovered."
+    }
+  },
+  "stage_order": [
+    "minimal_atom_preservation",
+    "candidate_span_segmentation",
+    "scope_compatibility_analysis",
+    "compatible_evidence_set_construction",
+    "set_level_sufficiency_coverage",
+    "polarity_if_sufficient",
+    "deterministic_relation_mapping",
+    "claim_composition"
+  ],
+  "deterministic_mapping": {
+    "scope_incompatible": "UNKNOWN",
+    "scope_compatible_but_insufficient": "UNKNOWN",
+    "scope_compatible_sufficient_support": "ENTAILED",
+    "scope_compatible_sufficient_refute": "CONTRADICTED",
+    "support_and_refutation_coexist": "CONFLICTING_EVIDENCE"
+  },
+  "design_constraints": {
+    "single_scalar_retrieval_relevance_as_authoritative_gate": false,
+    "top1_span_only_as_authoritative_evidence_set": false,
+    "free_form_claim_redecomposition": false,
+    "native_nli_neutral_directly_means_unknown": false,
+    "relevance_may_use_polarity_to_decide_compatibility": false,
+    "sufficiency_is_set_level_property": true,
+    "complementary_compatible_spans_may_accumulate_coverage": true,
+    "existing_aerf_atoms_preserved": true
+  },
+  "future_measurement_requirements": {
+    "do_not_weaken_a45a_component_validity_floors": true,
+    "must_measure_scope_compatibility_directly": true,
+    "must_measure_relevant_but_insufficient_recall_directly": true,
+    "must_measure_cross_document_irrelevance_rejection_directly": true,
+    "must_measure_same_domain_irrelevance_rejection_directly": true,
+    "must_measure_temporal_scope_compatibility_directly": true,
+    "must_measure_set_level_sufficiency_directly": true,
+    "must_preserve_final_relation_and_safety_metrics": true
+  },
+  "data_governance": {
+    "a45b_calibration_may_be_used_for": [
+      "closed failure diagnosis",
+      "regression checks after a future implementation is frozen"
+    ],
+    "a45b_calibration_may_not_be_used_as": "independent evidence that the replacement methodology is valid",
+    "fresh_replacement_calibration_required_before_future_validation": true,
+    "a45a_fresh_validation_remains_sealed": true,
+    "a45a_fresh_validation_pairs_scored": 0,
+    "a45a_fresh_validation_claims_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a45c_repurposed_for_scec": false
+  },
+  "scope": {
+    "semantic_inference_authorized": 0,
+    "model_binding_authorized": 0,
+    "model_family_comparison_authorized": 0,
+    "threshold_search_authorized": 0,
+    "calibration_fit_authorized": 0,
+    "fresh_validation_authorized": 0,
+    "confirmatory_scoring_authorized": 0,
+    "a44a_or_a44d_rescoring_authorized": 0
+  },
+  "next_action": {
+    "class": "FRESH_SCEC_MEASUREMENT_AND_CALIBRATION_PROTOCOL_REGISTRATION",
+    "authorized": false,
+    "requires_separate_approval": true,
+    "must_precede": [
+      "SCEC model or rule binding",
+      "SCEC threshold fitting",
+      "fresh validation"
+    ]
+  }
+}
