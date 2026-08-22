@@ -24,7 +24,6 @@ from typing import Any
 
 import numpy as np
 import torch
-
 from aerf_calibration_core_a45b import select_thresholds
 from calibration_cases_a45b import build_calibration_only, calibration_manifest
 from huggingface_hub import hf_hub_download
