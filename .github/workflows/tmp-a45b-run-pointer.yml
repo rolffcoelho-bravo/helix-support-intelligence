@@ -12,10 +12,10 @@ jobs:
   pointer:
     runs-on: ubuntu-24.04
     steps:
-      - name: Locate exact A4.5b push run
+      - name: Locate exact A4.5b recovery push run
         env:
           GH_TOKEN: ${{ github.token }}
-          SCIENTIFIC_SHA: 92c5b073fd91454a6b3f1b11ab13f453e1644a6d
+          SCIENTIFIC_SHA: 735eb357bf8693b3aa0d7a881a748a5123173006
         run: |
           gh api \
             -H "Accept: application/vnd.github+json" \
