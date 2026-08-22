@@ -96,9 +96,7 @@ def main() -> None:
         raise RuntimeError("A4.5b claim hash no longer matches A4.5a")
 
     setup = config["threshold_calibration"]
-    candidates = _grid_count(setup["relevance_grid"]) * _grid_count(
-        setup["sufficiency_grid"]
-    )
+    candidates = _grid_count(setup["relevance_grid"]) * _grid_count(setup["sufficiency_grid"])
     if candidates != 12050 or candidates != setup["joint_candidates"]:
         raise RuntimeError("A4.5b registered threshold grid drifted")
 
