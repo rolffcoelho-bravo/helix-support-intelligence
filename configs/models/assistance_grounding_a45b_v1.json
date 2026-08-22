@@ -1,0 +1,209 @@
+{
+  "checkpoint": "A4.5b",
+  "binding_id": "phase4-assistance-a4.5b-aerf-binding-calibration-v1",
+  "source_main_sha": "35305f3568e0842bc7327dfebb58ffc975ea1cee",
+  "source_protocol_id": "phase4-assistance-a4.5a-aerf-validity-v1",
+  "status": "REGISTERED_PRE_EXECUTION_CALIBRATION_ONLY",
+  "architecture": {
+    "name": "Atom-Evidence Relation Factorization",
+    "short_name": "AERF",
+    "implementation_status": "BOUND_PRE_CALIBRATION",
+    "stages": [
+      "sentence_span_alignment",
+      "relevance_gate",
+      "sufficiency_gate",
+      "polarity_if_sufficient",
+      "deterministic_relation_mapping",
+      "claim_composition"
+    ],
+    "unknown_construction": "UNKNOWN is produced only when evidence is below the relevance threshold or relevant evidence is below the sufficiency threshold. Native NLI neutral is never directly mapped to UNKNOWN."
+  },
+  "binding": {
+    "alignment_relevance": {
+      "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "revision": "c5f2b386de279a97c53a702dd5189d1c407160dc",
+      "weights_file": "model.safetensors",
+      "weights_sha256": "821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae",
+      "license": "apache-2.0",
+      "role": "score claim-sentence relevance and select the highest-scoring sentence span",
+      "decision_score": "single raw sequence-classification logit",
+      "max_sequence_length": 512,
+      "batch_size": 32
+    },
+    "sufficiency_polarity": {
+      "model_id": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+      "revision": "0e2603d5d3d3ef9b2910814b34eebe1a2101da65",
+      "weights_file": "model.safetensors",
+      "weights_sha256": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707",
+      "license": "mit",
+      "role": "measure whether an aligned span contains sufficient support/refutation evidence and, only when sufficient, determine polarity",
+      "native_labels": {
+        "0": "entailment",
+        "1": "neutral",
+        "2": "contradiction"
+      },
+      "max_sequence_length": 512,
+      "batch_size": 16,
+      "sufficiency_score": "max(softmax_entailment, softmax_contradiction)",
+      "polarity_rule": "if sufficient, entailment > contradiction => SUPPORTS; contradiction > entailment => REFUTES; exact tie => UNRESOLVED"
+    }
+  },
+  "span_alignment": {
+    "sentence_split": "regex (?<=[.!?])\\s+ with punctuation retained",
+    "selection": "highest alignment_relevance raw logit; stable earliest-span tie break",
+    "irrelevant_output": "no evidence span after relevance gate rejects the pair"
+  },
+  "threshold_calibration": {
+    "joint_search": true,
+    "relevance_grid": {
+      "integer_start": -120,
+      "integer_stop": 120,
+      "integer_step": 1,
+      "scale": 0.1,
+      "points": 241
+    },
+    "sufficiency_grid": {
+      "integer_start": 50,
+      "integer_stop": 99,
+      "integer_step": 1,
+      "scale": 0.01,
+      "points": 50
+    },
+    "joint_candidates": 12050,
+    "selection_order": [
+      "prefer candidates satisfying every calibration readiness requirement",
+      "maximize final_relation_macro_f1",
+      "maximize minimum of ENTAILED, CONTRADICTED, UNKNOWN recall",
+      "maximize relevance_macro_f1",
+      "maximize sufficiency_macro_f1_on_gold_relevant_pairs",
+      "maximize polarity_macro_f1_on_gold_relevant_sufficient_pairs",
+      "minimize summed failure-directed false-CONTRADICTED rates",
+      "prefer higher sufficiency threshold",
+      "prefer higher relevance threshold"
+    ],
+    "no_temperature_fit": true,
+    "no_class_specific_thresholds": true,
+    "no_validation_feedback": true
+  },
+  "calibration_readiness_requirements": {
+    "minimal_evidence_span_precision_min": 0.9,
+    "minimal_evidence_span_recall_min": 0.9,
+    "relevance_macro_f1_min": 0.9,
+    "relevant_recall_min": 0.9,
+    "irrelevant_recall_min": 0.9,
+    "sufficiency_macro_f1_min_on_relevant_pairs": 0.9,
+    "sufficient_recall_min": 0.9,
+    "insufficient_recall_min": 0.9,
+    "polarity_macro_f1_min_on_relevant_sufficient_pairs": 0.9,
+    "supports_recall_min": 0.9,
+    "refutes_recall_min": 0.9,
+    "final_relation_macro_f1_min": 0.9,
+    "entailed_recall_min": 0.9,
+    "contradicted_recall_min": 0.9,
+    "unknown_recall_min": 0.9,
+    "cross_document_irrelevance_false_contradiction_rate_max": 0.05,
+    "same_domain_irrelevance_false_contradiction_rate_max": 0.05,
+    "relevant_insufficient_false_contradiction_rate_max": 0.05,
+    "context_contamination_support_accuracy_min": 0.9,
+    "claim_composition_accuracy_min": 1.0
+  },
+  "calibration_partition": {
+    "unit_ids": [
+      "AERF-U052",
+      "AERF-U033",
+      "AERF-U058",
+      "AERF-U016",
+      "AERF-U025",
+      "AERF-U045",
+      "AERF-U003",
+      "AERF-U017",
+      "AERF-U057",
+      "AERF-U010",
+      "AERF-U050",
+      "AERF-U046",
+      "AERF-U041",
+      "AERF-U038",
+      "AERF-U013",
+      "AERF-U026",
+      "AERF-U047",
+      "AERF-U053",
+      "AERF-U043",
+      "AERF-U037",
+      "AERF-U051",
+      "AERF-U008",
+      "AERF-U048",
+      "AERF-U014",
+      "AERF-U009",
+      "AERF-U028",
+      "AERF-U005",
+      "AERF-U002",
+      "AERF-U022",
+      "AERF-U034",
+      "AERF-U060",
+      "AERF-U015",
+      "AERF-U029",
+      "AERF-U042",
+      "AERF-U044",
+      "AERF-U049",
+      "AERF-U054",
+      "AERF-U011",
+      "AERF-U027",
+      "AERF-U007"
+    ],
+    "unit_count": 40,
+    "pair_rows": 360,
+    "claim_rows": 360,
+    "pairs_sha256": "2339b1328c1dd2854e712862f5e4183300581997a22a7000db2629313a49092f",
+    "claims_sha256": "e04813b1aec29335ffdbfbd8baa2e6f021ca6aa6a64625c255b454139e948ee5"
+  },
+  "sealed_partitions": {
+    "fresh_validation_units": 20,
+    "fresh_validation_pairs": 180,
+    "fresh_validation_claims": 180,
+    "validation_pairs_sha256": "5f6f0294230de5da3af8baaee2403c9497bd42308c96f9d1041f4f88667d1da7",
+    "validation_claims_sha256": "116040d37035e4a43a3bee17ea2d29fe87d85c6148adade770e8c224456e43d6",
+    "validation_scoring_authorized": 0,
+    "validation_rows_materialized_by_a45b": 0,
+    "confirmatory_queries": 68,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_scoring_authorized": 0
+  },
+  "runtime": {
+    "device": "cpu",
+    "dtype": "float32",
+    "torch_num_threads": 1,
+    "torch_num_interop_threads": 1,
+    "environment_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "TOKENIZERS_PARALLELISM": "false",
+      "HF_HUB_DISABLE_TELEMETRY": "1"
+    },
+    "resolved_environment_recorded_in_artifact": true
+  },
+  "scientific_status_rules": {
+    "pass": "Every calibration readiness requirement passes. Freeze selected thresholds and permit only a separately approved fresh-validation checkpoint.",
+    "fail": "Any calibration readiness requirement fails. Freeze the negative calibration result and prohibit fresh validation until a separately registered methodological decision.",
+    "workflow_success_is_not_scientific_pass": true,
+    "post_result_threshold_rescue_forbidden": true,
+    "model_substitution_after_calibration_forbidden_within_a45b": true
+  },
+  "scope": {
+    "calibration_model_inference_authorized": 1,
+    "calibration_threshold_fit_authorized": 1,
+    "validation_model_inference_authorized": 0,
+    "validation_rows_rescored": 0,
+    "a44d_rows_rescored": 0,
+    "a44a_rows_rescored": 0,
+    "candidate_model_comparison_authorized": 0,
+    "confirmatory_queries_scored": 0
+  },
+  "next_checkpoint": {
+    "checkpoint": "A4.5c",
+    "name": "AERF fresh registered validation-only execution",
+    "authorized_by_a45b": false,
+    "requires_separate_approval": true,
+    "eligibility": "Only if A4.5b calibration readiness passes and post-result forensic audit closes A4.5b."
+  }
+}
