@@ -96,9 +96,9 @@ def _claim_accuracy(claims: list[dict[str, Any]]) -> float:
             predicted = "CITATION_INVALID"
         elif gate == "STALE_EVIDENCE":
             predicted = "STALE_EVIDENCE"
-        elif gate == "REGISTERED_CONFLICT":
-            predicted = "CONFLICTING_EVIDENCE"
-        elif "ENTAILED" in relations and "CONTRADICTED" in relations:
+        elif gate == "REGISTERED_CONFLICT" or (
+            "ENTAILED" in relations and "CONTRADICTED" in relations
+        ):
             predicted = "CONFLICTING_EVIDENCE"
         elif relations and all(value == "ENTAILED" for value in relations):
             predicted = "SUPPORTED"
@@ -157,7 +157,9 @@ def _metrics(
         span_precision.append(precision)
         span_recall.append(recall)
     context = [
-        index for index, row in enumerate(pairs) if row["subtype"] == "context_contamination_support"
+        index
+        for index, row in enumerate(pairs)
+        if row["subtype"] == "context_contamination_support"
     ]
     context_accuracy = sum(pred_relations[index] == "ENTAILED" for index in context) / len(context)
     return {
@@ -208,7 +210,9 @@ def _metrics(
     }
 
 
-def _checks(metrics: dict[str, float], requirements: dict[str, Any]) -> tuple[dict[str, bool], bool]:
+def _checks(
+    metrics: dict[str, float], requirements: dict[str, Any]
+) -> tuple[dict[str, bool], bool]:
     output: dict[str, bool] = {}
     for name, raw_threshold in requirements.items():
         threshold = float(raw_threshold)
@@ -284,7 +288,9 @@ def _reconstruct_selection(
                 best_any = candidate
             if passed:
                 feasible_count += 1
-                if best_feasible is None or _selection_key(candidate) > _selection_key(best_feasible):
+                if best_feasible is None or _selection_key(candidate) > _selection_key(
+                    best_feasible
+                ):
                     best_feasible = candidate
     if best_any is None:
         raise RuntimeError("Independent A4.5b grid was empty")
