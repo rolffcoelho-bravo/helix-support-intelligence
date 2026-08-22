@@ -171,7 +171,9 @@ def main() -> None:
     pair_ids = [str(row["pair_id"]) for row in pairs]
     score_ids = [str(row["pair_id"]) for row in scores]
     if len(scores) != 360 or score_ids != pair_ids or len(set(score_ids)) != 360:
-        raise RuntimeError("Independent recovery score IDs do not match the frozen calibration pairs")
+        raise RuntimeError(
+            "Independent recovery score IDs do not match the frozen calibration pairs"
+        )
     if any(str(row["split"]) != "calibration" for row in scores):
         raise RuntimeError("Independent recovery found non-calibration score data")
     for score in scores:
