@@ -729,16 +729,13 @@ def manifest() -> dict[str, Any]:
             "evidence_set_rows": len(sets),
             "claim_rows": len(claims),
             "pair_subtypes": {
-                name: sum(row["subtype"] == name for row in pairs)
-                for name in pair_subtypes
+                name: sum(row["subtype"] == name for row in pairs) for name in pair_subtypes
             },
             "evidence_set_subtypes": {
-                name: sum(row["subtype"] == name for row in sets)
-                for name in set_subtypes
+                name: sum(row["subtype"] == name for row in sets) for name in set_subtypes
             },
             "claim_categories": {
-                name: sum(row["category"] == name for row in claims)
-                for name in claim_categories
+                name: sum(row["category"] == name for row in claims) for name in claim_categories
             },
             "pair_compatibility": {
                 label: sum(row["gold"]["compatibility"] == label for row in pairs)
