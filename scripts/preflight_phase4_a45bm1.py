@@ -60,7 +60,9 @@ def main() -> None:
 
     constraints = config["design_constraints"]
     if constraints["single_scalar_retrieval_relevance_as_authoritative_gate"] is not False:
-        raise RuntimeError("A4.5b-M1 cannot retain scalar retrieval relevance as authoritative gate")
+        raise RuntimeError(
+            "A4.5b-M1 cannot retain scalar retrieval relevance as authoritative gate"
+        )
     if constraints["sufficiency_is_set_level_property"] is not True:
         raise RuntimeError("A4.5b-M1 must preserve set-level sufficiency")
     if constraints["free_form_claim_redecomposition"] is not False:
