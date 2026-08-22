@@ -31,9 +31,10 @@ def test_registered_requirement_name_dispatch_is_mechanical() -> None:
         "sufficiency_macro_f1_on_relevant_pairs",
         "min",
     )
-    assert module.registered_metric_name(
-        "polarity_macro_f1_min_on_relevant_sufficient_pairs"
-    ) == ("polarity_macro_f1_on_relevant_sufficient_pairs", "min")
+    assert module.registered_metric_name("polarity_macro_f1_min_on_relevant_sufficient_pairs") == (
+        "polarity_macro_f1_on_relevant_sufficient_pairs",
+        "min",
+    )
     assert module.registered_metric_name(
         "cross_document_irrelevance_false_contradiction_rate_max"
     ) == ("cross_document_irrelevance_false_contradiction_rate", "max")
