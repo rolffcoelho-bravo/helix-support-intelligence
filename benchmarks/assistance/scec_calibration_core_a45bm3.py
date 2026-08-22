@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 DIMENSIONS = (
     "entity",
@@ -246,9 +247,7 @@ def _claim_predictions(
             verdict = "CITATION_INVALID"
         elif gate == "STALE_EVIDENCE":
             verdict = "STALE_EVIDENCE"
-        elif gate == "REGISTERED_CONFLICT":
-            verdict = "CONFLICTING_EVIDENCE"
-        elif relation == "CONFLICTING_EVIDENCE":
+        elif gate == "REGISTERED_CONFLICT" or relation == "CONFLICTING_EVIDENCE":
             verdict = "CONFLICTING_EVIDENCE"
         elif relation == "ENTAILED":
             verdict = "SUPPORTED"
@@ -326,18 +325,20 @@ def evaluate_candidate(
         and predicted_minimal[index] == gold_minimal[index]
     }
 
-    set_gold_suff = [str(set_gold[row["set_id"]]["gold"]["sufficiency"]) for row in set_pred]
+    set_gold_suff = [
+        str(set_gold[row["set_id"]]["gold"]["sufficiency"]) for row in set_pred
+    ]
     set_pred_suff = [str(row["sufficiency"]) for row in set_pred]
     suff_labels = ("SUFFICIENT", "INSUFFICIENT", "CONFLICTING")
-
     polarity_gold_rows = [
         row
         for row in set_pred
         if str(set_gold[row["set_id"]]["gold"]["sufficiency"]) == "SUFFICIENT"
     ]
-    gold_polarity = [str(set_gold[row["set_id"]]["gold"]["polarity"]) for row in polarity_gold_rows]
+    gold_polarity = [
+        str(set_gold[row["set_id"]]["gold"]["polarity"]) for row in polarity_gold_rows
+    ]
     pred_polarity = [str(row["polarity"]) for row in polarity_gold_rows]
-
     final_gold = [
         str(pair_gold[row["pair_id"]]["gold"]["final_relation"]) for row in pair_pred
     ] + [str(set_gold[row["set_id"]]["gold"]["final_relation"]) for row in set_pred]
@@ -355,7 +356,6 @@ def evaluate_candidate(
         / len(rows)
         for category, rows in sorted(categories.items())
     }
-
     safety_indices = [index for index, value in enumerate(claim_gold) if value != "SUPPORTED"]
     false_supported_safety = _safe_div(
         sum(claim_values[index] == "SUPPORTED" for index in safety_indices),
