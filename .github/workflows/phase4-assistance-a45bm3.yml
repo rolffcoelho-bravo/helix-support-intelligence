@@ -1,0 +1,124 @@
+name: Phase 4 Assistance A4.5b-M3 SCEC Calibration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase4-assistance-a45bm3.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase4-assistance-a45bm3-scec-calibration-v1
+  cancel-in-progress: false
+
+jobs:
+  registered-scec-calibration-only:
+    name: Frozen SCEC calibration-only execution and audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+
+    steps:
+      - name: Check out immutable execution commit with predecessor
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enforce exact M3 scientific lineage
+        run: |
+          test "$(git rev-parse HEAD^)" = "e44fc9d53d217b6bf506a2253d06da876f904c26"
+          cat > /tmp/a45bm3-expected-files.txt <<'EOF'
+          .github/workflows/phase4-assistance-a45bm3.yml
+          Makefile
+          benchmarks/assistance/calibrate_scec_a45bm3.py
+          benchmarks/assistance/scec_calibration_core_a45bm3.py
+          benchmarks/assistance/verify_calibration_a45bm3.py
+          configs/models/assistance_grounding_a45bm3_v1.json
+          docs/assistance-a45bm3-scec-binding-calibration.md
+          scripts/preflight_phase4_a45bm3.py
+          tests/test_phase4_a45bm3_binding.py
+          EOF
+          git diff --name-only HEAD^ HEAD | sort > /tmp/a45bm3-actual-files.txt
+          diff -u /tmp/a45bm3-expected-files.txt /tmp/a45bm3-actual-files.txt
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install repository quality environment
+        run: uv sync --locked --group dev
+
+      - name: Verify A4.5b-M3 calibration-only pre-execution state
+        run: uv run python scripts/preflight_phase4_a45bm3.py
+
+      - name: Resolve and freeze A4.5b-M3 scientific runtime
+        run: uv lock --script benchmarks/assistance/calibrate_scec_a45bm3.py
+
+      - name: Freeze registered scientific inputs before inference
+        run: |
+          mkdir -p artifacts/phase4-assistance/a45bm3
+          sha256sum \
+            configs/models/assistance_grounding_a45bm2_v1.json \
+            configs/models/assistance_grounding_a45bm3_v1.json \
+            benchmarks/assistance/a45bm2_manifest_v1.json \
+            benchmarks/assistance/scec_calibration_a45bm2.py \
+            benchmarks/assistance/scec_calibration_core_a45bm3.py \
+            benchmarks/assistance/calibrate_scec_a45bm3.py \
+            benchmarks/assistance/calibrate_scec_a45bm3.py.lock \
+            benchmarks/assistance/verify_calibration_a45bm3.py \
+            scripts/preflight_phase4_a45bm3.py \
+            .github/workflows/phase4-assistance-a45bm3.yml \
+            > artifacts/phase4-assistance/a45bm3/registered_inputs.sha256
+          cp benchmarks/assistance/calibrate_scec_a45bm3.py.lock \
+            artifacts/phase4-assistance/a45bm3/resolved_environment.lock
+
+      - name: Execute frozen SCEC calibration-only stage
+        run: >-
+          uv run --locked benchmarks/assistance/calibrate_scec_a45bm3.py
+          --output-dir artifacts/phase4-assistance/a45bm3
+
+      - name: Reverify frozen scientific inputs after execution
+        run: sha256sum -c artifacts/phase4-assistance/a45bm3/registered_inputs.sha256
+
+      - name: Reconstruct all registered parameter arithmetic
+        run: >-
+          python3 benchmarks/assistance/verify_calibration_a45bm3.py
+          --output-dir artifacts/phase4-assistance/a45bm3
+
+      - name: Freeze artifact checksums
+        run: |
+          find artifacts/phase4-assistance/a45bm3 -maxdepth 1 -type f \
+            ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > artifacts/phase4-assistance/a45bm3/checksums.sha256
+          sha256sum -c artifacts/phase4-assistance/a45bm3/checksums.sha256
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          if test -f artifacts/phase4-assistance/a45bm3/report.md; then
+            cat artifacts/phase4-assistance/a45bm3/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f artifacts/phase4-assistance/a45bm3/post_audit.md; then
+            printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+            cat artifacts/phase4-assistance/a45bm3/post_audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload immutable A4.5b-M3 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a45bm3-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: artifacts/phase4-assistance/a45bm3/
+          if-no-files-found: warn
+          retention-days: 90
