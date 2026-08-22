@@ -15,7 +15,7 @@ jobs:
       - name: Locate exact A4.5b push run
         env:
           GH_TOKEN: ${{ github.token }}
-          SCIENTIFIC_SHA: 6ad2b93ccdc92af204bd5bc93cd2bd2c3a7f817d
+          SCIENTIFIC_SHA: 92c5b073fd91454a6b3f1b11ab13f453e1644a6d
         run: |
           gh api \
             -H "Accept: application/vnd.github+json" \
