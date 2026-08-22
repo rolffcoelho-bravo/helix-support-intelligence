@@ -1,0 +1,35 @@
+{
+  "checkpoint": "A4.5b",
+  "status": "PARTIAL_INFERENCE_COMPLETE_THRESHOLD_ARITHMETIC_NOT_RUN",
+  "scientific_execution_sha": "92c5b073fd91454a6b3f1b11ab13f453e1644a6d",
+  "workflow_run_id": 32581433921,
+  "workflow_job_id": 97051295321,
+  "run_number": 2,
+  "run_attempt": 1,
+  "failure_stage": "threshold_requirement_name_dispatch",
+  "failure_message": "Unsupported A4.5b requirement: sufficiency_macro_f1_min_on_relevant_pairs",
+  "model_inference_completed": true,
+  "threshold_candidate_evaluation_completed": false,
+  "threshold_selected": false,
+  "scientific_pass_fail_computed": false,
+  "post_audit_completed": false,
+  "artifact": {
+    "id": 9477913279,
+    "name": "phase4-assistance-a45b-92c5b073fd91454a6b3f1b11ab13f453e1644a6d-attempt-1",
+    "zip_sha256": "0bb5bd16c5a582f69e6421d0017bfa3e33e60cb5d4b31a005f6929d6cfc2c633",
+    "files": {
+      "calibration_pair_scores.jsonl": "fe6b22278945e4df094fe8d0314706281ae6fd7915a2f613606b29f63c5d32b6",
+      "model_weight_verification.json": "3de21ab00668699db71ea6e2d7f997f475f74ea2fac9ddbbe8cd7acc7be2936f",
+      "registered_inputs.sha256": "5d80f2347b0bcba6187edef45471cd110c55375507e2ee27c091669786111ed3",
+      "resolved_environment.lock": "c80a41b08f501ddc15e28cae9c065c8c5b3688316b2e5ff210cd7c1f56c6a801"
+    }
+  },
+  "score_rows": 360,
+  "unique_pair_ids": 360,
+  "score_splits": ["calibration"],
+  "validation_rows_materialized": 0,
+  "validation_rows_scored": 0,
+  "confirmatory_queries_inspected": 0,
+  "confirmatory_queries_scored": 0,
+  "recovery_rule": "Use only the immutable raw calibration scores above. Repair deterministic registered-requirement name dispatch without changing models, scores, threshold grid, requirements, selection rule, or sealed partitions. Do not perform a second model inference."
+}
