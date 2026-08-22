@@ -130,9 +130,7 @@ def _load_models(config: dict[str, Any]) -> tuple[dict[str, Any], Any, Any, Any,
     observed = {
         str(index): str(label).lower() for index, label in nli_model.config.id2label.items()
     }
-    expected = {
-        str(index): str(label).lower() for index, label in nli["native_labels"].items()
-    }
+    expected = {str(index): str(label).lower() for index, label in nli["native_labels"].items()}
     if observed != expected:
         raise RuntimeError(f"A4.5b NLI label mapping drifted: {observed}")
     nli_model.eval()
