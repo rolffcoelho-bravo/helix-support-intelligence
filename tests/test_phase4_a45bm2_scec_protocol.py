@@ -44,20 +44,14 @@ def test_fresh_calibration_counts_and_hashes_are_frozen() -> None:
     assert manifest["sha256"] == {
         "units": "ece3b03fe215cb4847ec1e8ed71f05885bddc6807fe7a87691af55b05dc75d84",
         "pair_rows": "2ee18830fb2510aae85a936368adea72de145f82b2282831e0d2ee841546e12f",
-        "evidence_set_rows": (
-            "698b348b4bb5d5b00e597a7fcea144ce10ecd62e40036602ae5fa25577606d61"
-        ),
+        "evidence_set_rows": ("698b348b4bb5d5b00e597a7fcea144ce10ecd62e40036602ae5fa25577606d61"),
         "claim_rows": "3dc8b01f797ca1b97ae5330929d8b462bf3b85b3d0788433c23026bf8bef262e",
     }
 
 
 def test_relevant_but_insufficient_is_not_relabelled_irrelevant() -> None:
     rows = _module().build_suite()["pair_rows"]
-    target = [
-        row
-        for row in rows
-        if str(row["subtype"]).startswith("relevant_but_insufficient_")
-    ]
+    target = [row for row in rows if str(row["subtype"]).startswith("relevant_but_insufficient_")]
     assert len(target) == 144
     assert all(row["gold"]["compatibility"] == "COMPATIBLE" for row in target)
     assert all(row["gold"]["pair_sufficiency"] == "INSUFFICIENT" for row in target)
@@ -84,13 +78,9 @@ def test_scope_mismatches_are_explicitly_incompatible() -> None:
 
 def test_complementary_evidence_and_scope_gap_are_distinct() -> None:
     rows = _module().build_suite()["evidence_set_rows"]
-    complementary = [
-        row for row in rows if row["subtype"] == "complementary_two_span_support"
-    ]
+    complementary = [row for row in rows if row["subtype"] == "complementary_two_span_support"]
     scope_gap = [
-        row
-        for row in rows
-        if row["subtype"] == "compatible_multi_span_unresolved_scope_gap"
+        row for row in rows if row["subtype"] == "compatible_multi_span_unresolved_scope_gap"
     ]
     assert len(complementary) == 48
     assert len(scope_gap) == 48
