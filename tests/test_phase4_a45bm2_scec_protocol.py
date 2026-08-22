@@ -14,7 +14,10 @@ CONFIG = ROOT / "configs" / "models" / "assistance_grounding_a45bm2_v1.json"
 
 
 def _json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise RuntimeError(f"Expected JSON object in {path}")
+    return value
 
 
 def _module() -> Any:
