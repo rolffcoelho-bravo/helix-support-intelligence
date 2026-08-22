@@ -87,9 +87,7 @@ def _build_unit(unit_id: str) -> dict[str, Any]:
     subject = f"Orchid case {number:03d}"
     support_queue = f"{subject} requests are handled by the {queue} queue."
     support_requirement = f"{subject} review requires {requirement}."
-    support_window = (
-        f"The standard review window for {subject.lower()} is {window} business days."
-    )
+    support_window = f"The standard review window for {subject.lower()} is {window} business days."
     return {
         "unit_id": unit_id,
         "subject": subject,
