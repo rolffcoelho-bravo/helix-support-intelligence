@@ -119,9 +119,7 @@ def calibration_metrics(
     insufficient_stats = label_stats(gold_sufficiency, predicted_sufficiency, "INSUFFICIENT")
 
     sufficient_indices = [
-        index
-        for index in relevant_indices
-        if pairs[index]["gold"]["sufficiency"] == "SUFFICIENT"
+        index for index in relevant_indices if pairs[index]["gold"]["sufficiency"] == "SUFFICIENT"
     ]
     gold_polarity = [str(pairs[index]["gold"]["polarity"]) for index in sufficient_indices]
     predicted_polarity = [polarity_predictions[index] for index in sufficient_indices]
@@ -148,10 +146,9 @@ def calibration_metrics(
         for index, row in enumerate(pairs)
         if row["subtype"] == "context_contamination_support"
     ]
-    context_accuracy = (
-        sum(relation_predictions[index] == "ENTAILED" for index in context_indices)
-        / len(context_indices)
-    )
+    context_accuracy = sum(
+        relation_predictions[index] == "ENTAILED" for index in context_indices
+    ) / len(context_indices)
     return {
         "minimal_evidence_span_precision": sum(span_precisions) / len(span_precisions),
         "minimal_evidence_span_recall": sum(span_recalls) / len(span_recalls),
