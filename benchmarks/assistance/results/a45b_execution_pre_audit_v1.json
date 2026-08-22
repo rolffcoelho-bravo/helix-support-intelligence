@@ -1,0 +1,45 @@
+{
+  "checkpoint": "A4.5b",
+  "audit_id": "phase4-assistance-a45b-execution-pre-audit-v1",
+  "source_main_sha": "35305f3568e0842bc7327dfebb58ffc975ea1cee",
+  "status": "REGISTERED_PRE_EXECUTION_NO_RESULTS",
+  "binding": {
+    "alignment_relevance_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "alignment_relevance_revision": "c5f2b386de279a97c53a702dd5189d1c407160dc",
+    "alignment_relevance_weights_sha256": "821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae",
+    "sufficiency_polarity_model": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+    "sufficiency_polarity_revision": "0e2603d5d3d3ef9b2910814b34eebe1a2101da65",
+    "sufficiency_polarity_weights_sha256": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707"
+  },
+  "calibration": {
+    "units": 40,
+    "pairs": 360,
+    "claims": 360,
+    "pairs_sha256": "2339b1328c1dd2854e712862f5e4183300581997a22a7000db2629313a49092f",
+    "claims_sha256": "e04813b1aec29335ffdbfbd8baa2e6f021ca6aa6a64625c255b454139e948ee5",
+    "joint_threshold_candidates": 12050
+  },
+  "sealed": {
+    "fresh_validation_units": 20,
+    "fresh_validation_pairs": 180,
+    "fresh_validation_claims": 180,
+    "validation_rows_materialized": 0,
+    "validation_rows_scored": 0,
+    "confirmatory_queries": 68,
+    "confirmatory_query_records_inspected": 0,
+    "confirmatory_queries_scored": 0
+  },
+  "results": {
+    "model_inference_performed": 0,
+    "threshold_fit_performed": 0,
+    "performance_metrics_opened": 0,
+    "scientific_status_known": false
+  },
+  "governance": {
+    "candidate_model_comparison_authorized": false,
+    "post_result_threshold_rescue_authorized": false,
+    "post_result_model_substitution_authorized": false,
+    "a45c_authorized": false,
+    "separate_approval_required_for_a45c": true
+  }
+}

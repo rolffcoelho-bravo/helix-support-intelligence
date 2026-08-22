@@ -1,0 +1,110 @@
+name: Phase 4 Assistance A4.5b
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/phase4-assistance-a45b.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase4-assistance-a45b-calibration-v1
+  cancel-in-progress: false
+
+jobs:
+  registered-aerf-calibration-only:
+    name: Frozen AERF calibration-only execution and audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+
+    steps:
+      - name: Check out immutable execution commit
+        uses: actions/checkout@v4
+
+      - name: Enforce exact A4.5a predecessor
+        run: |
+          test "$(git rev-parse HEAD^)" = "35305f3568e0842bc7327dfebb58ffc975ea1cee"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+
+      - name: Install repository quality environment
+        run: uv sync --locked --group dev
+
+      - name: Verify A4.5b calibration-only pre-execution state
+        run: uv run python scripts/preflight_phase4_a45b.py
+
+      - name: Resolve and freeze A4.5b scientific runtime
+        run: uv lock --script benchmarks/assistance/calibrate_aerf_a45b.py
+
+      - name: Freeze registered scientific inputs before model inference
+        run: |
+          mkdir -p artifacts/phase4-assistance/a45b
+          sha256sum \
+            configs/models/assistance_grounding_a45a_v1.json \
+            configs/models/assistance_grounding_a45b_v1.json \
+            benchmarks/assistance/a45a_manifest_v1.json \
+            benchmarks/assistance/aerf_validity_a45a.py \
+            benchmarks/assistance/calibration_cases_a45b.py \
+            benchmarks/assistance/aerf_calibration_core_a45b.py \
+            benchmarks/assistance/calibrate_aerf_a45b.py \
+            benchmarks/assistance/calibrate_aerf_a45b.py.lock \
+            benchmarks/assistance/verify_calibration_a45b.py \
+            scripts/preflight_phase4_a45b.py \
+            .github/workflows/phase4-assistance-a45b.yml \
+            > artifacts/phase4-assistance/a45b/registered_inputs.sha256
+          cp benchmarks/assistance/calibrate_aerf_a45b.py.lock \
+            artifacts/phase4-assistance/a45b/resolved_environment.lock
+
+      - name: Execute frozen AERF calibration-only stage
+        run: >-
+          uv run --locked benchmarks/assistance/calibrate_aerf_a45b.py
+          --output-dir artifacts/phase4-assistance/a45b
+
+      - name: Reverify frozen scientific inputs after execution
+        run: sha256sum -c artifacts/phase4-assistance/a45b/registered_inputs.sha256
+
+      - name: Independently reconstruct A4.5b calibration arithmetic
+        run: >-
+          python3 benchmarks/assistance/verify_calibration_a45b.py
+          --output-dir artifacts/phase4-assistance/a45b
+
+      - name: Freeze artifact checksums
+        run: |
+          find artifacts/phase4-assistance/a45b -maxdepth 1 -type f \
+            ! -name checksums.sha256 -print0 \
+            | sort -z \
+            | xargs -0 sha256sum \
+            > artifacts/phase4-assistance/a45b/checksums.sha256
+          sha256sum -c artifacts/phase4-assistance/a45b/checksums.sha256
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          if test -f artifacts/phase4-assistance/a45b/report.md; then
+            cat artifacts/phase4-assistance/a45b/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f artifacts/phase4-assistance/a45b/post_audit.md; then
+            printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+            cat artifacts/phase4-assistance/a45b/post_audit.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload immutable A4.5b evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assistance-a45b-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: artifacts/phase4-assistance/a45b/
+          if-no-files-found: warn
+          retention-days: 90
