@@ -52,9 +52,7 @@ def _check_distribution(values: dict[str, Any], expected: set[str]) -> None:
         raise RuntimeError(f"A4.5b-M3 probability simplex drifted: {sum(numbers)}")
 
 
-def _probability_audit(
-    raw_pairs: list[dict[str, Any]], raw_sets: list[dict[str, Any]]
-) -> None:
+def _probability_audit(raw_pairs: list[dict[str, Any]], raw_sets: list[dict[str, Any]]) -> None:
     dimensions = (
         "entity",
         "predicate",
