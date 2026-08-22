@@ -144,7 +144,9 @@ def calibration_metrics(
         span_recalls.append(recall)
 
     context_indices = [
-        index for index, row in enumerate(pairs) if row["subtype"] == "context_contamination_support"
+        index
+        for index, row in enumerate(pairs)
+        if row["subtype"] == "context_contamination_support"
     ]
     context_accuracy = (
         sum(relation_predictions[index] == "ENTAILED" for index in context_indices)
