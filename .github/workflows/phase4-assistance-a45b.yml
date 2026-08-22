@@ -26,12 +26,15 @@ jobs:
       HF_HUB_DISABLE_TELEMETRY: "1"
 
     steps:
-      - name: Check out immutable execution commit
+      - name: Check out immutable execution commit with predecessor
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      - name: Enforce exact A4.5a predecessor
+      - name: Enforce infrastructure-only retry lineage
         run: |
-          test "$(git rev-parse HEAD^)" = "35305f3568e0842bc7327dfebb58ffc975ea1cee"
+          test "$(git rev-parse HEAD^)" = "6ad2b93ccdc92af204bd5bc93cd2bd2c3a7f817d"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/phase4-assistance-a45b.yml"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
