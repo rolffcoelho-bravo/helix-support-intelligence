@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -22,8 +22,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -34,59 +32,47 @@ jobs:
       - name: Install locked environment
         run: uv sync --locked --group dev
 
-      - name: Canonicalize M6 Python on its source branch
-        if: github.event_name == 'pull_request' && github.head_ref == 'phase4-a45bm6-tpag-binding-calibration'
+      - name: Diagnose first M6 structural mismatch
         run: |
-          uv run ruff format \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            benchmarks/assistance/tpag_core_a45bm6.py \
-            benchmarks/assistance/verify_calibration_a45bm6.py \
-            scripts/preflight_phase4_a45bm6.py \
-            tests/test_phase4_a45bm6_binding.py
-          python3 - <<'PY'
-          from pathlib import Path
+          uv run python - <<'PY'
+          import json
+          import runpy
 
-          path = Path("benchmarks/assistance/calibrate_tpag_a45bm6.py")
-          text = path.read_text(encoding="utf-8")
-          old = """        f"Readiness requirements passed: **{selected['requirements_passed']}/{selected['requirements_total']}**","""
-          new = """        (
-              f"Readiness requirements passed: **{selected['requirements_passed']}/"
-              f"{selected['requirements_total']}**"
-          ),"""
-          if old not in text:
-              raise SystemExit("Expected M6 report line was not found")
-          path.write_text(text.replace(old, new), encoding="utf-8")
+          namespace = runpy.run_path("tests/test_phase4_a45bm6_binding.py")
+          core = namespace["_module"](
+              "tpag_core_a45bm6_debug", namespace["CORE"]
+          )
+          builder = namespace["_module"](
+              "tpag_calibration_a45bm5_debug", namespace["BUILDER"]
+          )
+          suite = builder.build_suite()
+          scores = namespace["_fake_raw_scores"](core, suite)
+          predictions = core.predict_all(suite, scores, 0.9)
+          for row, prediction in zip(
+              suite["alignment_rows"], predictions["alignments"], strict=True
+          ):
+              gold = row["gold"]
+              if prediction["scope_compatibility"] != gold["scope_compatibility"]:
+                  print(
+                      json.dumps(
+                          {
+                              "alignment_id": row["alignment_id"],
+                              "subtype": row["subtype"],
+                              "claim": row["claim"],
+                              "evidence": row["evidence_proposition"],
+                              "gold_slot_relations": gold["slot_relations"],
+                              "predicted_slot_relations": prediction["slot_relations"],
+                              "gold_compatibility": gold["scope_compatibility"],
+                              "predicted_compatibility": prediction[
+                                  "scope_compatibility"
+                              ],
+                          },
+                          indent=2,
+                          sort_keys=True,
+                      )
+                  )
+                  break
           PY
-          uv run ruff check --fix \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            benchmarks/assistance/tpag_core_a45bm6.py \
-            benchmarks/assistance/verify_calibration_a45bm6.py \
-            scripts/preflight_phase4_a45bm6.py \
-            tests/test_phase4_a45bm6_binding.py
-          uv run ruff format \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            benchmarks/assistance/tpag_core_a45bm6.py \
-            benchmarks/assistance/verify_calibration_a45bm6.py \
-            scripts/preflight_phase4_a45bm6.py \
-            tests/test_phase4_a45bm6_binding.py
-          uv run ruff check \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            benchmarks/assistance/tpag_core_a45bm6.py \
-            benchmarks/assistance/verify_calibration_a45bm6.py \
-            scripts/preflight_phase4_a45bm6.py \
-            tests/test_phase4_a45bm6_binding.py
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            benchmarks/assistance/tpag_core_a45bm6.py \
-            benchmarks/assistance/verify_calibration_a45bm6.py \
-            scripts/preflight_phase4_a45bm6.py \
-            tests/test_phase4_a45bm6_binding.py
-          if ! git diff --cached --quiet; then
-            git commit -m "Canonicalize A4.5b-M6 Python formatting"
-            git push origin HEAD:phase4-a45bm6-tpag-binding-calibration
-          fi
 
       - name: Run release-blocking checks
         run: make quality
