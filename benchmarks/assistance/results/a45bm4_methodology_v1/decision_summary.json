@@ -1,0 +1,85 @@
+{
+  "checkpoint": "A4.5b-M4",
+  "decision_id": "phase4-assistance-a4.5b-m4-tpag-methodology-v1",
+  "status": "CLOSED_METHODOLOGY_SELECTED_NO_INFERENCE",
+  "source_main_sha": "595a1df9381b5c7d6e79042b0438eb12d39bff9b",
+  "source_failure": {
+    "checkpoint": "A4.5b-M3",
+    "scientific_status": "FAILED_SCEC_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+    "failed_measurement_assumption": "one zero-shot NLI primitive can authoritatively measure all SCEC compatibility dimensions, coverage, and polarity through hypothesis competition",
+    "registered_candidates": 609,
+    "feasible_candidates": 0,
+    "requirements_passed": 14,
+    "requirements_total": 42
+  },
+  "selected_methodology": {
+    "name": "Typed Proposition Alignment Graph",
+    "short_name": "TPAG",
+    "novelty_claim": false,
+    "implementation_bound": false,
+    "model_bound": false,
+    "thresholds_bound": false,
+    "relationship_to_scec": "operational measurement architecture for SCEC"
+  },
+  "core_decisions": [
+    "Retain SCEC's conceptual separation of compatibility, sufficiency, polarity, deterministic relation mapping, and claim composition.",
+    "Retire universal whole-pair zero-shot NLI hypothesis competition as the authoritative measurement of every SCEC dimension.",
+    "Represent each claim atom and candidate evidence proposition as typed proposition frames with explicit core and qualifier slots.",
+    "Evaluate MATCH, MISMATCH, or UNSPECIFIED slot relations with typed comparison rather than one universal semantic labeler.",
+    "Treat explicit mandatory mismatches as compatibility vetoes and unspecified required content as a coverage gap rather than a contradiction.",
+    "Construct an evidence coverage graph so complementary compatible propositions can jointly satisfy decisive claim slots.",
+    "Evaluate support or refutation only after scope alignment and sufficiency are established.",
+    "Permit specialized deterministic or separately validated learned logic for explicit negation, value conflict, temporal relations, and residual semantic equivalence.",
+    "Preserve existing AERF atoms and forbid verifier-adaptive free-form redecomposition in this checkpoint."
+  ],
+  "frame_slots": [
+    "entity_or_subject",
+    "predicate_or_event",
+    "target_slot_identity",
+    "target_value",
+    "temporal_scope",
+    "location_scope",
+    "organizational_scope",
+    "conditional_scope",
+    "modality_or_quantification"
+  ],
+  "future_validity_focus": [
+    "proposition and frame extraction fidelity",
+    "slotwise MATCH/MISMATCH/UNSPECIFIED accuracy",
+    "explicit mismatch rejection by dimension",
+    "relevant-but-insufficient preservation",
+    "set-level decisive-slot coverage",
+    "minimal evidence group recovery",
+    "eligible-case support/refute polarity",
+    "support/refute conflict detection",
+    "final relation and claim-level safety"
+  ],
+  "data_governance": {
+    "closed_m2_m3_calibration_independent_validity_evidence": false,
+    "closed_m2_m3_calibration_regression_use_only": true,
+    "fresh_replacement_calibration_required": true,
+    "a45a_fresh_validation_pairs_scored": 0,
+    "a45a_fresh_validation_claims_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a45c_eligible": false,
+    "a45c_authorized": false,
+    "a45c_repurposed": false
+  },
+  "scope": {
+    "semantic_inference_performed": 0,
+    "model_bindings_performed": 0,
+    "model_family_comparisons_performed": 0,
+    "threshold_searches_performed": 0,
+    "prompt_searches_performed": 0,
+    "calibration_fits_performed": 0,
+    "validation_rows_scored": 0,
+    "confirmatory_queries_scored": 0,
+    "closed_m3_rows_rescored": 0
+  },
+  "next_action": {
+    "class": "FRESH_TPAG_MEASUREMENT_AND_CALIBRATION_PROTOCOL_REGISTRATION",
+    "authorized": false,
+    "requires_separate_approval": true
+  }
+}
