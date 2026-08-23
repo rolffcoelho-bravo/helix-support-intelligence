@@ -37,6 +37,12 @@ jobs:
       - name: Canonicalize M6 Python on its source branch
         if: github.event_name == 'pull_request' && github.head_ref == 'phase4-a45bm6-tpag-binding-calibration'
         run: |
+          uv run ruff format \
+            benchmarks/assistance/calibrate_tpag_a45bm6.py \
+            benchmarks/assistance/tpag_core_a45bm6.py \
+            benchmarks/assistance/verify_calibration_a45bm6.py \
+            scripts/preflight_phase4_a45bm6.py \
+            tests/test_phase4_a45bm6_binding.py
           uv run ruff check --fix \
             benchmarks/assistance/calibrate_tpag_a45bm6.py \
             benchmarks/assistance/tpag_core_a45bm6.py \
@@ -44,6 +50,12 @@ jobs:
             scripts/preflight_phase4_a45bm6.py \
             tests/test_phase4_a45bm6_binding.py
           uv run ruff format \
+            benchmarks/assistance/calibrate_tpag_a45bm6.py \
+            benchmarks/assistance/tpag_core_a45bm6.py \
+            benchmarks/assistance/verify_calibration_a45bm6.py \
+            scripts/preflight_phase4_a45bm6.py \
+            tests/test_phase4_a45bm6_binding.py
+          uv run ruff check \
             benchmarks/assistance/calibrate_tpag_a45bm6.py \
             benchmarks/assistance/tpag_core_a45bm6.py \
             benchmarks/assistance/verify_calibration_a45bm6.py \
