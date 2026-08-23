@@ -265,10 +265,10 @@ def main() -> None:
         "status": "RAW_LEARNED_OUTPUTS_FROZEN_BEFORE_GOLD_EVALUATION",
         "residual_request_count": len(raw_rows),
         "raw_scores_sha256": _sha256(raw_path),
-        "gold_read_for_inference": false,
+        "gold_read_for_inference": False,
         "a45a_fresh_validation_rows_scored": 0,
         "confirmatory_queries_scored": 0,
-        "closed_a45bm2_m3_rows_scored": 0
+        "closed_a45bm2_m3_rows_scored": 0,
     }
     _write_json(output_dir / "raw_inference_manifest.json", raw_manifest)
     _write_json(output_dir / "model_weight_verification.json", model_verification)
@@ -314,9 +314,9 @@ def main() -> None:
             "confirmatory_records_inspected": 0,
             "closed_a45bm2_m3_rows_scored": 0,
             "future_validation_rows_constructed": 0,
-            "post_result_rescue_authorized": false,
-            "next_checkpoint_authorized": false
-        }
+            "post_result_rescue_authorized": False,
+            "next_checkpoint_authorized": False,
+        },
     }
     _write_json(output_dir / "results.json", results)
     (output_dir / "report.md").write_text(_report(results), encoding="utf-8")
