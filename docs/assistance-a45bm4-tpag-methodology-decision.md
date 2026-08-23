@@ -172,7 +172,7 @@ Not authorized or performed:
 - fresh-validation scoring;
 - confirmatory inspection or scoring.
 
-## Next locked action
+## Next research step
 
 The only admissible next action is **fresh TPAG measurement and calibration protocol registration**. That checkpoint must define the fresh calibration construction, component labels, measurement floors, deterministic versus learned boundaries, and later binding/search budget **before** any parser/model is bound or any new inference is executed.
 
