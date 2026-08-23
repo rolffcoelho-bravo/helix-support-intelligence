@@ -1,0 +1,107 @@
+{
+  "corpus_id": "helix-tpag-calibration-corpus-v1",
+  "counts": {
+    "alignment_compatibility": {
+      "COMPATIBLE": 640,
+      "INCOMPATIBLE": 640
+    },
+    "alignment_relations": {
+      "CONTRADICTED": 64,
+      "ENTAILED": 192,
+      "UNKNOWN": 1024
+    },
+    "alignment_rows": 1280,
+    "alignment_subtypes": {
+      "conditional_scope_mismatch": 64,
+      "cross_unit_distractor": 64,
+      "direct_refutation_value_conflict": 64,
+      "direct_support": 64,
+      "entity_mismatch": 64,
+      "explicit_entity_alias_match": 64,
+      "location_scope_mismatch": 64,
+      "missing_conditional_scope": 64,
+      "missing_location_scope": 64,
+      "missing_modality_quantification": 64,
+      "missing_organizational_scope": 64,
+      "missing_target_value": 64,
+      "missing_temporal_scope": 64,
+      "modality_quantification_mismatch": 64,
+      "organizational_scope_mismatch": 64,
+      "predicate_mismatch": 64,
+      "predicate_paraphrase_match": 64,
+      "same_domain_near_miss": 64,
+      "target_slot_identity_mismatch": 64,
+      "temporal_scope_mismatch": 64
+    },
+    "claim_categories": {
+      "citation_invalid": 64,
+      "compatible_incomplete": 64,
+      "complementary_group_supported": 64,
+      "registered_conflict": 64,
+      "same_scope_conflict": 64,
+      "scope_mismatch_only": 64,
+      "single_refuted": 64,
+      "single_supported": 64,
+      "stale_evidence": 64,
+      "unresolved_alignment_abstention": 64
+    },
+    "claim_rows": 640,
+    "evidence_group_rows": 768,
+    "evidence_group_subtypes": {
+      "complementary_three_span_support": 64,
+      "complementary_two_span_support": 64,
+      "cross_span_scope_incoherence": 64,
+      "different_condition_not_conflict": 64,
+      "multi_span_unresolved_condition": 64,
+      "redundant_support_minimality": 64,
+      "same_scope_support_refute_conflict": 64,
+      "single_incomplete_missing_condition": 64,
+      "single_incomplete_missing_value": 64,
+      "single_refutation": 64,
+      "single_support": 64,
+      "support_with_cross_unit_distractor": 64
+    },
+    "group_relations": {
+      "CONFLICTING_EVIDENCE": 64,
+      "CONTRADICTED": 64,
+      "ENTAILED": 384,
+      "UNKNOWN": 256
+    },
+    "proposition_rows": 512,
+    "proposition_subtypes": {
+      "alias_requires_decontextualization": 64,
+      "coordinated_independent_propositions": 64,
+      "no_target_proposition": 64,
+      "parenthetical_context_target": 64,
+      "pronoun_requires_decontextualization": 64,
+      "single_clean_target": 64,
+      "target_after_unrelated_prefix": 64,
+      "target_before_unrelated_suffix": 64
+    },
+    "units": 64
+  },
+  "governance": {
+    "a45a_fresh_validation_rows_materialized": 0,
+    "a45a_fresh_validation_rows_scored": 0,
+    "a45bm2_m3_rows_reused": 0,
+    "calibration_fits": 0,
+    "candidate_model_calls": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_query_records_inspected": 0,
+    "future_validation_rows_constructed": 0,
+    "model_bindings": 0,
+    "model_family_comparisons": 0,
+    "prompt_searches": 0,
+    "threshold_searches": 0
+  },
+  "partition": "calibration_only",
+  "protocol_id": "phase4-assistance-a4.5b-m5-tpag-calibration-v1",
+  "seed": 20260823,
+  "sha256": {
+    "alignment_rows": "698516335de3829941092bcf312af6d9f97b2acdbd155c0bdbd0006dfc94dee7",
+    "claim_rows": "20063b3fc84f306b43adf3fd1a4a0a255c2aeb7e04863c3c98158da7dfb9324c",
+    "evidence_group_rows": "2d00c96870082ab234aff01686004f4c377b1451245799a2fe093224bf4f63d5",
+    "proposition_rows": "eabc82d897b3720556ceeb6d4034c9e7c3a6dec6ea7e8ab846eb08930cbbd80b",
+    "units": "7ffe0ccd27c4f837374adb9b9041829984d16251bb68f7157b6dd16dffa3fa9f"
+  }
+}
