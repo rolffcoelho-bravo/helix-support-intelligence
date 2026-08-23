@@ -34,12 +34,11 @@ jobs:
       - name: Install locked environment
         run: uv sync --locked --group dev
 
-      - name: Rebase M6 provenance to corrected M5 main
+      - name: Rebase non-workflow M6 provenance to corrected M5 main
         run: |
           OLD='9070fc4cf0447077a20c7e576e49e9ba5f0536ba'
           NEW='1ac85b123a4804e5cc6f9b74662ff04fd9ef198b'
           for path in \
-            .github/workflows/phase4-assistance-a45bm6.yml \
             benchmarks/assistance/calibrate_tpag_a45bm6.py \
             configs/models/assistance_grounding_a45bm6_v1.json \
             docs/assistance-a45bm6-tpag-binding-calibration.md \
@@ -57,7 +56,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
-            .github/workflows/phase4-assistance-a45bm6.yml \
             benchmarks/assistance/calibrate_tpag_a45bm6.py \
             docs/assistance-a45bm6-tpag-binding-calibration.md \
             scripts/preflight_phase4_a45bm6.py
