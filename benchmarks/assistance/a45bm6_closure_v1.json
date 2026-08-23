@@ -1,0 +1,169 @@
+{
+  "closure_id": "phase4-assistance-a4.5b-m6-closure-v1",
+  "checkpoint": "A4.5b-M6",
+  "scientific_status": "PASSED_TPAG_CALIBRATION_READINESS_PARAMETERS_FROZEN",
+  "scientific_pass": true,
+  "scope": "calibration_readiness_only",
+  "generalization_claim_authorized": false,
+  "validation_authorized": false,
+  "execution": {
+    "run_id": 32650171688,
+    "job_id": 97220391248,
+    "run_attempt": 1,
+    "event": "push",
+    "execution_sha": "6a2d77a2ff0a219197dd3acdd58aaaac82f6794d",
+    "direct_parent_sha": "1ac85b123a4804e5cc6f9b74662ff04fd9ef198b",
+    "workflow_conclusion": "success"
+  },
+  "corrected_m5_provenance": {
+    "source_main_sha": "1ac85b123a4804e5cc6f9b74662ff04fd9ef198b",
+    "alignment_sha256": "136322c6b4710fdf3d5ea3edb857a31d8a99133c9308899e176fb914ef6b6c09",
+    "erratum_status": "CLOSED_PREINFERENCE_FIXTURE_ERRATUM_NO_SEMANTIC_INFERENCE"
+  },
+  "artifact": {
+    "artifact_id": 9495963075,
+    "name": "phase4-assistance-a45bm6-6a2d77a2ff0a219197dd3acdd58aaaac82f6794d-attempt-1",
+    "zip_sha256": "ab56b67f3f2542a7b81342c104d3c7976dc59902e252414aec258437e2a5dbb1",
+    "size_bytes": 44835,
+    "files": {
+      "environment.json": "d0011096b5bd41f996a26fa4d1d4d93b7c0325f03643900013e3c84cdca1ebc5",
+      "model_weight_verification.json": "5963f782acb89b0297ebd491b9631e594d7ad42bfbd5d5a7606992fabd229860",
+      "post_audit.json": "f6a25a91e07b5f0fd1867e0f821f53db781ef9cd660af565790c5ff3445cdded",
+      "post_audit.md": "d33e27d6cb658f517f3883fa4db5c423058adbbb1e33d084432715eec3dfda6f",
+      "raw_inference_manifest.json": "eda935baae28ec05655fb4f0df1668bf57eeefa82384c6c2a777079603b05c7d",
+      "registered_inputs.sha256": "9b866aaf94f5244f8a219298fcafe61fed0b6b4ce6ca946cc9078223c7a869ea",
+      "report.md": "d4d59c4b30883934ab14eda4e40d6c244dc3e8799664bd6b78d2c077f1f9a9fb",
+      "residual_raw_scores.jsonl": "94a0fd23901fd250513e3415a131ab21ec1a1acbc605b53457fd4e18820ded00",
+      "resolved_environment.lock": "7b7636708fb540d8b3b1a83405f45ffc49f45de59bc614cb86a969b10a44b951",
+      "results.json": "b836410af1430858826be2a8e943c3034b870a47a7f36e57b690c842d6cff2c9"
+    },
+    "local_zip_digest_verified": true,
+    "all_internal_file_hashes_verified": true
+  },
+  "model": {
+    "model_id": "cross-encoder/nli-deberta-v3-base",
+    "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa",
+    "tokenizer_file": "spm.model",
+    "tokenizer_sha256": "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd",
+    "license": "apache-2.0"
+  },
+  "registered_calibration": {
+    "calibration_units": 64,
+    "proposition_rows": 512,
+    "alignment_rows": 1280,
+    "evidence_group_rows": 768,
+    "claim_rows": 640,
+    "readiness_requirements": 56,
+    "residual_learned_requests": 128,
+    "candidate_count": 7,
+    "feasible_candidate_count": 6,
+    "selected_alignment_confidence_min": 0.6,
+    "selected_requirements_passed": 56,
+    "selected_requirements_total": 56,
+    "candidate_geometry": [
+      {
+        "alignment_confidence_min": 0.6,
+        "feasible": true,
+        "requirements_passed": 56,
+        "slot_relation_macro_f1": 0.9462257392420863,
+        "predicate_paraphrase_match_recall": 1.0,
+        "final_relation_macro_f1": 1.0
+      },
+      {
+        "alignment_confidence_min": 0.65,
+        "feasible": true,
+        "requirements_passed": 56,
+        "slot_relation_macro_f1": 0.9429798831922956,
+        "predicate_paraphrase_match_recall": 1.0,
+        "final_relation_macro_f1": 1.0
+      },
+      {
+        "alignment_confidence_min": 0.7,
+        "feasible": true,
+        "requirements_passed": 56,
+        "slot_relation_macro_f1": 0.9401619841971408,
+        "predicate_paraphrase_match_recall": 1.0,
+        "final_relation_macro_f1": 1.0
+      },
+      {
+        "alignment_confidence_min": 0.75,
+        "feasible": true,
+        "requirements_passed": 56,
+        "slot_relation_macro_f1": 0.9397162976261971,
+        "predicate_paraphrase_match_recall": 1.0,
+        "final_relation_macro_f1": 1.0
+      },
+      {
+        "alignment_confidence_min": 0.8,
+        "feasible": true,
+        "requirements_passed": 56,
+        "slot_relation_macro_f1": 0.9379385241376718,
+        "predicate_paraphrase_match_recall": 1.0,
+        "final_relation_macro_f1": 1.0
+      },
+      {
+        "alignment_confidence_min": 0.85,
+        "feasible": true,
+        "requirements_passed": 56,
+        "slot_relation_macro_f1": 0.9358529853121859,
+        "predicate_paraphrase_match_recall": 0.984375,
+        "final_relation_macro_f1": 0.9989669969982597
+      },
+      {
+        "alignment_confidence_min": 0.9,
+        "feasible": false,
+        "requirements_passed": 55,
+        "slot_relation_macro_f1": 0.9323162360603496,
+        "predicate_paraphrase_match_recall": 0.890625,
+        "final_relation_macro_f1": 0.9926753449028808
+      }
+    ]
+  },
+  "selected_metrics": {
+    "target_proposition_f1": 1.0,
+    "scope_compatibility_macro_f1": 1.0,
+    "slot_relation_macro_f1": 0.9462257392420863,
+    "sufficiency_macro_f1": 1.0,
+    "polarity_macro_f1": 1.0,
+    "final_relation_macro_f1": 1.0,
+    "claim_category_macro_accuracy": 1.0,
+    "supported_precision": 1.0,
+    "supported_recall": 1.0,
+    "contradicted_recall": 1.0,
+    "unknown_recall": 1.0,
+    "conflicting_evidence_recall": 1.0,
+    "minimal_sufficient_group_exact_match": 1.0,
+    "predicate_mismatch_rejection": 1.0,
+    "predicate_paraphrase_match_recall": 1.0,
+    "false_supported_safety": 0.0,
+    "different_condition_false_conflict_rate": 0.0,
+    "no_target_false_positive_rate": 0.0
+  },
+  "reconstruction": {
+    "status": "PASSED_A45BM6_DETERMINISTIC_RECONSTRUCTION",
+    "raw_outputs_frozen_before_gold_evaluation": true,
+    "raw_scores_sha256": "94a0fd23901fd250513e3415a131ab21ec1a1acbc605b53457fd4e18820ded00",
+    "selected_alignment_confidence_min": 0.6,
+    "scientific_pass": true
+  },
+  "sealed_boundaries": {
+    "a45a_fresh_validation_rows_scored": 0,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "closed_a45bm2_m3_rows_scored": 0,
+    "future_validation_rows_constructed": 0,
+    "model_family_comparisons": 0,
+    "prompt_searches": 0,
+    "post_result_rescue_authorized": false,
+    "next_checkpoint_authorized": false
+  },
+  "interpretation": {
+    "calibration_readiness_passed": true,
+    "m5_is_independent_generalization_evidence": false,
+    "fresh_validation_requires_separate_approval": true,
+    "confirmatory_access_requires_separate_approval": true,
+    "real_world_performance_claim_authorized": false
+  }
+}
