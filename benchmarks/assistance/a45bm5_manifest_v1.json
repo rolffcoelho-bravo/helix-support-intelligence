@@ -98,7 +98,7 @@
   "protocol_id": "phase4-assistance-a4.5b-m5-tpag-calibration-v1",
   "seed": 20260823,
   "sha256": {
-    "alignment_rows": "c2b0bb66dc13a8c09560730337152ee5d0978b5a995bc7af3beb7782988c2845",
+    "alignment_rows": "136322c6b4710fdf3d5ea3edb857a31d8a99133c9308899e176fb914ef6b6c09",
     "claim_rows": "20063b3fc84f306b43adf3fd1a4a0a255c2aeb7e04863c3c98158da7dfb9324c",
     "evidence_group_rows": "0927bb13d8f8d64ec692f349a6dec403e75faec87ca4812fe07c975e0d462c89",
     "proposition_rows": "eabc82d897b3720556ceeb6d4034c9e7c3a6dec6ea7e8ab846eb08930cbbd80b",

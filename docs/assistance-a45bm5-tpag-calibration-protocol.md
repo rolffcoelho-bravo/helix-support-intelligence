@@ -96,7 +96,7 @@ Frozen hashes:
 - proposition rows:
   `eabc82d897b3720556ceeb6d4034c9e7c3a6dec6ea7e8ab846eb08930cbbd80b`
 - alignment rows:
-  `c2b0bb66dc13a8c09560730337152ee5d0978b5a995bc7af3beb7782988c2845`
+  `136322c6b4710fdf3d5ea3edb857a31d8a99133c9308899e176fb914ef6b6c09`
 - evidence-group rows:
   `0927bb13d8f8d64ec692f349a6dec403e75faec87ca4812fe07c975e0d462c89`
 - claim rows:
@@ -282,3 +282,28 @@ runtime, its raw-output contract, and the registered calibration selection proce
 before any M5 calibration result is exposed.
 
 A4.5b-M6 is not authorized by this registration and requires separate approval.
+
+## Pre-inference fixture erratum
+
+Before any A4.5b-M6 semantic inference, static structural testing found that the A18
+`predicate_paraphrase_match` generator used unrestricted string replacement. When a
+predicate token also appeared inside the conditional qualifier, that operation changed
+both the intended predicate span and the condition while gold still marked
+`conditional_scope` as `MATCH`. The first observed case was `TPAG-C004-A18`.
+
+The correction changes only A18 surface construction: the replacement is now restricted
+to the registered operation span `and <predicate> them within`, exactly once. Counts, gold
+labels, readiness floors, units, proposition rows, evidence-group rows, claim rows, and all
+governance boundaries are unchanged.
+
+Original alignment SHA-256:
+
+`c2b0bb66dc13a8c09560730337152ee5d0978b5a995bc7af3beb7782988c2845`
+
+Corrected alignment SHA-256:
+
+`136322c6b4710fdf3d5ea3edb857a31d8a99133c9308899e176fb914ef6b6c09`
+
+No M6 model inference, threshold evaluation, A4.5a validation access, M2/M3 rescoring,
+or confirmatory access occurred before this repair. The abandoned M6 PR #50 was closed
+unmerged after the defect was detected by static CI.

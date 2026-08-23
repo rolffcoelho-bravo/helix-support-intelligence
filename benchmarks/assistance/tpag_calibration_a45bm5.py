@@ -556,7 +556,11 @@ def _unit_alignments(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[s
             "ENTAILED",
         )
     )
-    paraphrase_evidence = support.replace(unit["predicate"], unit["predicate_paraphrase"])
+    paraphrase_evidence = support.replace(
+        f" and {unit['predicate']} them within",
+        f" and {unit['predicate_paraphrase']} them within",
+        1,
+    )
     rows.append(
         _alignment_row(
             unit,

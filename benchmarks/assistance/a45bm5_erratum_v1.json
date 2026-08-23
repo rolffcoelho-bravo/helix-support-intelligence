@@ -1,0 +1,30 @@
+{
+  "a45a_fresh_validation_rows_scored": 0,
+  "a45c_repurposed": false,
+  "abandoned_m6_pr": 50,
+  "affected_corpus_id": "helix-tpag-calibration-corpus-v1",
+  "affected_subtype": "predicate_paraphrase_match",
+  "closed_a45bm2_m3_rows_scored": 0,
+  "confirmatory_queries_scored": 0,
+  "confirmatory_records_inspected": 0,
+  "counts_unchanged": true,
+  "defect": "A18 used unrestricted predicate string replacement, which could also mutate conditional-scope text containing the same token while gold remained MATCH.",
+  "erratum_id": "phase4-assistance-a4.5b-m5-preinference-fixture-erratum-v1",
+  "first_observed_case": "TPAG-C004-A18",
+  "gold_labels_changed": 0,
+  "m6_model_calls_before_repair": 0,
+  "m6_threshold_candidates_evaluated_before_repair": 0,
+  "new_alignment_sha256": "136322c6b4710fdf3d5ea3edb857a31d8a99133c9308899e176fb914ef6b6c09",
+  "old_alignment_sha256": "c2b0bb66dc13a8c09560730337152ee5d0978b5a995bc7af3beb7782988c2845",
+  "readiness_requirements_changed": 0,
+  "repair": "Restrict replacement to the registered operation span 'and <predicate> them within' and replace exactly once.",
+  "semantic_inference_before_repair": 0,
+  "source_main_sha": "9070fc4cf0447077a20c7e576e49e9ba5f0536ba",
+  "status": "CLOSED_PREINFERENCE_FIXTURE_ERRATUM_NO_SEMANTIC_INFERENCE",
+  "unchanged_sha256": {
+    "claim_rows": "20063b3fc84f306b43adf3fd1a4a0a255c2aeb7e04863c3c98158da7dfb9324c",
+    "evidence_group_rows": "0927bb13d8f8d64ec692f349a6dec403e75faec87ca4812fe07c975e0d462c89",
+    "proposition_rows": "eabc82d897b3720556ceeb6d4034c9e7c3a6dec6ea7e8ab846eb08930cbbd80b",
+    "units": "7ffe0ccd27c4f837374adb9b9041829984d16251bb68f7157b6dd16dffa3fa9f"
+  }
+}
