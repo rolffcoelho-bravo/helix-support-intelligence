@@ -1,9 +1,7 @@
 """Candidate-independent TPAG calibration construction for Phase 4 A4.5b-M5.
 
-This module performs no learned inference. It creates calibration-only fictional
-support-policy fixtures for proposition extraction, typed slot alignment, evidence-group
-coverage, and claim composition. It does not materialize A4.5a validation or confirmatory
-data.
+This module performs no learned inference and creates calibration-only fictional
+support-policy fixtures. It does not materialize A4.5a validation or confirmatory data.
 """
 
 from __future__ import annotations
@@ -139,7 +137,9 @@ def build_units() -> list[dict[str, Any]]:
                 "predicate_paraphrase": f"complete {predicate} handling",
                 "target_slot_identity": slot,
                 "target_value": window,
-                "alternate_target_value": WINDOWS[(WINDOWS.index(window) + 1) % len(WINDOWS)],
+                "alternate_target_value": WINDOWS[
+                    (WINDOWS.index(window) + 1) % len(WINDOWS)
+                ],
                 "year": year,
                 "alternate_year": YEARS[(YEARS.index(year) + 1) % len(YEARS)],
                 "region": region,
@@ -226,7 +226,9 @@ def _proposition_row(
     }
 
 
-def _unit_propositions(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[str, Any]]:
+def _unit_propositions(
+    unit: dict[str, Any], other: dict[str, Any]
+) -> list[dict[str, Any]]:
     support = _support(unit)
     unrelated = (
         f"{other['organization']} maintains {other['subject'].lower()} records for "
@@ -351,7 +353,9 @@ def _alignment_row(
     }
 
 
-def _unit_alignments(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[str, Any]]:
+def _unit_alignments(
+    unit: dict[str, Any], other: dict[str, Any]
+) -> list[dict[str, Any]]:
     support = _support(unit)
     refute = _refute(unit)
     base = _frame(unit)
@@ -408,7 +412,13 @@ def _unit_alignments(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[s
             unit,
             "A05",
             "target_slot_identity_mismatch",
-            support.replace(unit["predicate"], unit["alternate_predicate"]),
+            (
+                f"During {unit['year']}, {unit['organization']} in the {unit['region']} "
+                f"{unit['modality']} {unit['subject'].lower()} records in "
+                f"{unit['service_line']}. The governing action is {unit['predicate']}, "
+                f"and the {unit['alternate_slot']} is {unit['target_value']} business days "
+                f"when {unit['condition']}."
+            ),
             _frame(unit, target_slot_identity=unit["alternate_slot"]),
             _relations(target_slot_identity="MISMATCH"),
             "INCOMPATIBLE",
@@ -698,7 +708,13 @@ def _unit_groups(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[str, 
         " under the applicable condition",
     )
     distractor = _support(other)
-    incoherent_scope = support.replace(unit["region"], unit["alternate_region"])
+    coherent_except_location = (
+        f"During {unit['year']}, {unit['organization']} {unit['modality']} "
+        f"{unit['subject'].lower()} records in {unit['service_line']} and "
+        f"{unit['predicate']} them within {unit['target_value']} business days "
+        f"when {unit['condition']}."
+    )
+    incoherent_location = f"The applicable location is {unit['alternate_region']}."
     support_duplicate = support.replace("records in", "records assigned to")
     different_condition_refute = refute.replace(
         unit["condition"],
@@ -853,17 +869,9 @@ def _unit_groups(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[str, 
             unit,
             "G12",
             "cross_span_scope_incoherence",
-            [value, incoherent_scope],
-            [
-                "entity_or_subject",
-                "predicate_or_event",
-                "target_slot_identity",
-                "target_value",
-                "organizational_scope",
-                "conditional_scope",
-                "modality_or_quantification",
-            ],
-            ["location_scope", "temporal_scope"],
+            [coherent_except_location, incoherent_location],
+            [slot for slot in all_slots if slot != "location_scope"],
+            ["location_scope"],
             [],
             "INCOHERENT",
             "INSUFFICIENT",
@@ -1017,8 +1025,7 @@ def manifest() -> dict[str, Any]:
             "claim_categories": _counts(claims, "category"),
             "alignment_compatibility": {
                 label: sum(
-                    row["gold"]["scope_compatibility"] == label
-                    for row in alignments
+                    row["gold"]["scope_compatibility"] == label for row in alignments
                 )
                 for label in ("COMPATIBLE", "INCOMPATIBLE")
             },
