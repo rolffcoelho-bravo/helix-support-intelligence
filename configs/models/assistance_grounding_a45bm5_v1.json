@@ -1,0 +1,308 @@
+{
+  "calibration_readiness_requirements": {
+    "citation_invalid_accuracy_min": 1.0,
+    "claim_category_macro_accuracy_min": 0.95,
+    "compatible_recall_min": 0.93,
+    "complementary_three_span_support_recall_min": 0.92,
+    "complementary_two_span_support_recall_min": 0.92,
+    "conditional_scope_mismatch_rejection_min": 0.95,
+    "conflicting_evidence_recall_min": 1.0,
+    "contradicted_recall_min": 0.95,
+    "covered_slot_exact_set_accuracy_min": 0.9,
+    "cross_span_scope_incoherence_insufficiency_recall_min": 0.98,
+    "cross_unit_distractor_rejection_min": 0.98,
+    "decontextualized_target_frame_slot_accuracy_min": 0.93,
+    "different_condition_false_conflict_rate_max": 0.0,
+    "entailed_recall_min": 0.92,
+    "entity_mismatch_rejection_min": 0.95,
+    "explicit_entity_alias_match_recall_min": 0.9,
+    "false_supported_safety_max": 0.0,
+    "final_relation_macro_f1_min": 0.92,
+    "incompatible_recall_min": 0.93,
+    "insufficient_recall_min": 0.95,
+    "irrelevant_distractor_robustness_min": 0.98,
+    "location_scope_mismatch_rejection_min": 0.95,
+    "minimal_sufficient_group_exact_match_min": 0.9,
+    "missing_conditional_scope_stays_compatible_min": 0.98,
+    "missing_location_scope_stays_compatible_min": 0.98,
+    "missing_modality_quantification_stays_compatible_min": 0.98,
+    "missing_organizational_scope_stays_compatible_min": 0.98,
+    "missing_slot_exact_set_accuracy_min": 0.95,
+    "missing_target_value_stays_compatible_min": 0.98,
+    "missing_temporal_scope_stays_compatible_min": 0.98,
+    "modality_quantification_mismatch_rejection_min": 0.95,
+    "no_target_false_positive_rate_max": 0.02,
+    "organizational_scope_mismatch_rejection_min": 0.95,
+    "polarity_macro_f1_min": 0.92,
+    "predicate_mismatch_rejection_min": 0.95,
+    "predicate_paraphrase_match_recall_min": 0.9,
+    "proposition_precision_min": 0.95,
+    "proposition_recall_min": 0.95,
+    "refutes_recall_min": 0.95,
+    "registered_conflict_accuracy_min": 1.0,
+    "same_domain_near_miss_rejection_min": 0.98,
+    "same_scope_conflict_accuracy_min": 1.0,
+    "scope_compatibility_macro_f1_min": 0.93,
+    "slot_relation_macro_f1_min": 0.92,
+    "stale_evidence_accuracy_min": 1.0,
+    "sufficiency_macro_f1_min": 0.92,
+    "sufficient_recall_min": 0.92,
+    "supported_precision_min": 0.99,
+    "supported_recall_min": 0.92,
+    "supports_recall_min": 0.92,
+    "target_proposition_f1_min": 0.95,
+    "target_slot_identity_mismatch_rejection_min": 0.95,
+    "target_value_conflict_refutation_recall_min": 0.95,
+    "target_value_conflict_stays_scope_compatible_min": 0.98,
+    "temporal_scope_mismatch_rejection_min": 0.95,
+    "unknown_recall_min": 0.95
+  },
+  "checkpoint": "A4.5b-M5",
+  "data_governance": {
+    "a45a_fresh_validation_claims_scored": 0,
+    "a45a_fresh_validation_pairs_scored": 0,
+    "a45a_fresh_validation_remains_sealed": true,
+    "a45bm2_m3_calibration_may_be_used_for": [
+      "failure diagnosis",
+      "non-independent regression checks after a future TPAG implementation and M5 parameters are frozen"
+    ],
+    "a45bm2_m3_calibration_may_not_select_tpag_models_prompts_or_parameters": true,
+    "a45bm5_calibration_may_be_used_for": [
+      "calibration-readiness evaluation after exactly one authoritative TPAG pipeline is frozen",
+      "registered threshold fitting under a separately approved execution protocol"
+    ],
+    "a45bm5_calibration_may_not_be_used_as": "independent evidence of TPAG generalization",
+    "a45c_repurposed": false,
+    "confirmatory_queries_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "future_validation_must_be_separately_registered": true
+  },
+  "deterministic_boundary": {
+    "allowed": [
+      "Unicode, whitespace, and case normalization",
+      "exact canonical identifier equality",
+      "trusted explicit alias-table equality from fixture or source metadata",
+      "exact integer parsing in the same registered unit",
+      "exact four-digit year parsing and equality",
+      "closed equivalence classes for must/required-to and every/all",
+      "explicit target-value inequality after scope identity has been established",
+      "deterministic citation, freshness, and registered-conflict gates"
+    ],
+    "forbidden_without_separate_learned_or_specialized_validation": [
+      "open-world alias guessing",
+      "predicate paraphrase inference outside registered exact forms",
+      "location or organizational hierarchy inference",
+      "conditional implication",
+      "temporal arithmetic beyond exact registered forms",
+      "modal implication beyond the closed equivalence class",
+      "contradiction from lexical dissimilarity alone"
+    ],
+    "tunable_thresholds_in_deterministic_rules": false
+  },
+  "evidence_group_measurement_contract": {
+    "compatible_propositions_may_accumulate_coverage": true,
+    "cross_proposition_scope_coherence_required": true,
+    "decisive_slots": [
+      "entity_or_subject",
+      "predicate_or_event",
+      "target_slot_identity",
+      "target_value",
+      "temporal_scope",
+      "location_scope",
+      "organizational_scope",
+      "conditional_scope",
+      "modality_or_quantification"
+    ],
+    "different_scope_refutation_must_not_create_conflict": true,
+    "incompatible_propositions_must_not_supply_coverage": true,
+    "minimal_sufficient_groups_required": true,
+    "same_scope_support_refute_coexistence_forces_conflict": true
+  },
+  "fresh_calibration_construction": {
+    "a45a_fresh_validation_rows_materialized": 0,
+    "a45bm2_m3_rows_reused": 0,
+    "alignment_rows": 1280,
+    "claim_rows": 640,
+    "corpus_id": "helix-tpag-calibration-corpus-v1",
+    "evidence_group_rows": 768,
+    "fixture_status": "fictional_candidate_independent_calibration_benchmark",
+    "future_validation_rows_constructed": 0,
+    "partition": "calibration_only",
+    "proposition_rows": 512,
+    "real_world_impact_claims_authorized": false,
+    "seed": 20260823,
+    "sha256": {
+      "alignment_rows": "698516335de3829941092bcf312af6d9f97b2acdbd155c0bdbd0006dfc94dee7",
+      "claim_rows": "20063b3fc84f306b43adf3fd1a4a0a255c2aeb7e04863c3c98158da7dfb9324c",
+      "evidence_group_rows": "2d00c96870082ab234aff01686004f4c377b1451245799a2fe093224bf4f63d5",
+      "proposition_rows": "eabc82d897b3720556ceeb6d4034c9e7c3a6dec6ea7e8ab846eb08930cbbd80b",
+      "units": "7ffe0ccd27c4f837374adb9b9041829984d16251bb68f7157b6dd16dffa3fa9f"
+    },
+    "units": 64
+  },
+  "future_calibration_parameter_budget": {
+    "class_specific_thresholds_authorized": false,
+    "disabled_threshold_rule": "If a bound component exposes no scalar confidence, its threshold may be disabled and counts as one fixed state.",
+    "freeze_all_raw_outputs_before_threshold_selection": true,
+    "low_confidence_alignment_maps_to": "UNSPECIFIED",
+    "low_confidence_polarity_maps_to": "UNRESOLVED",
+    "maximum_joint_candidates": 343,
+    "maximum_scalar_thresholds": 3,
+    "post_result_grid_expansion_authorized": false,
+    "scalar_thresholds": [
+      "extraction_confidence_min",
+      "alignment_confidence_min",
+      "polarity_confidence_min"
+    ],
+    "slot_specific_thresholds_authorized": false,
+    "values": [
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9
+    ]
+  },
+  "future_independent_validity_requirements": {
+    "citation_invalid_accuracy_min": 1.0,
+    "claim_category_macro_accuracy_min": 0.97,
+    "compatible_recall_min": 0.95,
+    "cross_unit_distractor_rejection_min": 0.99,
+    "decontextualized_target_frame_slot_accuracy_min": 0.95,
+    "different_condition_false_conflict_rate_max": 0.0,
+    "false_supported_safety_max": 0.0,
+    "final_relation_macro_f1_min": 0.95,
+    "incompatible_recall_min": 0.95,
+    "insufficient_recall_min": 0.97,
+    "minimal_sufficient_group_exact_match_min": 0.95,
+    "polarity_macro_f1_min": 0.95,
+    "proposition_precision_min": 0.97,
+    "proposition_recall_min": 0.97,
+    "refutes_recall_min": 0.97,
+    "registered_conflict_accuracy_min": 1.0,
+    "relation_recall_each_min": 0.95,
+    "same_domain_near_miss_rejection_min": 0.99,
+    "same_scope_conflict_accuracy_min": 1.0,
+    "scope_compatibility_macro_f1_min": 0.95,
+    "scope_mismatch_rejection_each_min": 0.98,
+    "slot_relation_macro_f1_min": 0.95,
+    "stale_evidence_accuracy_min": 1.0,
+    "status": "REGISTERED_FLOORS_ONLY_NO_VALIDATION_DATA_CONSTRUCTED",
+    "sufficiency_macro_f1_min": 0.95,
+    "supported_precision_min": 0.99,
+    "supported_recall_min": 0.95,
+    "target_proposition_f1_min": 0.97,
+    "target_value_conflict_refutation_recall_min": 0.97,
+    "unspecified_preservation_each_min": 0.98
+  },
+  "future_learned_roles": {
+    "exactly_one_authoritative_pipeline_must_be_bound_before_calibration_inference": true,
+    "maximum_distinct_roles": 3,
+    "model_family_comparison_on_m5_calibration_authorized": false,
+    "prompt_search_on_m5_calibration_authorized": false,
+    "roles": [
+      "proposition extraction plus decontextualized frame extraction",
+      "residual query-conditioned typed-edge alignment for unresolved semantic equivalence",
+      "residual polarity on scope-aligned sufficiently covered evidence"
+    ],
+    "same_model_may_be_reused_across_roles": true
+  },
+  "future_parameter_selection_order": [
+    "all calibration readiness requirements satisfied",
+    "number of calibration readiness requirements passed",
+    "final relation macro F1",
+    "minimum safety-critical recall across scope mismatch rejection, insufficiency, refutation, and conflict",
+    "claim category macro accuracy",
+    "minimal sufficient group exact match",
+    "scope compatibility macro F1",
+    "slot relation macro F1",
+    "target proposition F1",
+    "higher polarity confidence threshold",
+    "higher alignment confidence threshold",
+    "higher extraction confidence threshold"
+  ],
+  "methodology": {
+    "binding_status": "UNBOUND",
+    "name": "Typed Proposition Alignment Graph",
+    "novelty_claim": false,
+    "short_name": "TPAG"
+  },
+  "name": "Fresh TPAG measurement and calibration protocol registration",
+  "next_action": {
+    "authorized": false,
+    "checkpoint": "A4.5b-M6",
+    "class": "TPAG_IMPLEMENTATION_BINDING_AND_CALIBRATION_ONLY_EXECUTION_PROTOCOL",
+    "must_bind_exactly_one_authoritative_pipeline_before_calibration": true,
+    "must_keep_a45a_validation_and_confirmatory_partitions_sealed": true,
+    "must_not_use_a45bm2_m3_failure_rows_for_selection": true,
+    "requires_separate_approval": true
+  },
+  "proposition_extraction_contract": {
+    "empty_target_set_allowed": true,
+    "existing_aerf_atoms_preserved": true,
+    "free_form_claim_redecomposition": false,
+    "required_outputs": [
+      "surface_proposition_boundaries",
+      "target_proposition_selection",
+      "decontextualized_target_propositions",
+      "typed_target_frames"
+    ],
+    "semantic_preservation_required": true
+  },
+  "protocol_id": "phase4-assistance-a4.5b-m5-tpag-calibration-v1",
+  "scope": {
+    "calibration_fit_authorized": 0,
+    "closed_a45bm2_m3_rescoring_authorized": 0,
+    "confirmatory_scoring_authorized": 0,
+    "fresh_validation_authorized": 0,
+    "future_validation_construction_authorized": 0,
+    "model_binding_authorized": 0,
+    "model_family_comparison_authorized": 0,
+    "prompt_search_authorized": 0,
+    "semantic_inference_authorized": 0,
+    "threshold_search_authorized": 0
+  },
+  "source_main_sha": "2299935cdf940bc0f3774e7d5c35d4a5cd297d87",
+  "source_methodology_decision_id": "phase4-assistance-a4.5b-m4-tpag-methodology-v1",
+  "status": "REGISTERED_FRESH_TPAG_CALIBRATION_PROTOCOL_NO_INFERENCE",
+  "typed_frame_measurement_contract": {
+    "content_slots": [
+      "target_value"
+    ],
+    "coverage_labels": [
+      "COMPLETE",
+      "INCOMPLETE",
+      "NOT_APPLICABLE"
+    ],
+    "overall_compatibility_labels": [
+      "COMPATIBLE",
+      "INCOMPATIBLE"
+    ],
+    "polarity_labels": [
+      "SUPPORTS",
+      "REFUTES",
+      "UNRESOLVED",
+      "NOT_APPLICABLE"
+    ],
+    "relation_states": [
+      "MATCH",
+      "MISMATCH",
+      "UNSPECIFIED"
+    ],
+    "scope_compatibility_rule": "Any explicit MISMATCH on a mandatory scope/identity slot makes the evidence proposition INCOMPATIBLE for that claim target.",
+    "scope_identity_slots": [
+      "entity_or_subject",
+      "predicate_or_event",
+      "target_slot_identity",
+      "temporal_scope",
+      "location_scope",
+      "organizational_scope",
+      "conditional_scope",
+      "modality_or_quantification"
+    ],
+    "target_value_rule": "A target_value MISMATCH does not by itself make the proposition scope-incompatible. When scope/identity aligns and decisive coverage is otherwise complete, a conflicting target value is eligible for REFUTES.",
+    "unspecified_rule": "UNSPECIFIED on a required slot preserves scope compatibility but leaves the slot uncovered and therefore may force INCOMPLETE coverage."
+  }
+}
