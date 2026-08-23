@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   canonical-format:
+    # Branch-only maintenance; this workflow is removed before M6 scientific merge.
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-24.04
     steps:
