@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -20,10 +20,8 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Check out erratum source branch
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: phase4-a45bm5-preinference-erratum
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -34,34 +32,5 @@ jobs:
       - name: Install locked environment
         run: uv sync --locked --group dev
 
-      - name: Apply deterministic M5 pre-inference erratum
-        run: uv run python scripts/_tmp_repair_a45bm5_fixture.py
-
-      - name: Canonicalize permanent repaired source
-        run: |
-          uv run ruff format \
-            benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py
-          uv run ruff check --fix \
-            benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py
-          uv run ruff format \
-            benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py
-          uv run ruff check \
-            benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py
-
-      - name: Commit repaired frozen fixture and erratum record
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            benchmarks/assistance/tpag_calibration_a45bm5.py \
-            benchmarks/assistance/a45bm5_manifest_v1.json \
-            benchmarks/assistance/a45bm5_erratum_v1.json \
-            docs/assistance-a45bm5-tpag-calibration-protocol.md \
-            tests/test_phase4_a45bm5_calibration_protocol.py
-          git add -f configs/models/assistance_grounding_a45bm5_v1.json
-          git commit -m "Correct A4.5b-M5 predicate paraphrase fixture isolation"
-          git push origin HEAD:phase4-a45bm5-preinference-erratum
+      - name: Run release-blocking checks
+        run: make quality
