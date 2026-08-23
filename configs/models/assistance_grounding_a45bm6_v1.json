@@ -2,7 +2,7 @@
   "checkpoint": "A4.5b-M6",
   "name": "TPAG implementation binding and calibration-only execution protocol",
   "protocol_id": "phase4-assistance-a4.5b-m6-tpag-binding-calibration-v1",
-  "source_main_sha": "9070fc4cf0447077a20c7e576e49e9ba5f0536ba",
+  "source_main_sha": "1ac85b123a4804e5cc6f9b74662ff04fd9ef198b",
   "source_m5_protocol_id": "phase4-assistance-a4.5b-m5-tpag-calibration-v1",
   "authoritative_implementation": {
     "count": 1,

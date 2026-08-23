@@ -12,7 +12,7 @@ CONFIG = ROOT / "configs" / "models" / "assistance_grounding_a45bm6_v1.json"
 M5_CONFIG = ROOT / "configs" / "models" / "assistance_grounding_a45bm5_v1.json"
 M5_MANIFEST = ROOT / "benchmarks" / "assistance" / "a45bm5_manifest_v1.json"
 BUILDER = ROOT / "benchmarks" / "assistance" / "tpag_calibration_a45bm5.py"
-SOURCE_MAIN_SHA = "9070fc4cf0447077a20c7e576e49e9ba5f0536ba"
+SOURCE_MAIN_SHA = "1ac85b123a4804e5cc6f9b74662ff04fd9ef198b"
 
 
 def _json(path: Path) -> dict[str, Any]:

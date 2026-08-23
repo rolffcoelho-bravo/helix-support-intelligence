@@ -247,7 +247,7 @@ def main() -> None:
     frozen_manifest = _load_json(M5_MANIFEST)
     if manifest() != frozen_manifest:
         raise RuntimeError("A4.5b-M6 M5 calibration manifest drifted")
-    if config["source_main_sha"] != "9070fc4cf0447077a20c7e576e49e9ba5f0536ba":
+    if config["source_main_sha"] != "1ac85b123a4804e5cc6f9b74662ff04fd9ef198b":
         raise RuntimeError("A4.5b-M6 source main SHA drifted")
     if config["authoritative_implementation"]["count"] != 1:
         raise RuntimeError("A4.5b-M6 requires exactly one authoritative implementation")
