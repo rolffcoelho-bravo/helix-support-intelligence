@@ -113,6 +113,21 @@ def test_target_value_mismatch_is_compatible_refutation() -> None:
         assert gold["final_relation"] == "CONTRADICTED"
 
 
+def test_target_slot_mismatch_is_surface_isolated() -> None:
+    module = _module()
+    suite = module.build_suite()
+    units = {str(row["unit_id"]): row for row in suite["units"]}
+    rows = _by_subtype(suite["alignment_rows"])["target_slot_identity_mismatch"]
+    assert len(rows) == 64
+    for row in rows:
+        unit = units[str(row["unit_id"])]
+        text = str(row["evidence_proposition"])
+        assert str(unit["predicate"]) in text
+        assert str(unit["alternate_slot"]) in text
+        assert row["gold"]["slot_relations"]["predicate_or_event"] == "MATCH"
+        assert row["gold"]["slot_relations"]["target_slot_identity"] == "MISMATCH"
+
+
 def test_scope_identity_mismatches_veto_compatibility() -> None:
     module = _module()
     rows_by_subtype = _by_subtype(module.build_suite()["alignment_rows"])
@@ -151,6 +166,21 @@ def test_group_conflict_requires_same_scope() -> None:
     )
     assert all(row["gold"]["sufficiency"] == "SUFFICIENT" for row in different_condition)
     assert all(row["gold"]["final_relation"] == "ENTAILED" for row in different_condition)
+
+
+def test_cross_span_scope_incoherence_cannot_fill_location() -> None:
+    module = _module()
+    rows = _by_subtype(module.build_suite()["evidence_group_rows"])[
+        "cross_span_scope_incoherence"
+    ]
+    assert len(rows) == 64
+    for row in rows:
+        gold = row["gold"]
+        assert gold["cross_proposition_scope_coherence"] == "INCOHERENT"
+        assert gold["missing_decisive_slots"] == ["location_scope"]
+        assert "location_scope" not in gold["covered_decisive_slots"]
+        assert gold["sufficiency"] == "INSUFFICIENT"
+        assert gold["final_relation"] == "UNKNOWN"
 
 
 def test_parameter_budget_is_small_and_nonadaptive() -> None:
