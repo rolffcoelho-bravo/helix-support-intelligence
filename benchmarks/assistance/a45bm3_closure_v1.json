@@ -1,0 +1,87 @@
+{
+  "closure_id": "phase4-assistance-a4.5b-m3-closure-v1",
+  "checkpoint": "A4.5b-M3",
+  "scientific_status": "FAILED_SCEC_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED",
+  "scientific_pass": false,
+  "workflow": {
+    "run_id": 32596053185,
+    "job_id": 97087058066,
+    "run_attempt": 1,
+    "scientific_sha": "9521c6dda9ea16eb3cccc91f1a7178064999c32b",
+    "direct_parent_sha": "806efae4fcbc1f24cc2db8cd8616b5c49d6a1f2a",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "artifact_id": 9483500754,
+    "name": "phase4-assistance-a45bm3-9521c6dda9ea16eb3cccc91f1a7178064999c32b-attempt-1",
+    "zip_sha256": "605208633b9a550f1337f4fbf795027f5c25ee6ae6daeceb9fb19ad30b937824",
+    "raw_pair_scores_sha256": "de996c5a5de1e3cf83ac23600b802a0bc1b27dc16be8935b20ee146de2ff2f09",
+    "raw_set_scores_sha256": "0fb42a1b6ad2b6f5c74cefe3d71f152e362685eff71ad8dff026c378cae9b923",
+    "results_sha256": "d58566c281938178951d4ad47c9d447309fa18e18b6fb07e3309e48fac115473",
+    "post_audit_sha256": "ec6ca2608f226a894f1b579ec973a9ea397c319d672f45656afdfcbb76303157"
+  },
+  "model": {
+    "model_id": "MoritzLaurer/deberta-v3-base-zeroshot-v2.0",
+    "revision": "91562024e753ad76646a2d0dfcbb26801aa945fe",
+    "weights_file": "model.safetensors",
+    "weights_sha256": "6e8f2af78c828dcbd5243aac40fb87430376f0b8a9c288f4993df3ea3558d557",
+    "license": "MIT"
+  },
+  "calibration": {
+    "units": 48,
+    "pair_rows": 768,
+    "evidence_set_rows": 384,
+    "claim_rows": 384,
+    "candidate_count": 609,
+    "feasible_candidate_count": 0,
+    "requirements_passed": 14,
+    "requirements_total": 42,
+    "selected_best_any_mismatch_threshold": 0.56,
+    "selected_best_any_coverage_threshold": 0.72,
+    "metrics": {
+      "compatibility_macro_f1": 0.6002503878289742,
+      "compatible_recall": 0.8784722222222222,
+      "incompatible_recall": 0.4354166666666667,
+      "minimal_compatible_span_precision": 0.4217557251908397,
+      "minimal_compatible_span_recall": 0.7673611111111112,
+      "sufficiency_macro_f1": 0.33228898209442953,
+      "sufficient_recall": 0.703125,
+      "insufficient_recall": 0.3680555555555556,
+      "polarity_macro_f1": 0.4782608695652174,
+      "supports_recall": 0.9166666666666666,
+      "refutes_recall": 0.0,
+      "final_relation_macro_f1": 0.31525495153813743,
+      "entailed_recall": 0.9166666666666666,
+      "contradicted_recall": 0.0,
+      "unknown_recall": 0.6263020833333334,
+      "claim_category_macro_accuracy": 0.8541666666666666,
+      "supported_precision": 0.6666666666666666,
+      "supported_recall": 0.9166666666666666,
+      "conflict_detection_accuracy": 0.0,
+      "support_refute_conflict_accuracy": 0.0,
+      "false_supported_safety": 0.1527777777777778
+    }
+  },
+  "deterministic_reconstruction": {
+    "status": "PASSED_A45BM3_DETERMINISTIC_RECONSTRUCTION",
+    "candidate_count_reconstructed": 609,
+    "probability_simplex_verified": true
+  },
+  "sealed_boundaries": {
+    "a45a_fresh_validation_rows_materialized": 0,
+    "a45a_fresh_validation_rows_scored": 0,
+    "a45b_closed_rows_scored": 0,
+    "confirmatory_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "fresh_validation_authorized": false,
+    "next_checkpoint_authorized": false,
+    "post_result_rescue_authorized": false
+  },
+  "governance": {
+    "result_is_binding_negative_calibration_evidence": true,
+    "validation_is_authorized": false,
+    "post_result_threshold_rescue_is_authorized": false,
+    "post_result_model_substitution_is_authorized": false,
+    "parallel_rescue_execution_is_authorized": false
+  }
+}
