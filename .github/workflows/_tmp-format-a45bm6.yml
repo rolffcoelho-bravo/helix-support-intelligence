@@ -1,0 +1,64 @@
+name: Temporary A4.5b-M6 Canonical Formatter
+
+on:
+  push:
+    branches: [phase4-a45bm6-tpag-binding-calibration]
+    paths:
+      - ".github/workflows/_tmp-format-a45bm6.yml"
+      - "benchmarks/assistance/calibrate_tpag_a45bm6.py"
+      - "benchmarks/assistance/tpag_core_a45bm6.py"
+      - "benchmarks/assistance/verify_calibration_a45bm6.py"
+      - "scripts/preflight_phase4_a45bm6.py"
+      - "tests/test_phase4_a45bm6_binding.py"
+
+permissions:
+  contents: write
+
+jobs:
+  canonical-format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: phase4-a45bm6-tpag-binding-calibration
+          fetch-depth: 1
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.11.33"
+      - run: uv sync --locked --group dev
+      - name: Apply canonical Ruff fixes and format
+        run: |
+          uv run ruff check --fix \
+            benchmarks/assistance/calibrate_tpag_a45bm6.py \
+            benchmarks/assistance/tpag_core_a45bm6.py \
+            benchmarks/assistance/verify_calibration_a45bm6.py \
+            scripts/preflight_phase4_a45bm6.py \
+            tests/test_phase4_a45bm6_binding.py
+          uv run ruff format \
+            benchmarks/assistance/calibrate_tpag_a45bm6.py \
+            benchmarks/assistance/tpag_core_a45bm6.py \
+            benchmarks/assistance/verify_calibration_a45bm6.py \
+            scripts/preflight_phase4_a45bm6.py \
+            tests/test_phase4_a45bm6_binding.py
+          uv run ruff check \
+            benchmarks/assistance/calibrate_tpag_a45bm6.py \
+            benchmarks/assistance/tpag_core_a45bm6.py \
+            benchmarks/assistance/verify_calibration_a45bm6.py \
+            scripts/preflight_phase4_a45bm6.py \
+            tests/test_phase4_a45bm6_binding.py
+      - name: Commit canonical formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            benchmarks/assistance/calibrate_tpag_a45bm6.py \
+            benchmarks/assistance/tpag_core_a45bm6.py \
+            benchmarks/assistance/verify_calibration_a45bm6.py \
+            scripts/preflight_phase4_a45bm6.py \
+            tests/test_phase4_a45bm6_binding.py
+          if ! git diff --cached --quiet; then
+            git commit -m "Canonicalize A4.5b-M6 Python formatting"
+            git push origin HEAD:phase4-a45bm6-tpag-binding-calibration
+          fi
