@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -20,10 +20,8 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Check out M6 source branch
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: phase4-a45bm6-tpag-binding-calibration-v2
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -33,37 +31,6 @@ jobs:
 
       - name: Install locked environment
         run: uv sync --locked --group dev
-
-      - name: Rebase non-workflow M6 provenance to corrected M5 main
-        run: |
-          OLD='9070fc4cf0447077a20c7e576e49e9ba5f0536ba'
-          NEW='1ac85b123a4804e5cc6f9b74662ff04fd9ef198b'
-          for path in \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            configs/models/assistance_grounding_a45bm6_v1.json \
-            docs/assistance-a45bm6-tpag-binding-calibration.md \
-            scripts/preflight_phase4_a45bm6.py
-          do
-            test "$(grep -o "$OLD" "$path" | wc -l)" -ge 1
-            sed -i "s/$OLD/$NEW/g" "$path"
-            test "$(grep -o "$OLD" "$path" | wc -l)" -eq 0
-          done
-          uv run ruff check .
-          uv run ruff format --check .
-          uv run mypy
-          uv run pytest
-          uv run python scripts/preflight_phase4_a45bm6.py
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            benchmarks/assistance/calibrate_tpag_a45bm6.py \
-            docs/assistance-a45bm6-tpag-binding-calibration.md \
-            scripts/preflight_phase4_a45bm6.py
-          git add -f configs/models/assistance_grounding_a45bm6_v1.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Rebase A4.5b-M6 provenance to corrected M5 main"
-            git push origin HEAD:phase4-a45bm6-tpag-binding-calibration-v2
-          fi
 
       - name: Run release-blocking checks
         run: make quality
