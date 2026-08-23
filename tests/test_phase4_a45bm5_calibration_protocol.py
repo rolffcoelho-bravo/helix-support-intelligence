@@ -100,9 +100,7 @@ def test_four_measurement_layers_are_balanced_and_registered() -> None:
 
 def test_target_value_mismatch_is_compatible_refutation() -> None:
     module = _module()
-    rows = _by_subtype(module.build_suite()["alignment_rows"])[
-        "direct_refutation_value_conflict"
-    ]
+    rows = _by_subtype(module.build_suite()["alignment_rows"])["direct_refutation_value_conflict"]
     assert len(rows) == 64
     for row in rows:
         gold = row["gold"]
@@ -161,18 +159,14 @@ def test_group_conflict_requires_same_scope() -> None:
     assert len(same_scope) == 64
     assert len(different_condition) == 64
     assert all(row["gold"]["sufficiency"] == "CONFLICTING" for row in same_scope)
-    assert all(
-        row["gold"]["final_relation"] == "CONFLICTING_EVIDENCE" for row in same_scope
-    )
+    assert all(row["gold"]["final_relation"] == "CONFLICTING_EVIDENCE" for row in same_scope)
     assert all(row["gold"]["sufficiency"] == "SUFFICIENT" for row in different_condition)
     assert all(row["gold"]["final_relation"] == "ENTAILED" for row in different_condition)
 
 
 def test_cross_span_scope_incoherence_cannot_fill_location() -> None:
     module = _module()
-    rows = _by_subtype(module.build_suite()["evidence_group_rows"])[
-        "cross_span_scope_incoherence"
-    ]
+    rows = _by_subtype(module.build_suite()["evidence_group_rows"])["cross_span_scope_incoherence"]
     assert len(rows) == 64
     for row in rows:
         gold = row["gold"]
