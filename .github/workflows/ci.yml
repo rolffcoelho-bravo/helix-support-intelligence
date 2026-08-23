@@ -43,6 +43,20 @@ jobs:
             benchmarks/assistance/verify_calibration_a45bm6.py \
             scripts/preflight_phase4_a45bm6.py \
             tests/test_phase4_a45bm6_binding.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("benchmarks/assistance/calibrate_tpag_a45bm6.py")
+          text = path.read_text(encoding="utf-8")
+          old = """        f"Readiness requirements passed: **{selected['requirements_passed']}/{selected['requirements_total']}**","""
+          new = """        (
+              f"Readiness requirements passed: **{selected['requirements_passed']}/"
+              f"{selected['requirements_total']}**"
+          ),"""
+          if old not in text:
+              raise SystemExit("Expected M6 report line was not found")
+          path.write_text(text.replace(old, new), encoding="utf-8")
+          PY
           uv run ruff check --fix \
             benchmarks/assistance/calibrate_tpag_a45bm6.py \
             benchmarks/assistance/tpag_core_a45bm6.py \
