@@ -37,24 +37,20 @@ jobs:
       - name: Apply deterministic M5 pre-inference erratum
         run: uv run python scripts/_tmp_repair_a45bm5_fixture.py
 
-      - name: Canonicalize repaired source
+      - name: Canonicalize permanent repaired source
         run: |
           uv run ruff format \
             benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py \
-            scripts/_tmp_repair_a45bm5_fixture.py
+            tests/test_phase4_a45bm5_calibration_protocol.py
           uv run ruff check --fix \
             benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py \
-            scripts/_tmp_repair_a45bm5_fixture.py
+            tests/test_phase4_a45bm5_calibration_protocol.py
           uv run ruff format \
             benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py \
-            scripts/_tmp_repair_a45bm5_fixture.py
+            tests/test_phase4_a45bm5_calibration_protocol.py
           uv run ruff check \
             benchmarks/assistance/tpag_calibration_a45bm5.py \
-            tests/test_phase4_a45bm5_calibration_protocol.py \
-            scripts/_tmp_repair_a45bm5_fixture.py
+            tests/test_phase4_a45bm5_calibration_protocol.py
 
       - name: Commit repaired frozen fixture and erratum record
         run: |
