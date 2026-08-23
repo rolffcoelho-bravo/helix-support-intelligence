@@ -45,8 +45,7 @@ def test_tpag_preserves_scec_semantics_and_retires_universal_nli() -> None:
     assert retained["polarity_only_after_compatibility_and_sufficiency"] is True
     assert alignment["whole_pair_nli_may_not_authoritatively_decide_all_slots"] is True
     assert (
-        alignment["learned_semantic_matching_must_be_restricted_to_unresolved_typed_edges"]
-        is True
+        alignment["learned_semantic_matching_must_be_restricted_to_unresolved_typed_edges"] is True
     )
 
 
