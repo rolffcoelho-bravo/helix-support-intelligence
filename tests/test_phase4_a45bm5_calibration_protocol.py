@@ -177,6 +177,21 @@ def test_cross_span_scope_incoherence_cannot_fill_location() -> None:
         assert gold["final_relation"] == "UNKNOWN"
 
 
+def test_predicate_paraphrase_is_surface_isolated_from_condition() -> None:
+    module = _module()
+    suite = module.build_suite()
+    units = {str(row["unit_id"]): row for row in suite["units"]}
+    rows = _by_subtype(suite["alignment_rows"])["predicate_paraphrase_match"]
+    assert len(rows) == 64
+    for row in rows:
+        unit = units[str(row["unit_id"])]
+        text = str(row["evidence_proposition"])
+        assert str(unit["predicate_paraphrase"]) in text
+        assert f"when {unit['condition']}" in text
+        assert row["gold"]["slot_relations"]["predicate_or_event"] == "MATCH"
+        assert row["gold"]["slot_relations"]["conditional_scope"] == "MATCH"
+
+
 def test_parameter_budget_is_small_and_nonadaptive() -> None:
     config = _json(CONFIG)
     budget = config["future_calibration_parameter_budget"]
