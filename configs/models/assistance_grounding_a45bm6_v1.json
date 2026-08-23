@@ -1,0 +1,190 @@
+{
+  "checkpoint": "A4.5b-M6",
+  "name": "TPAG implementation binding and calibration-only execution protocol",
+  "protocol_id": "phase4-assistance-a4.5b-m6-tpag-binding-calibration-v1",
+  "source_main_sha": "1ac85b123a4804e5cc6f9b74662ff04fd9ef198b",
+  "source_m5_protocol_id": "phase4-assistance-a4.5b-m5-tpag-calibration-v1",
+  "authoritative_implementation": {
+    "count": 1,
+    "architecture": "Typed Proposition Alignment Graph",
+    "short_name": "TPAG",
+    "novelty_claim": false,
+    "implementation_id": "tpag-deterministic-typed-parser-plus-qc-nli-residual-v1",
+    "proposition_and_frame_extraction": {
+      "type": "deterministic",
+      "implementation": "registered typed parser and decontextualizer",
+      "sentence_split_regex": "(?<=[.!?])\\s+",
+      "trusted_alias_pattern": "explicit source-local alias declarations only",
+      "pronoun_rule": "nearest preceding explicit active-record declaration within the same document",
+      "parenthetical_rule": "remove non-semantic parenthetical appositives while preserving proposition text order",
+      "target_selection_rule": "select decontextualized propositions whose canonical entity equals the claim entity",
+      "tunable_parameters": 0,
+      "confidence_threshold": "DISABLED"
+    },
+    "typed_alignment": {
+      "deterministic_slots": [
+        "entity_or_subject",
+        "target_slot_identity",
+        "target_value",
+        "temporal_scope",
+        "location_scope",
+        "organizational_scope",
+        "conditional_scope",
+        "modality_or_quantification"
+      ],
+      "residual_learned_slots": [
+        "predicate_or_event"
+      ],
+      "scope_compatibility_rule": "Any explicit MISMATCH on a mandatory scope/identity slot makes the proposition INCOMPATIBLE. UNSPECIFIED preserves compatibility but leaves the slot uncovered. target_value MISMATCH remains compatible and is eligible for REFUTES when all mandatory scope/identity slots align.",
+      "closed_modality_equivalence": [
+        "must process every",
+        "must process all",
+        "is required to process every",
+        "is required to process all"
+      ],
+      "low_confidence_residual_label": "UNSPECIFIED"
+    },
+    "evidence_group_reasoning": {
+      "type": "deterministic",
+      "compatible_only_coverage": true,
+      "minimal_sufficient_groups": "enumerate all non-empty compatible evidence-span subsets and retain inclusion-minimal complete coherent subsets",
+      "cross_span_scope_coherence": "explicit single-scope qualifier conflicts cannot fill the conflicted slot",
+      "same_scope_support_refute": "CONFLICTING_EVIDENCE",
+      "different_scope_refutation": "not a conflict for the claim scope",
+      "tunable_parameters": 0
+    },
+    "polarity": {
+      "type": "deterministic_after_scope_and_coverage",
+      "supports_rule": "all decisive slots covered with no target_value mismatch",
+      "refutes_rule": "all decisive slots covered and target_value is an explicit mismatch",
+      "unresolved_rule": "scope-compatible but incomplete or semantically unresolved evidence",
+      "confidence_threshold": "DISABLED",
+      "tunable_parameters": 0
+    },
+    "claim_composition": {
+      "type": "deterministic",
+      "supported_rule": "at least one ENTAILED evidence group and no conflicting or safety veto",
+      "unsupported_rule": "CONTRADICTED or UNKNOWN without an ENTAILED group",
+      "conflict_rule": "CONFLICTING_EVIDENCE dominates support",
+      "safety_gates": [
+        "CITATION_INVALID",
+        "STALE_EVIDENCE",
+        "REGISTERED_CONFLICT"
+      ]
+    },
+    "semantic_model": {
+      "role": "residual query-conditioned typed-edge semantic equivalence only",
+      "model_id": "cross-encoder/nli-deberta-v3-base",
+      "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+      "weights_file": "model.safetensors",
+      "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa",
+      "tokenizer_file": "spm.model",
+      "tokenizer_sha256": "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd",
+      "license": "apache-2.0",
+      "native_labels": {
+        "0": "contradiction",
+        "1": "entailment",
+        "2": "neutral"
+      },
+      "device": "cpu",
+      "dtype": "float32",
+      "batch_size": 32,
+      "max_sequence_length": 256,
+      "query_template": "Claim operation: {claim_value}. Evidence operation: {evidence_value}. Evidence context: {evidence_text}",
+      "hypothesis": "The evidence operation expresses the same operation as the claim operation.",
+      "decision_rule": {
+        "MATCH": "entailment_probability >= alignment_confidence_min",
+        "MISMATCH": "contradiction_probability >= alignment_confidence_min",
+        "UNSPECIFIED": "otherwise"
+      }
+    }
+  },
+  "runtime": {
+    "python": ">=3.12,<3.13",
+    "huggingface_hub": "0.36.2",
+    "safetensors": "0.8.0",
+    "sentencepiece": "0.2.1",
+    "torch": "2.13.0",
+    "transformers": "4.57.6",
+    "protobuf": "6.33.6",
+    "cpu_threads": 1,
+    "tokenizers_parallelism": false
+  },
+  "calibration_parameter_grid": {
+    "active_thresholds": [
+      "alignment_confidence_min"
+    ],
+    "disabled_thresholds": [
+      "extraction_confidence_min",
+      "polarity_confidence_min"
+    ],
+    "alignment_confidence_values": [
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9
+    ],
+    "candidate_count": 7,
+    "m5_maximum_joint_candidates": 343,
+    "class_specific_thresholds_authorized": false,
+    "slot_specific_thresholds_authorized": false,
+    "post_result_grid_expansion_authorized": false,
+    "all_raw_learned_outputs_frozen_before_threshold_selection": true
+  },
+  "parameter_selection_order": [
+    "all 56 M5 calibration readiness requirements satisfied",
+    "number of M5 calibration readiness requirements passed",
+    "final relation macro F1",
+    "minimum safety-critical recall across scope mismatch rejection, insufficiency, refutation, and conflict",
+    "claim category macro accuracy",
+    "minimal sufficient group exact match",
+    "scope compatibility macro F1",
+    "slot relation macro F1",
+    "target proposition F1",
+    "higher alignment_confidence_min"
+  ],
+  "scientific_status_labels": {
+    "pass": "PASSED_TPAG_CALIBRATION_READINESS_PARAMETERS_FROZEN",
+    "fail": "FAILED_TPAG_CALIBRATION_READINESS_NO_VALIDATION_AUTHORIZED"
+  },
+  "execution_contract": {
+    "m5_calibration_units_authorized": 64,
+    "m5_proposition_rows_authorized": 512,
+    "m5_alignment_rows_authorized": 1280,
+    "m5_evidence_group_rows_authorized": 768,
+    "m5_claim_rows_authorized": 640,
+    "semantic_model_bindings_authorized": 1,
+    "authoritative_pipeline_count": 1,
+    "model_family_comparisons_authorized": 0,
+    "prompt_searches_authorized": 0,
+    "threshold_candidates_authorized": 7,
+    "closed_a45bm2_m3_rows_authorized": 0,
+    "a45a_fresh_validation_rows_authorized": 0,
+    "confirmatory_queries_authorized": 0,
+    "future_validation_construction_authorized": 0,
+    "post_result_rescue_authorized": 0
+  },
+  "gold_separation": {
+    "inference_stage_may_read_gold": false,
+    "raw_learned_outputs_must_be_written_before_gold_evaluation": true,
+    "gold_may_be_read_only_for_registered_metric_evaluation_and_parameter_selection": true
+  },
+  "governance": {
+    "a45a_fresh_validation_remains_sealed": true,
+    "confirmatory_partition_remains_sealed": true,
+    "a45c_repurposed": false,
+    "m2_m3_failure_rows_may_select_parameters": false,
+    "m5_is_independent_generalization_evidence": false,
+    "validation_after_pass_requires_separate_approval": true,
+    "rescue_after_fail_requires_separate_methodology_checkpoint": true
+  },
+  "next_checkpoint": {
+    "authorized": false,
+    "requires_separate_approval": true,
+    "class": "POST_M6_DECISION_DEPENDS_ON_REGISTERED_CALIBRATION_RESULT"
+  },
+  "status": "BOUND_SINGLE_TPAG_PIPELINE_CALIBRATION_ONLY_EXECUTION_REGISTERED"
+}
