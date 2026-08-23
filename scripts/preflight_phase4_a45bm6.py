@@ -77,9 +77,15 @@ def main() -> None:
         raise RuntimeError("A4.5b-M6 semantic model identity drifted")
     if model["revision"] != "6c749ce3425cd33b46d187e45b92bbf96ee12ec7":
         raise RuntimeError("A4.5b-M6 semantic model revision drifted")
-    if model["weights_sha256"] != "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa":
+    if (
+        model["weights_sha256"]
+        != "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa"
+    ):
         raise RuntimeError("A4.5b-M6 semantic model weight hash drifted")
-    if model["tokenizer_sha256"] != "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd":
+    if (
+        model["tokenizer_sha256"]
+        != "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd"
+    ):
         raise RuntimeError("A4.5b-M6 tokenizer hash drifted")
     if model["native_labels"] != {
         "0": "contradiction",
@@ -136,7 +142,10 @@ def main() -> None:
         raise RuntimeError("A4.5b-M6 requires all 56 frozen M5 readiness requirements")
     if config["gold_separation"]["inference_stage_may_read_gold"] is not False:
         raise RuntimeError("A4.5b-M6 inference stage may not read gold")
-    if config["gold_separation"]["raw_learned_outputs_must_be_written_before_gold_evaluation"] is not True:
+    if (
+        config["gold_separation"]["raw_learned_outputs_must_be_written_before_gold_evaluation"]
+        is not True
+    ):
         raise RuntimeError("A4.5b-M6 raw-output/gold boundary drifted")
     governance = config["governance"]
     if governance["a45a_fresh_validation_remains_sealed"] is not True:

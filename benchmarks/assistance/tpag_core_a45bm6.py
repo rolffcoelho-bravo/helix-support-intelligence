@@ -319,7 +319,9 @@ def residual_request(
     }
 
 
-def collect_residual_requests(suite: dict[str, Any], aliases: dict[str, str]) -> list[dict[str, str]]:
+def collect_residual_requests(
+    suite: dict[str, Any], aliases: dict[str, str]
+) -> list[dict[str, str]]:
     requests: dict[str, dict[str, str]] = {}
     for row in suite["alignment_rows"]:
         claim_frame = parse_frame(str(row["claim"]), aliases)
@@ -510,9 +512,7 @@ def predict_group_case(
     for frame, prediction in zip(span_frames, span_predictions, strict=True):
         explicit = set(str(slot) for slot in frame["_explicit_slots"] if slot in SCOPE_SLOTS)
         mismatches = {
-            slot
-            for slot in SCOPE_SLOTS
-            if prediction["slot_relations"].get(slot) == "MISMATCH"
+            slot for slot in SCOPE_SLOTS if prediction["slot_relations"].get(slot) == "MISMATCH"
         }
         if len(explicit) == 1 and len(mismatches) == 1 and explicit == mismatches:
             incoherent_slots.update(mismatches)
@@ -531,16 +531,16 @@ def predict_group_case(
     sufficient: list[tuple[tuple[int, ...], str]] = []
     for size in range(1, len(compatible_indices) + 1):
         for subset in combinations(compatible_indices, size):
-            is_sufficient, polarity = _subset_prediction(
-                subset, span_predictions, incoherent_slots
-            )
+            is_sufficient, polarity = _subset_prediction(subset, span_predictions, incoherent_slots)
             if is_sufficient:
                 sufficient.append((subset, polarity))
 
     minimal: list[tuple[tuple[int, ...], str]] = []
     for subset, polarity in sufficient:
         subset_set = set(subset)
-        if any(set(other).issubset(subset_set) and len(other) < len(subset) for other, _ in sufficient):
+        if any(
+            set(other).issubset(subset_set) and len(other) < len(subset) for other, _ in sufficient
+        ):
             continue
         minimal.append((subset, polarity))
     minimal.sort(key=lambda item: (len(item[0]), item[0], item[1]))
@@ -581,9 +581,7 @@ def predict_claim_case(row: dict[str, Any]) -> dict[str, Any]:
         verdict = "CITATION_INVALID"
     elif gate == "STALE_EVIDENCE":
         verdict = "STALE_EVIDENCE"
-    elif gate == "REGISTERED_CONFLICT":
-        verdict = "CONFLICTING_EVIDENCE"
-    elif "CONFLICTING_EVIDENCE" in relations:
+    elif gate == "REGISTERED_CONFLICT" or "CONFLICTING_EVIDENCE" in relations:
         verdict = "CONFLICTING_EVIDENCE"
     elif "ENTAILED" in relations:
         verdict = "SUPPORTED"
@@ -599,7 +597,9 @@ def predict_all(
 ) -> dict[str, list[dict[str, Any]]]:
     aliases = make_alias_map(suite["units"])
     return {
-        "propositions": [predict_proposition_case(row, aliases) for row in suite["proposition_rows"]],
+        "propositions": [
+            predict_proposition_case(row, aliases) for row in suite["proposition_rows"]
+        ],
         "alignments": [
             predict_alignment_case(row, aliases, raw_scores, threshold)
             for row in suite["alignment_rows"]
@@ -662,10 +662,14 @@ def _subtype_rows(
 
 
 def _rate(pairs: list[tuple[dict[str, Any], dict[str, Any]]], predicate: Any) -> float:
-    return _safe_div(float(sum(bool(predicate(row, prediction)) for row, prediction in pairs)), float(len(pairs)))
+    return _safe_div(
+        float(sum(bool(predicate(row, prediction)) for row, prediction in pairs)), float(len(pairs))
+    )
 
 
-def _proposition_metrics(rows: list[dict[str, Any]], predictions: list[dict[str, Any]]) -> dict[str, float]:
+def _proposition_metrics(
+    rows: list[dict[str, Any]], predictions: list[dict[str, Any]]
+) -> dict[str, float]:
     surface_tp = 0
     surface_gold = 0
     surface_pred = 0
@@ -721,7 +725,9 @@ def _proposition_metrics(rows: list[dict[str, Any]], predictions: list[dict[str,
     }
 
 
-def _alignment_metrics(rows: list[dict[str, Any]], predictions: list[dict[str, Any]]) -> dict[str, float]:
+def _alignment_metrics(
+    rows: list[dict[str, Any]], predictions: list[dict[str, Any]]
+) -> dict[str, float]:
     gold_slots: list[str] = []
     pred_slots: list[str] = []
     for row, prediction in zip(rows, predictions, strict=True):
@@ -815,7 +821,9 @@ def _alignment_metrics(rows: list[dict[str, Any]], predictions: list[dict[str, A
     return metrics
 
 
-def _group_metrics(rows: list[dict[str, Any]], predictions: list[dict[str, Any]]) -> dict[str, float]:
+def _group_metrics(
+    rows: list[dict[str, Any]], predictions: list[dict[str, Any]]
+) -> dict[str, float]:
     gold_sufficiency = [str(row["gold"]["sufficiency"]) for row in rows]
     pred_sufficiency = [str(value["sufficiency"]) for value in predictions]
     covered_exact = []
@@ -892,7 +900,9 @@ def _group_metrics(rows: list[dict[str, Any]], predictions: list[dict[str, Any]]
     return metrics
 
 
-def _claim_metrics(rows: list[dict[str, Any]], predictions: list[dict[str, Any]]) -> dict[str, float]:
+def _claim_metrics(
+    rows: list[dict[str, Any]], predictions: list[dict[str, Any]]
+) -> dict[str, float]:
     categories = sorted({str(row["category"]) for row in rows})
     category_accuracy = []
     for category in categories:

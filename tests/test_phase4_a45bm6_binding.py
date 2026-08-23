@@ -117,9 +117,10 @@ def test_deterministic_proposition_parser_handles_decontextualization() -> None:
         prediction = core.predict_proposition_case(row, aliases)
         assert prediction["surface_propositions"] == row["gold"]["surface_propositions"]
         assert prediction["target_proposition_indices"] == row["gold"]["target_proposition_indices"]
-        assert prediction["decontextualized_target_propositions"] == row["gold"][
-            "decontextualized_target_propositions"
-        ]
+        assert (
+            prediction["decontextualized_target_propositions"]
+            == row["gold"]["decontextualized_target_propositions"]
+        )
 
 
 def test_fake_residual_scores_recover_registered_structural_cases() -> None:

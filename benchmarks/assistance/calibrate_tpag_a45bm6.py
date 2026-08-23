@@ -209,7 +209,10 @@ def _report(results: dict[str, Any]) -> str:
         f"Registered threshold candidates: **{results['candidate_count']}**",
         f"Feasible candidates: **{results['feasible_candidate_count']}**",
         f"Selected alignment confidence threshold: **{selected['alignment_confidence_min']}**",
-        f"Readiness requirements passed: **{selected['requirements_passed']}/{selected['requirements_total']}**",
+        (
+            f"Readiness requirements passed: **{selected['requirements_passed']}/"
+            f"{selected['requirements_total']}**"
+        ),
         "",
         "## Selected metrics",
         "",
@@ -275,9 +278,7 @@ def main() -> None:
     _write_json(output_dir / "environment.json", _environment())
 
     raw_scores = {
-        str(row["request_id"]): {
-            key: float(value) for key, value in row["probabilities"].items()
-        }
+        str(row["request_id"]): {key: float(value) for key, value in row["probabilities"].items()}
         for row in raw_rows
     }
     thresholds = [

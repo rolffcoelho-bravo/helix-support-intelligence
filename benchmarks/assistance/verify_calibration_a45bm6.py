@@ -68,9 +68,7 @@ def main() -> None:
 
     raw_scores: dict[str, dict[str, float]] = {}
     for row in raw_rows:
-        probabilities = {
-            str(name): float(value) for name, value in row["probabilities"].items()
-        }
+        probabilities = {str(name): float(value) for name, value in row["probabilities"].items()}
         if abs(sum(probabilities.values()) - 1.0) > 1e-6:
             raise RuntimeError("A4.5b-M6 raw residual probabilities do not sum to one")
         raw_scores[str(row["request_id"])] = probabilities
