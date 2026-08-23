@@ -137,9 +137,7 @@ def build_units() -> list[dict[str, Any]]:
                 "predicate_paraphrase": f"complete {predicate} handling",
                 "target_slot_identity": slot,
                 "target_value": window,
-                "alternate_target_value": WINDOWS[
-                    (WINDOWS.index(window) + 1) % len(WINDOWS)
-                ],
+                "alternate_target_value": WINDOWS[(WINDOWS.index(window) + 1) % len(WINDOWS)],
                 "year": year,
                 "alternate_year": YEARS[(YEARS.index(year) + 1) % len(YEARS)],
                 "region": region,
@@ -226,9 +224,7 @@ def _proposition_row(
     }
 
 
-def _unit_propositions(
-    unit: dict[str, Any], other: dict[str, Any]
-) -> list[dict[str, Any]]:
+def _unit_propositions(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[str, Any]]:
     support = _support(unit)
     unrelated = (
         f"{other['organization']} maintains {other['subject'].lower()} records for "
@@ -239,9 +235,7 @@ def _unit_propositions(
     pronoun_context = f"The active record is {unit['subject']}."
     pronoun_target = support.replace(unit["subject"].lower(), "it")
     coordinated_a = support
-    coordinated_b = (
-        f"{unit['organization']} must archive the audit note after the case is closed."
-    )
+    coordinated_b = f"{unit['organization']} must archive the audit note after the case is closed."
     parenthetical = support.replace(
         f"{unit['organization']} in the {unit['region']}",
         f"{unit['organization']} (the assigned unit) in the {unit['region']}",
@@ -353,9 +347,7 @@ def _alignment_row(
     }
 
 
-def _unit_alignments(
-    unit: dict[str, Any], other: dict[str, Any]
-) -> list[dict[str, Any]]:
+def _unit_alignments(unit: dict[str, Any], other: dict[str, Any]) -> list[dict[str, Any]]:
     support = _support(unit)
     refute = _refute(unit)
     base = _frame(unit)
@@ -626,16 +618,10 @@ def _unit_alignments(
                 target_value=(
                     "MATCH" if other["target_value"] == unit["target_value"] else "MISMATCH"
                 ),
-                temporal_scope=(
-                    "MATCH" if other["year"] == unit["year"] else "MISMATCH"
-                ),
-                location_scope=(
-                    "MATCH" if other["region"] == unit["region"] else "MISMATCH"
-                ),
+                temporal_scope=("MATCH" if other["year"] == unit["year"] else "MISMATCH"),
+                location_scope=("MATCH" if other["region"] == unit["region"] else "MISMATCH"),
                 organizational_scope=(
-                    "MATCH"
-                    if other["organization"] == unit["organization"]
-                    else "MISMATCH"
+                    "MATCH" if other["organization"] == unit["organization"] else "MISMATCH"
                 ),
                 conditional_scope=(
                     "MATCH" if other["condition"] == unit["condition"] else "MISMATCH"
@@ -1024,9 +1010,7 @@ def manifest() -> dict[str, Any]:
             "evidence_group_subtypes": _counts(groups, "subtype"),
             "claim_categories": _counts(claims, "category"),
             "alignment_compatibility": {
-                label: sum(
-                    row["gold"]["scope_compatibility"] == label for row in alignments
-                )
+                label: sum(row["gold"]["scope_compatibility"] == label for row in alignments)
                 for label in ("COMPATIBLE", "INCOMPATIBLE")
             },
             "alignment_relations": {
