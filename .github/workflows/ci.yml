@@ -60,8 +60,8 @@ jobs:
             benchmarks/assistance/tpag_calibration_a45bm5.py \
             benchmarks/assistance/a45bm5_manifest_v1.json \
             benchmarks/assistance/a45bm5_erratum_v1.json \
-            configs/models/assistance_grounding_a45bm5_v1.json \
             docs/assistance-a45bm5-tpag-calibration-protocol.md \
             tests/test_phase4_a45bm5_calibration_protocol.py
+          git add -f configs/models/assistance_grounding_a45bm5_v1.json
           git commit -m "Correct A4.5b-M5 predicate paraphrase fixture isolation"
           git push origin HEAD:phase4-a45bm5-preinference-erratum
