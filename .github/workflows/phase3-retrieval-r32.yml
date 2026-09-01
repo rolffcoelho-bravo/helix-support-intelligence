@@ -98,7 +98,7 @@ jobs:
 
       - name: Upload immutable R3.2 evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase3-retrieval-r32-${{ github.sha }}-attempt-${{ github.run_attempt }}
           path: artifacts/phase3-retrieval/r32/
