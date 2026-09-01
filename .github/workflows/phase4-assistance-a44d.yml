@@ -109,7 +109,7 @@ jobs:
 
       - name: Upload immutable A4.4d evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase4-assistance-a44d-${{ github.sha }}-attempt-${{ github.run_attempt }}
           path: artifacts/phase4-assistance/a44d/

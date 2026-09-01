@@ -117,7 +117,7 @@ jobs:
 
       - name: Upload immutable A4.5b-M6 evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase4-assistance-a45bm6-${{ github.sha }}-attempt-${{ github.run_attempt }}
           path: artifacts/phase4-assistance/a45bm6/

@@ -53,7 +53,7 @@ jobs:
         run: cat artifacts/phase2-routing/a2/report.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload A2 evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase2-routing-a2-${{ github.sha }}
           path: artifacts/phase2-routing/a2/
