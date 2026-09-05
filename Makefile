@@ -1,4 +1,4 @@
-.PHONY: setup lint format typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight assistance-a44d-preflight assistance-a44e-preflight assistance-a45a-preflight assistance-a45b-preflight assistance-a45b-recovery-preflight assistance-a45b-postresult-preflight assistance-a45bm1-preflight assistance-a45bm2-preflight assistance-a45bm3-preflight assistance-a45bm4-preflight assistance-a45bm5-preflight assistance-a45bm6-preflight publication-audit quality
+.PHONY: setup lint format typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight assistance-a44d-preflight assistance-a44e-preflight assistance-a45a-preflight assistance-a45b-preflight assistance-a45b-recovery-preflight assistance-a45b-postresult-preflight assistance-a45bm1-preflight assistance-a45bm2-preflight assistance-a45bm3-preflight assistance-a45bm4-preflight assistance-a45bm5-preflight assistance-a45bm6-preflight assistance-a45d-preflight publication-audit quality
 
 setup:
 	uv sync --locked --group dev
@@ -78,7 +78,10 @@ assistance-a45bm5-preflight:
 assistance-a45bm6-preflight:
 	uv run python scripts/preflight_phase4_a45bm6.py
 
+assistance-a45d-preflight:
+	uv run python scripts/preflight_phase4_a45d.py
+
 publication-audit:
 	uv run python scripts/audit_publication.py
 
-quality: lint typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight assistance-a44d-preflight assistance-a44e-preflight assistance-a45a-preflight assistance-a45b-preflight assistance-a45b-recovery-preflight assistance-a45b-postresult-preflight assistance-a45bm1-preflight assistance-a45bm2-preflight assistance-a45bm3-preflight assistance-a45bm4-preflight assistance-a45bm5-preflight assistance-a45bm6-preflight publication-audit
+quality: lint typecheck test data-check retrieval-preflight assistance-preflight assistance-a42-preflight assistance-a43a-preflight assistance-a44a-preflight assistance-a44b-preflight assistance-a44c-preflight assistance-a44d-preflight assistance-a44e-preflight assistance-a45a-preflight assistance-a45b-preflight assistance-a45b-recovery-preflight assistance-a45b-postresult-preflight assistance-a45bm1-preflight assistance-a45bm2-preflight assistance-a45bm3-preflight assistance-a45bm4-preflight assistance-a45bm5-preflight assistance-a45bm6-preflight assistance-a45d-preflight publication-audit
