@@ -36,11 +36,13 @@ def test_a45d_freezes_exact_m6_implementation_and_threshold() -> None:
     closure = _json(M6_CLOSURE)
     assert config["source_main_sha"] == "40d6bdb417e798a7c0ead7709bdcec5d8241a989"
     assert closure["scientific_status"] == "PASSED_TPAG_CALIBRATION_READINESS_PARAMETERS_FROZEN"
-    assert config["authoritative_implementation"]["implementation_id"] == (
-        m6["authoritative_implementation"]["implementation_id"]
+    assert (
+        config["authoritative_implementation"]["implementation_id"]
+        == (m6["authoritative_implementation"]["implementation_id"])
     )
-    assert config["authoritative_implementation"]["model"] == (
-        m6["authoritative_implementation"]["semantic_model"]
+    assert (
+        config["authoritative_implementation"]["model"]
+        == (m6["authoritative_implementation"]["semantic_model"])
     )
     assert config["authoritative_implementation"]["runtime"] == m6["runtime"]
     assert config["authoritative_implementation"]["selected_alignment_confidence_min"] == 0.6
