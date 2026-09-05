@@ -1,0 +1,33 @@
+{
+  "checkpoint": "A4.5d",
+  "registration_id": "phase4-assistance-a4.5d-tpag-fresh-validation-registration-v1",
+  "status": "CLOSED_ZERO_RESULT_PREEXECUTION_BLOCKER",
+  "source_main_sha": "40d6bdb417e798a7c0ead7709bdcec5d8241a989",
+  "m6_status": "PASSED_TPAG_CALIBRATION_READINESS_PARAMETERS_FROZEN",
+  "frozen_alignment_confidence_min": 0.6,
+  "fresh_validation": {
+    "units": 20,
+    "pair_rows": 180,
+    "claim_rows": 180,
+    "pairs_sha256": "5f6f0294230de5da3af8baaee2403c9497bd42308c96f9d1041f4f88667d1da7",
+    "claims_sha256": "116040d37035e4a43a3bee17ea2d29fe87d85c6148adade770e8c224456e43d6",
+    "records_materialized": 0,
+    "records_inspected": 0,
+    "records_scored": 0
+  },
+  "registered_requirements": 29,
+  "audit_finding": {
+    "direct_validation_execution_ready": false,
+    "blocking_issue": "Frozen M6 TPAG parser input grammar and registered A4.5a validity-corpus grammar are incompatible.",
+    "silent_adapter_allowed": false,
+    "parser_change_allowed": false,
+    "scientific_interpretation": "This is a pre-execution contract incompatibility, not a negative validation result."
+  },
+  "sealed_boundaries": {
+    "a45a_validation_opened": false,
+    "confirmatory_records_inspected": 0,
+    "confirmatory_queries_scored": 0,
+    "a45c_repurposed": false
+  },
+  "next_checkpoint_authorized": false
+}

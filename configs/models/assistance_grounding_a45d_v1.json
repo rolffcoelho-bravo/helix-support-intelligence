@@ -1,0 +1,147 @@
+{
+  "checkpoint": "A4.5d",
+  "name": "TPAG fresh-validation registration and pre-execution contract audit",
+  "protocol_id": "phase4-assistance-a4.5d-tpag-fresh-validation-registration-v1",
+  "source_main_sha": "40d6bdb417e798a7c0ead7709bdcec5d8241a989",
+  "source_m6_closure_id": "phase4-assistance-a4.5b-m6-closure-v1",
+  "source_a45a_protocol_id": "phase4-assistance-a4.5a-aerf-validity-v1",
+  "status": "REGISTERED_ZERO_RESULT_VALIDATION_BLOCKED_INPUT_CONTRACT_MISMATCH",
+  "scientific_result_exposed": false,
+  "authoritative_implementation": {
+    "architecture": "Typed Proposition Alignment Graph",
+    "short_name": "TPAG",
+    "implementation_id": "tpag-deterministic-typed-parser-plus-qc-nli-residual-v1",
+    "m6_scientific_status": "PASSED_TPAG_CALIBRATION_READINESS_PARAMETERS_FROZEN",
+    "selected_alignment_confidence_min": 0.6,
+    "model": {
+      "role": "residual query-conditioned typed-edge semantic equivalence only",
+      "model_id": "cross-encoder/nli-deberta-v3-base",
+      "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+      "weights_file": "model.safetensors",
+      "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa",
+      "tokenizer_file": "spm.model",
+      "tokenizer_sha256": "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd",
+      "license": "apache-2.0",
+      "native_labels": {
+        "0": "contradiction",
+        "1": "entailment",
+        "2": "neutral"
+      },
+      "device": "cpu",
+      "dtype": "float32",
+      "batch_size": 32,
+      "max_sequence_length": 256,
+      "query_template": "Claim operation: {claim_value}. Evidence operation: {evidence_value}. Evidence context: {evidence_text}",
+      "hypothesis": "The evidence operation expresses the same operation as the claim operation.",
+      "decision_rule": {
+        "MATCH": "entailment_probability >= alignment_confidence_min",
+        "MISMATCH": "contradiction_probability >= alignment_confidence_min",
+        "UNSPECIFIED": "otherwise"
+      }
+    },
+    "runtime": {
+      "python": ">=3.12,<3.13",
+      "huggingface_hub": "0.36.2",
+      "safetensors": "0.8.0",
+      "sentencepiece": "0.2.1",
+      "torch": "2.13.0",
+      "transformers": "4.57.6",
+      "protobuf": "6.33.6",
+      "cpu_threads": 1,
+      "tokenizers_parallelism": false
+    }
+  },
+  "fresh_validation_contract": {
+    "corpus_id": "helix-aerf-validity-corpus-v1",
+    "seed": 20260821,
+    "validation_units": 20,
+    "validation_pair_rows": 180,
+    "validation_claim_rows": 180,
+    "validation_relation_counts": {
+      "ENTAILED": 60,
+      "CONTRADICTED": 40,
+      "UNKNOWN": 80
+    },
+    "validation_pairs_sha256": "5f6f0294230de5da3af8baaee2403c9497bd42308c96f9d1041f4f88667d1da7",
+    "validation_claims_sha256": "116040d37035e4a43a3bee17ea2d29fe87d85c6148adade770e8c224456e43d6",
+    "component_requirements": {
+      "minimal_evidence_span_precision_min": 0.95,
+      "minimal_evidence_span_recall_min": 0.95,
+      "relevance_macro_f1_min": 0.95,
+      "relevant_recall_min": 0.95,
+      "irrelevant_recall_min": 0.95,
+      "sufficiency_macro_f1_min_on_relevant_pairs": 0.95,
+      "sufficient_recall_min": 0.95,
+      "insufficient_recall_min": 0.95,
+      "polarity_macro_f1_min_on_relevant_sufficient_pairs": 0.95,
+      "supports_recall_min": 0.95,
+      "refutes_recall_min": 0.95,
+      "final_relation_macro_f1_min": 0.95,
+      "entailed_recall_min": 0.95,
+      "contradicted_recall_min": 0.95,
+      "unknown_recall_min": 0.95,
+      "cross_document_irrelevance_false_contradiction_rate_max": 0.02,
+      "same_domain_irrelevance_false_contradiction_rate_max": 0.02,
+      "relevant_insufficient_false_contradiction_rate_max": 0.02,
+      "context_contamination_support_accuracy_min": 0.95
+    },
+    "claim_requirements": {
+      "macro_case_category_accuracy_min": 0.95,
+      "supported_precision_min": 0.98,
+      "supported_recall_min": 0.95,
+      "multi_document_supported_recall_min": 0.95,
+      "partial_multi_document_unsupported_accuracy_min": 0.95,
+      "support_refute_conflict_accuracy_min": 1.0,
+      "citation_invalid_accuracy_min": 1.0,
+      "stale_evidence_accuracy_min": 1.0,
+      "registered_conflict_accuracy_min": 1.0,
+      "false_supported_on_safety_gate_cases_max": 0
+    },
+    "requirement_count": 29,
+    "validation_records_materialized": 0,
+    "validation_records_inspected": 0,
+    "validation_records_scored": 0
+  },
+  "pre_execution_contract_audit": {
+    "status": "BLOCKED_INPUT_CONTRACT_MISMATCH_NO_VALIDATION_OPENED",
+    "frozen_tpag_parser_subject_contract": "Orchid request NNN or explicit OR-NNN alias",
+    "registered_a45a_subject_contract": "Orchid case NNN",
+    "frozen_tpag_predicate_contract": "registered typed operation grammar used by M5/M6",
+    "registered_a45a_predicate_contract": "handled-by / requires / review-window support prose",
+    "direct_application_ready": false,
+    "existing_registered_adapter_found": false,
+    "adapter_or_parser_extension_would_change_scientific_implementation": true,
+    "validation_execution_authorized": false,
+    "reason": "The frozen M6 TPAG parser cannot directly represent the registered A4.5a support-text grammar without a new deterministic adapter or parser extension. Such a change would alter the frozen scientific implementation and must be separately registered before any fresh-validation exposure."
+  },
+  "execution_scope": {
+    "semantic_inference_authorized": 0,
+    "model_calls_authorized": 0,
+    "threshold_searches_authorized": 0,
+    "parameter_refits_authorized": 0,
+    "validation_materialization_authorized": 0,
+    "validation_inspection_authorized": 0,
+    "validation_scoring_authorized": 0,
+    "confirmatory_record_inspection_authorized": 0,
+    "confirmatory_scoring_authorized": 0,
+    "model_family_comparisons_authorized": 0,
+    "prompt_searches_authorized": 0,
+    "post_result_rescue_authorized": 0
+  },
+  "governance": {
+    "a45a_validation_remains_sealed": true,
+    "confirmatory_partition_remains_sealed": true,
+    "a45c_repurposed": false,
+    "m6_threshold_may_change": false,
+    "m6_model_may_change": false,
+    "m6_scientific_implementation_may_change_inside_a45d": false,
+    "a45a_requirements_may_change": false,
+    "validation_failure_may_trigger_post_result_rescue": false
+  },
+  "next_checkpoint": {
+    "authorized": false,
+    "requires_separate_approval": true,
+    "class": "PREVALIDATION_CONTRACT_RESOLUTION",
+    "constraint": "Any bridge must be registered and frozen without inspecting A4.5a validation records; otherwise a fresh TPAG-native independent validity construction is required."
+  }
+}
